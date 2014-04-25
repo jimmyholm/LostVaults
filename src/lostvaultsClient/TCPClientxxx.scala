@@ -1,5 +1,5 @@
 package lostvaultsClient
-
+import lostvaults.Parser
 import akka.io.{ IO, Tcp }
 import akka.actor.{ Actor, ActorRef, Props }
 import akka.util.Timeout
@@ -16,55 +16,58 @@ case object ShutDown extends MyMsg
 case object Ok extends MyMsg
 
 object TCPClientxxx {
-  def props: Props = Props(new TCPClientxxx)
+  def props(listener: ActorRef): Props = Props(new TCPClientxxx(listener))
 }
 
-class TCPClientxxx extends Actor {
+class TCPClientxxx(listener: ActorRef) extends Actor {
   import Tcp._
   import context.system
   val manager = IO(Tcp)
   var connection: Option[ActorRef] = None
   
+  
   override def preStart() = {
     manager ! Connect(new InetSocketAddress("localhost", 1337))
+    // Ändra localhost i slutversionen till IP'n för Servern. Eventuellt porten också.
   }
-  
+
   def receive = {
-    case Received(msg) => {
-      val dec = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
-      val check = dec.substring(0, 5)
-      println("Received message \"%s\"".format(check))
-      if (check == "Print")
-        println(dec.substring(6, msg.length))
-    }
-    case Print(msg) =>
-      if (!(connection.isEmpty)) {
-        connection.get ! Write(ByteString(" says: " + msg))
-      }
-    case c @ Connected(remote, local) => {
+
+    case CommandFailed(_: Connect) =>
+       listener ! "connect failed"
+      context stop self
+
+    case c @ Connected(remote, local) =>
+      listener ! "Connected"
       connection = Some(sender)
       sender ! Register(self)
-      println("Connected")
-    }
-    case CommandFailed(_: Connect) => {
-      println("Failed to connect. Shutting Down")
-      context stop self
-    }
-    case ShutDown => {
-      implicit val timeout = Timeout(5.seconds)
-      connection.get ! ConfirmedClose
-    }
-    case ConfirmedClosed => {
-      context stop self
-    }
-    case PeerClosed => {
-      implicit val timeout = Timeout(5.seconds)
-      val future = ask(connection.get, Close)
-      Await.result(future, timeout.duration)
-    }
-    case _: ConnectionClosed => {
-      println("Connection closed - shutting down.")
-      self ! ShutDown
-    }
+      context become {
+        case d: String =>
+          val firstWord = Parser.FindWord(d, 0)
+          firstWord match {
+
+            case "LoginOK" =>
+            listener ! "LoginOK"
+
+            case "LoginFail" =>
+            // Do Something
+
+            case "Say" =>
+            // Do Something
+
+            case "Bye" =>
+            // Do Something
+
+            case "Whisper" =>
+            // Do Something
+
+            case "System" =>
+            // Do Something
+
+          }
+
+      }
+    case _ =>
+      println("other")
   }
 }

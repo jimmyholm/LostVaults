@@ -8,7 +8,7 @@ object playGame {
 }
 
 class playGame extends Actor {  
-	val TCPActorRef = context.actorOf(TCPClientxxx.props)
+	val TCPActorRef = context.actorOf(TCPClientxxx.props(self))
 	val game = new playGameCommunication(this)
  
  	def sendMessage (msg: String) {
@@ -20,11 +20,11 @@ class playGame extends Actor {
       val firstWord = Parser.FindWord(c, 0)
       firstWord match  {
         case "LoginOK" =>
-          // Do Something
+          game.updateDynamicInfo("LoginOK\n")
         case "LoginFail" =>
-          // Do Something
+          game.updateDynamicInfo("LoginFailed\n")
         case "Say" =>
-        	// Do Something
+          
         case "Bye" =>
         	// Do Something	
         case "Whisper" =>
@@ -32,6 +32,8 @@ class playGame extends Actor {
         case "System" =>
           // Do Something
       }
+    case "Connection Failed" =>
+      // Restart maybe?
     case _ => 
       println("Coolt")	
   }
