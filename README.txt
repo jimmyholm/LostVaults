@@ -1,9 +1,9 @@
 ==== COURSE ==== 
 
-Process Oriented Programming (1DT049) Spring 2012
+Operating System and Multicore programming (1DT089) - Spring 2014
 
 Department of Information Technology 
-Uppsala university
+Uppsala University
 
 
 ==== GROUP ==== 
@@ -26,42 +26,44 @@ Add a short description of your project here.
 911225-4678 felix.farjsjo@gmail.com
 920508-1335 philip.akerfeldt@gmail.com
 890422-0590 fredrik.mejl@gmail.com
-870928-0138 senilica@gmail.com
+870928-0138 senilica@gmail.com (Jimmy Holm)
 
 
 ==== MAY THE SOURCE BE WITH YOU ==== 
 
-Everything you need to compile and run the system is included in this
-directory. 
+Everything you need to compile and run the system is included in the
+directory tree. 
 
 However, you might want to get the most up to date version of this
 directory with
 
-git clone https://github.com/anna-feliz/OSMP
+git clone https://github.com/senilica/LostVaults
 
 ==== SCALA VERSION ====
 
-This software was developed and tested using scala 2.10 + akka 2.3.2
+This software was developed and tested using scala 2.10 + akka 2.3.2 (Relevant libraries included in git repo.)
      	      	  	    	       
 ==== MAKE IT HAPPEN ====  
 
-Use eclipse
+ant build => Compile the source files
+ant build_jars => Compile the source files and create runnable jar files client.jar and server.jar
+ant client => Compile and build only the client jar file.
+ant server => Compile and build only the server jar file.
+ant run_client => Compile, build and execute the client jar file.
+ant run_server => Compile, build and execute the server jar file.
+ant doc => Compile code documentation
+TODO:
+ant run_tests => Compile, build and execute the tests jar file.
 
 
 ==== TO COMPILE ==== 
 
-Use eclipse
-
+Running ant will build both client and server jar files.  
 
 ==== TO RUN AND TEST THE SYSTEM ==== 
 
-Add a short description on how to run and test your system. Here you
-might give pointers to more details in the doc/final_presentation.pdf
-document. 
-
-If possible, add targets to the Makefile that can be used to start the
-system (make start, make start_server, make start_client or similar as
-necessary). 
+The build targets run_client and run_server have been provided in order to rapidly build and run 
+the client and server jar files respectively.
 
 ==== MORE INFORMATION (optional) ==== 
 

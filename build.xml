@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build_jars" name="LostVaults">
+	<!-- Define scala compiler, scaladoc, etc command -->
+	<property environment="env" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.7" />
+	<property name="source" value="1.7" />
+	<path id="JUnit 4.userclasspath">
+		<pathelement location="libs/junit.jar" />
+		<pathelement location="libs/org.hamcrest.core_1.3.0.v201303031735.jar" />
+	</path>
+	<path id="Scala Libraries [2.10.4].userclasspath">
+		<pathelement location="libs/scala-actors.jar" />
+		<pathelement location="libs/scala-library.jar" />
+		<pathelement location="libs/scala-reflect.jar" />
+		<pathelement location="libs/scala-swing.jar" />
+	</path>
+	<path id="LostVaults.classpath">
+		<pathelement location="bin" />
+		<pathelement location="libs/akka-actor_2.10-2.3.2.jar" />
+		<pathelement location="libs/config-1.2.0.jar" />
+		<path refid="JUnit 4.userclasspath" />
+		<path refid="Scala Libraries [2.10.4].userclasspath" />
+	</path>
+	<target name="init">
+		<taskdef resource="scala/tools/ant/antlib.xml">
+			<classpath>
+				<pathelement location="libs/scala-compiler.jar" />
+				<pathelement location="libs/scala-reflect.jar" />
+				<pathelement location="libs/scala-library.jar" />
+			</classpath>
+		</taskdef>
+		<mkdir dir="bin" />
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target depends="build-subprojects,build-project" name="build" />
+	<target name="build-subprojects" />
+	<target depends="init" name="build-project">
+		<fileset dir="src">
+			<exclude name="**/*.java" />
+		</fileset>
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<scalac scalacdebugging="true" destdir="bin" logging="verbose">
+			<src path="src" />
+			<exclude name="**/*.java" />
+			<classpath refid="LostVaults.classpath" />
+		</scalac>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+			<src path="src" />
+			<exclude name="**/*.scala" />
+			<classpath refid="LostVaults.classpath" />
+		</javac>
+	</target>
+	<target depends="build" name="doc">
+		<fileset dir="src">
+		</fileset>
+		<scaladoc destdir="doc">
+			<src path="src" />
+			<classpath refid="LostVaults.classpath" />
+		</scaladoc>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target depends="build" name="client" description="Build runnable client Jar File">
+		<jar destfile="client.jar" basedir="bin/">
+			<include name="lostvaults/Parser.class" />
+			<include name="lostvaults/Parser$.class" />
+			<include name="lostvaults/client/*.class" />
+			<include name="*.jar" />
+			<manifest>
+				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
+				<attribute name="Main-Class" value="lostvaults.client.main" />
+			</manifest>
+		</jar>
+	</target>
+	<target depends="build" name="server" description="Build runnable server Jar File">
+		<jar destfile="server.jar" basedir="bin/">
+			<include name="lostvaults/Parser.class" />
+			<include name="lostvaults/Parser$.class" />
+			<include name="lostvaults/server/*.class" />
+			<include name="*.jar" />
+			<manifest>
+				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
+				<attribute name="Main-Class" value="lostvaults.server.main" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="run_client" depends="client" description="Build and run the client jar file.">
+		<java jar="client.jar" fork="true" />
+	</target>
+	<target name="run_server" depends="server" description="Build and run the server jar file.">
+		<java jar="server.jar" fork="true" />
+	</target>
+	<target name="build_jars" depends="client,server" />
+</project>
