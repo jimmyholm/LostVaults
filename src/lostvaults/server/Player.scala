@@ -1,7 +1,7 @@
 package lostvaults.server
 import akka.actor.Actor
 import akka.util.ByteString
-import akka.io.{Tcp}
+import akka.io.{ Tcp }
 import lostvaults.Parser
 
 class Player extends Actor {
@@ -13,6 +13,9 @@ class Player extends Actor {
   var dungeon = self
   var whisperTo = ""
   var whisperMsg = ""
+
+  println("I am inside player")
+
   def receive() = {
     case Received(msg) => {
       connection = sender
@@ -36,7 +39,6 @@ class Player extends Actor {
           }
         }
       }
-
       def LoggedIn: Receive = {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())

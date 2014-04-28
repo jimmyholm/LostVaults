@@ -134,7 +134,7 @@ public class GUI {
 				JTextField source = (JTextField) (e.getSource());
 				String newName = (source.getText());
 				name = newName.replace(" ", "");
-				playGameCommunication.sendMessage("login " + name);
+				playGameCommunication.sendMessage("Login " + name);
 				source.setText("");
 			}
 		});

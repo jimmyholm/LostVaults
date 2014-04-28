@@ -19,14 +19,17 @@ class ConMan extends Actor {
   override def preStart() {
     manager ! Bind(self, new InetSocketAddress("0.0.0.0", 51234))
   }
+  
   def receive() = {
     case CommandFailed(_: Bind) => {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
+      printf("Hejsan")
       // Do interesting stuff
     }
     case c @ Connected => {
+      printf("I am connected")
       val newplayer = context.actorOf(Props[Player])
       sender ! Register(newplayer)
     }

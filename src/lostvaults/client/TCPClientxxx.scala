@@ -4,6 +4,7 @@ import akka.actor.{ Actor, ActorRef, Props }
 import java.net.InetSocketAddress
 import scala.concurrent.duration._
 import lostvaults.Parser
+import akka.util.ByteString
 sealed trait MyMsg
 case class Print(msg: String) extends MyMsg
 case object ConnClosed extends MyMsg
@@ -21,7 +22,7 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
   var connection: Option[ActorRef] = None
 
   override def preStart() = {
-    manager ! Connect(new InetSocketAddress("localhost", 51234))
+    manager ! Connect(new InetSocketAddress("0.0.0.0", 51234))
     // Ändra localhost i slutversionen till IP'n för Servern.
   }
 
@@ -41,7 +42,7 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
           listener ! msg
         }
         case msg: String =>
-          connection.get ! msg
+          connection.get ! Write(ByteString(msg))
         case x: ConnectionClosed => {
           println("Connection closed - shutting down.")
           listener ! x.getErrorCause
