@@ -4,6 +4,7 @@ import akka.actor.{ Actor, ActorRef, Props }
 import java.net.InetSocketAddress
 import scala.concurrent.duration._
 import lostvaults.Parser
+import akka.util.ByteString
 sealed trait MyMsg
 case class Print(msg: String) extends MyMsg
 case object ConnClosed extends MyMsg
@@ -35,6 +36,7 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
       listener ! "Connected"
       connection = Some(sender)
       sender ! Register(self)
+      //sender ! Write(ByteString("Login Jimmy"))
       context become {
         case Received(c) => {
           val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())

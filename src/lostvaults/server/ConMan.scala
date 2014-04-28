@@ -26,9 +26,10 @@ class ConMan extends Actor {
     case Bound(local) => {
       // Do interesting stuff
     }
-    case c @ Connected => {
+    case c @ Connected(remote, local) => {
       val newplayer = context.actorOf(Props[Player])
       sender ! Register(newplayer)
+      println("New connection from: " + remote)
     }
   }
 }

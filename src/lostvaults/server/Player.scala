@@ -17,7 +17,8 @@ class Player extends Actor {
     case Received(msg) => {
       connection = sender
       val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
-      if (Parser.findWord(decodedMsg, 0) == "Login") {
+      println("Received new message from client: " + decodedMsg)
+      if (Parser.findWord(decodedMsg, 0) == "login") {
         name = Parser.findWord(decodedMsg, 1)
         PMap ! PMapIsOnline(name, decodedMsg)
       }
@@ -41,6 +42,7 @@ class Player extends Actor {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
           val action = Parser.findWord(decodedMsg, 0)
+          println("Received message: " + decodedMsg)
           action match {
             case "Say" => {
               dungeon ! GameSay(name, Parser.findRest(decodedMsg, 0))
