@@ -1,10 +1,14 @@
 package lostvaults.client
 
-class playGameCommunication(_game : playGame) {
-	val game = _game
-	val gui = new GUI(this)
+object playGameCommunication {
+	var game : playGame = null
+	var gui = new GUI()
  
-  
+  def setGame(_game : playGame) {
+	  game = _game
+	}
+	
+	
   def sendMessage(msg : String){
 	  game.sendMessage(msg)
   }

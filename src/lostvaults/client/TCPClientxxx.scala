@@ -19,49 +19,36 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
   import context.system
   val manager = IO(Tcp)
   var connection: Option[ActorRef] = None
-  
-  
+
   override def preStart() = {
-    //manager ! Connect(new InetSocketAddress("localhost", 51234))
+    manager ! Connect(new InetSocketAddress("localhost", 51234))
     // Ändra localhost i slutversionen till IP'n för Servern.
   }
 
   def receive = {
 
-    case CommandFailed(_: Connect) =>
-       listener ! "connect failed"
+    case CommandFailed(_: Connect) => {
+      listener ! "Connect failed"
       context stop self
-
-    case c @ Connected(remote, local) =>
+    }
+    case c @ Connected(remote, local) => {
       listener ! "Connected"
       connection = Some(sender)
       sender ! Register(self)
       context become {
-        case d: String =>
-          val firstWord = Parser.findWord(d, 0)
-          firstWord match {
-
-            case "LoginOK" =>
-            listener ! "LoginOK"
-
-            case "LoginFail" =>
-            // Do Something
-
-            case "Say" =>
-            // Do Something
-
-            case "Bye" =>
-            // Do Something
-
-            case "Whisper" =>
-            // Do Something
-
-            case "System" =>
-            // Do Something
-
-          }
-
+        case Received(c) => {
+          val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
+          listener ! msg
+        }
+        case msg: String =>
+          connection.get ! msg
+        case x: ConnectionClosed => {
+          println("Connection closed - shutting down.")
+          listener ! x.getErrorCause
+          self ! ShutDown
+        }
       }
+    }
     case _ =>
       println("other")
   }

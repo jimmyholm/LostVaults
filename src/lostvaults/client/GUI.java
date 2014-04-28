@@ -7,7 +7,7 @@ import java.awt.event.*;
 
 public class GUI {
 
-	playGameCommunication game;
+
 	String name;
 
 	int screenWidth;
@@ -19,9 +19,7 @@ public class GUI {
 	JLabel stats = new JLabel();
 	JFrame window = new JFrame("The Lost Vaults");
 
-	public GUI(playGameCommunication _game) {
-		game = _game;
-
+	public GUI() {
 		// / Set fonts on frames above
 		Font font = new Font("Serif", Font.BOLD + Font.ITALIC, 14);
 		dynamicInfo.setFont(font);
@@ -102,10 +100,9 @@ public class GUI {
 		// /waits for someone to enter text in the commandInputField
 		commandInputField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(e);
 				JTextField source = (JTextField) (e.getSource());
-				System.out.println(source.getText());
-				dynamicInfo.append("\n" + source.getText());
+				playGameCommunication.sendMessage(source.getText());
+				dynamicInfo.append("\nYou say: " + source.getText());
 				source.setText("");
 			}
 		});
@@ -121,6 +118,7 @@ public class GUI {
 		// // Enter login name
 		
 		JDialog coolThing = new JDialog();
+
 		coolThing.setSize(300, 100);
 		JPanel inputNameFrame = new JPanel(new BorderLayout());
 		JTextField inputField = new JTextField();
@@ -136,7 +134,8 @@ public class GUI {
 				JTextField source = (JTextField) (e.getSource());
 				String newName = (source.getText());
 				name = newName.replace(" ", "");
-				game.sendMessage("login " + name);
+				playGameCommunication.sendMessage("login " + name);
+				source.setText("");
 			}
 		});
 
