@@ -22,11 +22,11 @@ Add a short description of your project here.
 
 
 ==== GROUP MEMBERS ====
-910804-0628 anna.fm.nilsson@gmail.com
-911225-4678 felix.farjsjo@gmail.com
-920508-1335 philip.akerfeldt@gmail.com
-890422-0590 fredrik.mejl@gmail.com
-870928-0138 senilica@gmail.com (Jimmy Holm)
+910804-0628 anna.fm.nilsson@gmail.com   (Anna Nilsson)
+911225-4678 felix.farjsjo@gmail.com     (Felix Färsjö)
+920508-1335 philip.akerfeldt@gmail.com  (Philip Åkerfeldt)
+890422-0590 fredrik.mejl@gmail.com      (Fredrik Larsson)
+870928-0138 senilica@gmail.com          (Jimmy Holm)
 
 
 ==== MAY THE SOURCE BE WITH YOU ==== 
