@@ -17,7 +17,7 @@ class ConMan extends Actor {
   val manager = IO(Tcp)
 
   override def preStart() {
-    manager ! Bind(self, new InetSocketAddress("0.0.0.0", 51234))
+    manager ! Bind(self, new InetSocketAddress("localhost", 51234))
   }
   
   def receive() = {

@@ -20,7 +20,7 @@ object PlayerMap {
 
 class PlayerMap extends Actor {
   var PMap: HashMap[String, ActorRef] = HashMap()
-  def receive() = {
+  def receive = {
     case PMapAddPlayer(name: String, ref: ActorRef) => {
       val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
       if (exist.isEmpty) {

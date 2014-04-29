@@ -22,12 +22,11 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
   var connection: Option[ActorRef] = None
 
   override def preStart() = {
-    manager ! Connect(new InetSocketAddress("0.0.0.0", 51234))
+    manager ! Connect(new InetSocketAddress("localhost", 51234))
     // Ändra localhost i slutversionen till IP'n för Servern.
   }
 
   def receive = {
-
     case CommandFailed(_: Connect) => {
       listener ! "Connect failed"
       context stop self
