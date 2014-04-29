@@ -35,19 +35,19 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
       listener ! "Connected"
       connection = Some(sender)
       sender ! Register(self)
-      context become {
-        case Received(c) => {
-          val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
-          listener ! msg
-        }
-        case msg: String =>
-          connection.get ! Write(ByteString(msg))
-        case x: ConnectionClosed => {
-          println("Connection closed - shutting down.")
-          listener ! x.getErrorCause
-          self ! ShutDown
-        }
-      }
+    }
+    //sender ! Write(ByteString("Login Jimmy"))
+    case Received(c) => {
+      val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
+      println("Received message from server: " + msg)
+      listener ! msg
+    }
+    case msg: String =>
+      connection.get ! Write(ByteString(msg))
+    case x: ConnectionClosed => {
+      println("Connection closed - shutting down.")
+      listener ! x.getErrorCause
+      self ! ShutDown
     }
     case _ =>
       println("other")

@@ -1,15 +1,19 @@
 package lostvaults.server
-import akka.actor.{ActorSystem, ActorRef, Props}
-
+import akka.actor.{ActorSystem, ActorRef, Props, Inbox}
+import akka.pattern.ask
+import scala.concurrent.duration._
+import akka.util.Timeout
 object main {
   var PMap: Option[ActorRef] = None
   val system = ActorSystem("LostVaultsServer")
+  var City: Option[ActorRef] = None
   def main(args: Array[String]) {
-    PMap = Some(system.actorOf(Props[PlayerMap])) // Start up our player hashmap actor
+    val pmap = system.actorOf(Props[PlayerMap])
+    PMap = Some(pmap) // Start up our player hashmap actor
     val conMan = system.actorOf(Props[ConMan])
-    val city = system.actorOf(Props[Dungeon])
+    City = Some(system.actorOf(Props[Dungeon]))
     var input = ""
-    city ! DungeonMakeCity
+    City.get ! DungeonMakeCity
     do {
       input = Console.readLine("Enter \"Quit\" to exit> ")
     } while (input.toLowerCase() != "quit")

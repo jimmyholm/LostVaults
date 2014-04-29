@@ -12,14 +12,12 @@ case class PMapIsOnline(name: String, purpose: String) extends PMapMsg
 case class PMapIsOnlineResponse(online: Boolean, purpose: String) extends PMapMsg
 case object PMapSuccess extends PMapMsg
 case object PMapFailure extends PMapMsg
-
-object PlayerMap {
-  val instance = new PlayerMap
-  def props(): Props = Props(new PlayerMap())
-}
+case object PMapStartUp extends PMapMsg
+case object PMapStarted extends PMapMsg
 
 class PlayerMap extends Actor {
   var PMap: HashMap[String, ActorRef] = HashMap()
+
   def receive = {
     case PMapAddPlayer(name: String, ref: ActorRef) => {
       val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)

@@ -16,4 +16,7 @@ object playGameCommunication {
   def updateDynamicInfo(msg: String){
 	  gui.updateDynamicInfo(msg)  
   }
+  def getName():String = {
+    gui.getName()
+  }
 }

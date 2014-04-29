@@ -28,10 +28,10 @@ class ConMan extends Actor {
       printf("Hejsan")
       // Do interesting stuff
     }
-    case c @ Connected => {
-      printf("I am connected")
+    case c @ Connected(remote, local) => {
       val newplayer = context.actorOf(Props[Player])
       sender ! Register(newplayer)
+      println("New connection from: " + remote)
     }
   }
 }
