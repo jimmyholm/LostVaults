@@ -22,7 +22,7 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
   var connection: Option[ActorRef] = None
 
   override def preStart() = {
-    manager ! Connect(new InetSocketAddress("localhost", 51234))
+    manager ! Connect(new InetSocketAddress("0.0.0.0", 51234))
     // Ändra localhost i slutversionen till IP'n för Servern.
   }
 
@@ -36,20 +36,19 @@ class TCPClientxxx(listener: ActorRef) extends Actor {
       listener ! "Connected"
       connection = Some(sender)
       sender ! Register(self)
-      //sender ! Write(ByteString("Login Jimmy"))
-      context become {
-        case Received(c) => {
-          val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
-          listener ! msg
-        }
-        case msg: String =>
-          connection.get ! msg
-        case x: ConnectionClosed => {
-          println("Connection closed - shutting down.")
-          listener ! x.getErrorCause
-          self ! ShutDown
-        }
-      }
+    }
+    //sender ! Write(ByteString("Login Jimmy"))
+    case Received(c) => {
+      val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
+      println("Received message from server: " + msg)
+      listener ! msg
+    }
+    case msg: String =>
+      connection.get ! Write(ByteString(msg))
+    case x: ConnectionClosed => {
+      println("Connection closed - shutting down.")
+      listener ! x.getErrorCause
+      self ! ShutDown
     }
     case _ =>
       println("other")

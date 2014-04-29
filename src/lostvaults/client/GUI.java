@@ -18,7 +18,7 @@ public class GUI {
 	JTextArea staticInfo = new JTextArea();
 	JLabel stats = new JLabel();
 	JFrame window = new JFrame("The Lost Vaults");
-
+	public String getName() { return name; }
 	public GUI() {
 		// / Set fonts on frames above
 		Font font = new Font("Serif", Font.BOLD + Font.ITALIC, 14);
@@ -102,7 +102,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				JTextField source = (JTextField) (e.getSource());
 				playGameCommunication.sendMessage(source.getText());
-				dynamicInfo.append("\nYou say: " + source.getText());
+				//dynamicInfo.append("\nYou say: " + source.getText());
 				source.setText("");
 			}
 		});
@@ -134,7 +134,7 @@ public class GUI {
 				JTextField source = (JTextField) (e.getSource());
 				String newName = (source.getText());
 				name = newName.replace(" ", "");
-				playGameCommunication.sendMessage("login " + name);
+				playGameCommunication.sendMessage("Login " + name);
 				source.setText("");
 			}
 		});

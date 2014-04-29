@@ -64,9 +64,4 @@ Running ant will build both client and server jar files.
 
 The build targets run_client and run_server have been provided in order to rapidly build and run 
 the client and server jar files respectively.
-
-==== MORE INFORMATION (optional) ==== 
-
- * How to get more information about your project?
- * Who is the main contact person?
- * Do you have a project home page?
+TODO: build target run_tests compiles, builds and executes the tests jar file.

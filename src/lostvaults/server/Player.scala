@@ -1,7 +1,7 @@
 package lostvaults.server
 import akka.actor.Actor
 import akka.util.ByteString
-import akka.io.{Tcp}
+import akka.io.{ Tcp }
 import lostvaults.Parser
 
 class Player extends Actor {
@@ -13,18 +13,21 @@ class Player extends Actor {
   var dungeon = self
   var whisperTo = ""
   var whisperMsg = ""
-  def receive() = {
+
+  println("I am inside player")
+  def receive = {
     case Received(msg) => {
       connection = sender
       val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
       println("Received new message from client: " + decodedMsg)
-      if (Parser.findWord(decodedMsg, 0) == "login") {
+      if (Parser.findWord(decodedMsg, 0) == "Login") {
         name = Parser.findWord(decodedMsg, 1)
         PMap ! PMapIsOnline(name, decodedMsg)
       }
     }
     case PMapIsOnlineResponse(response, purpose) =>
       {
+        println("Received PMapIsOnlineResponse: " + response + " - " + purpose)
         if (Parser.findWord(purpose, 0) == "Login") {
           if (response) {
             connection ! Write(ByteString("LoginFail"))
@@ -32,12 +35,12 @@ class Player extends Actor {
           } else {
             connection ! Write(ByteString("LoginOk"))
             PMap ! PMapAddPlayer(name, self)
+            dungeon = main.City.get
             dungeon ! GameAddPlayer(name)
             become(LoggedIn)
           }
         }
       }
-
       def LoggedIn: Receive = {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
