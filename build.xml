@@ -81,7 +81,7 @@
 			<include name="*.jar" />
 			<manifest>
 				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
-				<attribute name="Main-Class" value="lostvaults.client.main" />
+				<attribute name="Main-Class" value="lostvaults.client.Main" />
 			</manifest>
 		</jar>
 	</target>
@@ -93,12 +93,12 @@
 			<include name="*.jar" />
 			<manifest>
 				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
-				<attribute name="Main-Class" value="lostvaults.server.main" />
+				<attribute name="Main-Class" value="lostvaults.server.Main" />
 			</manifest>
 		</jar>
 	</target>
 	<target name="run_client" depends="client" description="Build and run the client jar file.">
-		<java jar="client.jar" fork="true" />
+		<java jar="client.jar" fork="false" />
 	</target>
 	<target name="run_server" depends="server" description="Build and run the server jar file.">
 		<java jar="server.jar" fork="true" />
