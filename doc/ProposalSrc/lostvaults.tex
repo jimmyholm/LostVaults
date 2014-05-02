@@ -4,13 +4,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{appendix}
+\usepackage{longtable}
 \DeclareGraphicsExtensions{.png}
 
 \title{The Lost Vaults: Uneasy Alliance\\\small{An online multi-user Dungeon Client and Server.}\\\small{Project Proposal for group 4}}
 
 \author{Felix Färjsjö\\(19911225-4678) \and Jimmy Holm\\(19870928-0138) \and Fredrik Larsson\\(19890422-0590) \and Anna Nilsson\\(19910804-0628) \and Philip Åkerfeldt\\(19920508-1335)}
 
-\date{\today\\Version 1.0}
+\date{\today\\Version 2.0}
 
 \begin{document}
 \maketitle
@@ -20,7 +22,8 @@ A proposal for implementing a concurrent server model as the basis for an online
 \end{abstract}
 
 \tableofcontents
-
+\listoffigures
+\newpage
 \section{Introduction}
 The final product of this project will be a fully functional and interactive multiplayer online role playing game, or MORPG, called The Lost Vaults.
 
@@ -34,23 +37,28 @@ A quest can be finding an object and bringing it back to the surface, killing a 
 \part{Design}
 \section{System Architecture}
 The system architecture is in this document divided into  Client-side archiecture and Server-side architecture. Being written in Scala, the application runs in the Java Virtual Machine and as such, both client and server should be able to run on any platform supporting Java VM 1.7.
-\subsection{Client-side}
-The design goal for the Lost Vaults client is to create something akin to a remote terminal, where no logic is performed beyond sending requests, and receiving and interpreting request responses. Ultimately, we aim to accomplish a client-side implementation that is easily extensible when the server's implementation of game logic increases, i.e. a system we can add to by simply adding new requests and responses.
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{clientmockup}
 \caption{\label{fig:Client}User Interface mockup of the Lost Vaults Client.}
 \end{figure}
+\subsection{Client-side}
+The design goal for the Lost Vaults client is to create something akin to a remote terminal, where no logic is performed beyond sending requests, and receiving and interpreting request responses. Ultimately, we aim to accomplish a client-side implementation that is easily extensible when the server's implementation of game logic increases, i.e. a system we can add to by simply adding new requests and responses.
+
 As seen in Figure \ref{fig:Client} the client window is divided into several text areas displaying relevant information to the player. The main area is for regular server responses and will contain for example room descriptions, player chat messages, system information messages and similar.
 The right side of the client is reserved for persistent information that the player may need to quickly reference. The top division contains information about the player's own character, listing the player's health and combat stats as well as the group's remaining food.
 
-The bottom om the window contains the command input field, where the player types in commands in accordance to a strict syntax listed under the server architecture below.
+The bottom of the window contains the command input field, where the player types in commands in accordance to a strict syntax listed under the server architecture below.
 Upon starting the client, the player is faced with the login window shown in the center of the mockup, where the player can enter their username and password as well as the server IP address to connect to.
 
-The client GUI will be implemented using Java's Swing UI library and integrated into Scala to utilize Akka's TCP capabilities, as shown in figure \ref{fig:ClientArch}.
+The client GUI will be implemented using Java's Swing UI library and integrated into Scala to utilize Akka's TCP capabilities.
+\subsubsection{Class Model}
+The client is structured up into four distinct classes as described by figure \ref{fig:ClientArch}. The classes PlayGame and PlayGameCommunication work together to create a bridge between the TCP layer and the GUI, with PlayGame accepting messages from TCPClient and passing it along to the GUI through PlayGameCommunication. 
+Likewise, the GUI sends data over the network  using method calls in PlayGameCommunication which passes it along to PlayGame and then TCPClient.
 \begin{figure}[hbt]
 \centering
-\caption{\label{fig:ClientArch}[TODO: Insert Client-system architecture figure]}
+\includegraphics[width=1.0\textwidth]{clientuml1}
+\caption{\label{fig:ClientArch}Client class relationship model.}
 \end{figure}
 \subsection{Server-side}
 The server-side system architecture is further divided into the sections Concurrency model, Actor Model and Class Model. The first describes our choice of concurrency model and the 
@@ -104,30 +112,6 @@ is to be considered a singleton and only one instance should exist at any given 
 The Game Logic section contains all the internal classes as well as the Dungeon class. The Dungeon class is the bridge between the Network Communicators and the Game Logic and it is 
 only through a Dungeon class that a Player can perform any actions apart from the server-wide \textit{WHISPER} command. The Dungeon class keeps track of explored and unexplored rooms, 
 quests, groups, objects and NPCs. The Dungeon also keeps track of all Players currently connected and associated with the given dungeon.
-\subsection{Network Messages}
-\begin{center}
-\begin{tabular}{|l|c|l|}
-\hline
-Message & Direction & Description\\
-\hline
-\textit{SAY [msg]} & Client $\rightarrow$ Server & Chat message sent from client to server.\\
-\hline
-\textit{SAY [name] [msg]} & Client $\leftarrow$ Server & The Chat message sent by [name] and relayed to the relevant clients.\\
-\hline
-\textit{WHISPER [to] [msg]} & Client $\rightarrow$ Server & A private message sent from a player to another player named [to].\\
-\hline
-\textit{WHISPER [from] [to] [msg]} & Client $\leftarrow$ Server & A private message sent from a player named [from], to another player named [to].\\
-\hline
-\textit{LOGIN [name]} & Client $\rightarrow$ Server & A request to sign onto the server using [name] as the player's username.\\
-\hline
-\textit{LOGINOK} & Client $\leftarrow$ Server & Response from server that a login request has been accepted.\\
-\hline
-\textit{LOGINFAIL} & Client $\leftarrow$ Server & Response from server that a login request has been denied.\\
-\hline
-[TODO: & Insert the rest & of the messages.]\\
-\hline
-\end{tabular}
-\end{center}
 \section{Game Design}
 [TODO: Describe game design here!]
 \part{Development Process}
@@ -148,5 +132,64 @@ The initial brainstorming went as expected with a long list of possible project 
 During the brainstorming session three main project ideas were presented. The first idea was to make an online multiplayer game and the two others were simulation programs, one to simulate the traffic situation in a city and one to simulate an ecosystem. We divided the group into three focus groups that looked deeper into these three options. After this, each group were given time to present their respective fields, and after discussing pros and cons for the potential of each idea, we decided to choose the online multiplayer game. The reasons for this was that the complexity was intriguing, and that there was potential to develop the game further in case of extra time. Some of the interesting parts of the online game, besides being the most fun, was to learn about networking and our chosen programming language, Scala. 
 
 Focusing on quantity in the first stage of brainstorming led to a good brainstorming process with plenty of ideas and doing so we found that it was easier to decide on a high quality idea when ideas could be put on the table and refined by the group as a whole, rather than feeling that any idea had to be fully formed before being suggested.
+\newpage
+\part{Appendices}
+\begin{appendices}
+\section{Network Messages}\label{app:NetworkMessages}
+\begin{longtable}{|l|c|p{8 cm}|}
+\hline
+Message & Direction & Description\\
+\hline
+\endhead
+\textit{SAY [msg]} & Client $\rightarrow$ Server & Chat message sent from client to server.\\
+\hline
+\textit{SAY [name] [msg]} & Client $\leftarrow$ Server & The Chat message sent by [name] and relayed to the relevant clients.\\
+\hline
+\textit{WHISPER [to] [msg]} & Client $\rightarrow$ Server & A private message sent from a player to another player named [to].\\
+\hline
+\textit{WHISPER [from] [to] [msg]} & Client $\leftarrow$ Server & A private message sent from a player named [from], to another player named [to].\\
+\hline
+\textit{LOGIN [name]} & Client $\rightarrow$ Server & A request to sign onto the server using [name] as the player's username.\\
+\hline
+\textit{LOGINOK} & Client $\leftarrow$ Server & Response from server that a login request has been accepted.\\
+\hline
+\textit{LOGINFAIL} & Client $\leftarrow$ Server & Response from server that a login request has been denied.\\
+\hline
+\textit{BYE} & Client $\leftarrow$ Server & Connection Closed message sent from server to client.\\
+\hline
+\textit{SYSTEM} & Client $\leftarrow$ Server & System mesage sent from the server to the client.\\
+\hline
+\textit{INVENTORY} & Client $\rightarrow$ Server & Request from a client to list a player's current inventory.\\
+\hline
+\textit{INVENTORY [list]} & Client $\leftarrow$ Server & Response to a client's inventory request. [list] is a comma delimited list of item names.\\
+\hline
+\textit{ROOMENTER [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has entered the room which the client receiving the message is in.\\
+\hline
+\textit{ROOMLEAVE [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has left the room which the client receiving the message is in.\\
+\hline
+\textit{ROOMLIST [list]} & Client $\leftarrow$ Server & Notification that the list of players in the client's current room should be repopulated. [list] is a space-delimited list of names.\\
+\hline
+\textit{ROOMITEMS [list]} & Client $\leftarrow$ Server & Notification of all the items in the current room. [list] is a comma delimited list of all the items in the room.\\
+\hline
+\textit{ROOMDESC [description} & Client $\leftarrow$ Server & Notification of the client's current room's description.\\
+\hline
+\textit{ROOMEXITS [list]} & Client $\leftarrow$ Server & Notification of all possible exits from the client's current room.\\
+\hline
+\textit{DESCRIBE} & Client $\rightarrow$ Server & Request for a room description of the client's current room.\\
+\hline
+\textit{ITEMS} & Client $\rightarrow$ Server & Request for a list of items in the client's current room.\\
+\hline
+\textit{EXITS} & Client $\rightarrow$ Server & Request for a list of exits in the client's current room.\\
+\hline
+\textit{HELP} & Client $\rightarrow$ Server & Request for a list of available commands and their descriptions.\\
+\hline
+\textit{DUNGEONENTER [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has entered the same dungeon the client is currently in.\\
+\hline
+\textit{DUNGEONLEAVE [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has left the room which the client receiving the message is in.\\
+\hline
+\textit{DUNGEONLIST [list]} & Client $\leftarrow$ Server & Notification that the list of players in the client's current room should be repopulated. [list] is a space-delimited list of names.\\
+\hline
+\end{longtable}
+\end{appendices}
 
 \end{document}

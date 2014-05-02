@@ -67,7 +67,7 @@
 	<target depends="build" name="doc">
 		<fileset dir="src">
 		</fileset>
-		<scaladoc destdir="doc">
+		<scaladoc destdir="doc/LostVaults">
 			<src path="src" />
 			<classpath refid="LostVaults.classpath" />
 		</scaladoc>
