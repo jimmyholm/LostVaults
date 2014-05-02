@@ -8,7 +8,7 @@ object playGame {
 }
 
 class playGame extends Actor {
-  val TCPActorRef = context.actorOf(TCPClientxxx.props(self))
+  val TCPActorRef = context.actorOf(TCPClient.props(self))
   val game = playGameCommunication
   game.setGame(this)
 

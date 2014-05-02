@@ -9,7 +9,7 @@ import lostvaults.Parser
  */
 case object DungeonMakeCity
 /**
- * Dungeon is an actor class in charge of carrying the main logic of the game,
+ * Dungeon is an actor class in charge of carrying the Main logic of the game,
  *  either as a dungeon or as the special-case City actor. The dungeon allows for
  *  interaction between players, such as chatting etc, while making sure that
  *  players who are not in the same logical space cannot interact with each other.
@@ -18,7 +18,7 @@ class Dungeon extends Actor {
   import context.become
   import scala.collection.mutable.Set
   var PSet: Set[String] = Set()
-  val PMap = main.PMap.get
+  val PMap = Main.PMap.get
   def receive() = {
     case DungeonMakeCity => {
       become(CityReceive)

@@ -1,7 +1,7 @@
 package lostvaults.client
 import akka.actor.{ Actor, ActorRef, ActorSystem, Props, Terminated }
 
-object main {
+object Main {
   val system = ActorSystem("GameClient")
   var Running = true
 

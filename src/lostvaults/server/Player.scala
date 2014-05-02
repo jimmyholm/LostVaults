@@ -8,7 +8,7 @@ class Player extends Actor {
   import Tcp._
   import context.{ system, become, unbecome }
   var connection = self
-  val PMap = main.PMap.get
+  val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
   var whisperTo = ""
@@ -32,7 +32,7 @@ class Player extends Actor {
           } else {
             connection ! Write(ByteString("LoginOk"))
             PMap ! PMapAddPlayer(name, self)
-            dungeon = main.City.get
+            dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
             become(LoggedIn)
           }

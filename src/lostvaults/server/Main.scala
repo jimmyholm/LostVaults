@@ -1,9 +1,8 @@
 package lostvaults.server
 import akka.actor.{ActorSystem, ActorRef, Props, Inbox}
-import akka.pattern.ask
 import scala.concurrent.duration._
 import akka.util.Timeout
-object main {
+object Main {
   var PMap: Option[ActorRef] = None
   val system = ActorSystem("LostVaultsServer")
   var City: Option[ActorRef] = None

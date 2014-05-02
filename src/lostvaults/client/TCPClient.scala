@@ -11,11 +11,11 @@ case object ConnClosed extends MyMsg
 case object ShutDown extends MyMsg
 case object Ok extends MyMsg
 
-object TCPClientxxx {
-  def props(listener: ActorRef): Props = Props(new TCPClientxxx(listener))
+object TCPClient {
+  def props(listener: ActorRef): Props = Props(new TCPClient(listener))
 }
 
-class TCPClientxxx(listener: ActorRef) extends Actor {
+class TCPClient(listener: ActorRef) extends Actor {
   import Tcp._
   import context.system
   val manager = IO(Tcp)
