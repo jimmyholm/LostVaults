@@ -14,12 +14,10 @@ class Player extends Actor {
   var whisperTo = ""
   var whisperMsg = ""
 
-  println("I am inside player")
   def receive = {
     case Received(msg) => {
       connection = sender
       val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
-      println("Received new message from client: " + decodedMsg)
       if (Parser.findWord(decodedMsg, 0) == "Login") {
         name = Parser.findWord(decodedMsg, 1)
         PMap ! PMapIsOnline(name, decodedMsg)
@@ -27,7 +25,6 @@ class Player extends Actor {
     }
     case PMapIsOnlineResponse(response, purpose) =>
       {
-        println("Received PMapIsOnlineResponse: " + response + " - " + purpose)
         if (Parser.findWord(purpose, 0) == "Login") {
           if (response) {
             connection ! Write(ByteString("LoginFail"))
@@ -45,13 +42,11 @@ class Player extends Actor {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
           val action = Parser.findWord(decodedMsg, 0)
-          println("Received message: " + decodedMsg)
           action match {
             case "Say" => {
               dungeon ! GameSay(name, Parser.findRest(decodedMsg, 0))
             }
             case "Whisper" => {
-              //dungeon ! GameWhisper(name, Parser.FindWord(decodedMsg, 1), Parser.FindRest(decodedMsg, 1))
               whisperTo = Parser.findWord(decodedMsg, 1)
               whisperMsg = Parser.findRest(decodedMsg, 1)
               PMap ! PMapGetPlayer(whisperTo, decodedMsg)
