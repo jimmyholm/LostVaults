@@ -18,36 +18,62 @@ class playGame extends Actor {
 
   def receive = {
     case "Connect failed" => {
-      game.updateDynamicInfo("\nConnect failed")
+      game.updateDynamicInfo("Connect failed\n")
       context stop self
     }
     case "Connected" =>
-      game.updateDynamicInfo("\nConnected")
+      game.updateDynamicInfo("Connected\n")
     case c: String => {
       println(c)
       val firstWord = Parser.findWord(c, 0)
       firstWord match {
-        case "LoginOK" =>
-          game.updateDynamicInfo("\nYou are logged in")
-        case "LoginFail" =>
+	case "DUNGEONLIST" => 
+	  game.setDungeonPlayers(Parser.findRest(c, 0))
+	case "DUNGEONJOIN" =>
+	  game.addDungeonPlayer(Parser.findRest(c, 0))
+	case "DUNGEONLEFT" =>
+	  game.removeDungeonPlayer(Parser.findRest(c, 0))
+	case "ROOMLIST" =>
+	  game.setRoomPlayers(Parser.findRest(c, 0))
+	case "ROOMJOIN" =>
+	  game.addRoomPlayer(Parser.findRest(c, 0))
+	case "ROOMLEFT" =>
+	  game.removeRoomPlayer(Parser.findRest(c, 0))
+	case "OTHERLIST" =>
+	  game.setOthers(Parser.findRest(c, 0))
+	case "OTHERJOIN" =>
+	  game.addOther(Parser.findRest(c, 0))
+	case "OTHERLEFT" =>
+	  game.removeOther(Parser.findRest(c, 0))
+	case "ITEMLIST" =>
+	  game.setItems(Parser.findRest(c, 0))
+	case "ITEMJOIN" =>
+	  game.addItem(Parser.findRest(c, 0))
+	case "ITEMLEFT" =>
+	  game.removeItem(Parser.findRest(c, 0))
+	case "ROOMEXITS" =>
+	  game.setExits(Parser.findRest(c, 0))
+        case "LOGINOK" =>
+          game.updateDynamicInfo("You are logged in\n")
+        case "LOGINFAIL" =>
           game.updateDynamicInfo("\nI'm sorry, but you cannot use that username")
-        case "Say" => {
+        case "SAY" => {
           if (game.getName == Parser.findWord(c, 1))
-            game.updateDynamicInfo("\nYou say: " + Parser.findRest(c, 1))
+            game.updateDynamicInfo("You say: " + Parser.findRest(c, 1) + "\n")
           else
-            game.updateDynamicInfo("\n" + Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1))
+            game.updateDynamicInfo(Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1) + "\n")
         }
-        case "Bye" =>
-          game.updateDynamicInfo("\nBye bye, have a good day")
-        case "Whisper" =>
-          game.updateDynamicInfo("\n" + Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2))
-        case "System" =>
-          game.updateDynamicInfo("\nSystem says: " + Parser.findRest(c, 0))
+        case "BYE" =>
+          game.updateDynamicInfo("Bye bye, have a good day\n")
+        case "WHISPER" =>
+          game.updateDynamicInfo(Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2) + "\n")
+        case "SYSTEM" =>
+          game.updateDynamicInfo("System says: " + Parser.findRest(c, 0) + "\n")
         case _ =>
-          game.updateDynamicInfo("\n" + c)
+          game.updateDynamicInfo(c + "\n")
       }
     }
     case _ =>
-      println("Coolt")
+      println("A misstake has happened\n")
   }
 }
