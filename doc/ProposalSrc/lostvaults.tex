@@ -25,13 +25,13 @@ A proposal for implementing a concurrent server model as the basis for an online
 \listoffigures
 \newpage
 \section{Introduction}
-Concurrency is becoming a more and more important facet of software development as computers rely more heavily on parallel processing. Because of this the way we write programs has to change 
-to tackle the new type of problems that arise from making use of this different kind of architecture. As a way for us to explore these challenges and their solutions, we opted to work on a 
-server-client system over a TCP/IP network connection. The problem we attempt to solve is maintaining a responsive environment for multiple, simultaneous connections as well as multiple 
-active and independent sections of program logic. We represent this problem through a multi-user dungeon or MUD, a form of online multiplayer game, where we aim to make sure that the server maintains 
-stable performance regardless of the number of connected users and we have decided to call this game Lost Vaults.
+Concurrency is becoming a more and more important facet of software development as computers rely more heavily on parallel processing and because of this the way we write programs has to change. 
+This new kind of architecture brings with it a new type of problems, and without adapting we will not be able to make use of the increase in processing power. 
+As a way for us to explore these challenges and their solutions, we opted to work on a server-client system over a TCP/IP network connection. The problem we attempt to solve is maintaining a responsive 
+environment for multiple, simultaneous connections as well as multiple active and independent sections of program logic. We represent this problem through a multi-user dungeon or 
+MUD, a form of online multiplayer game, where we aim to make sure that the server maintains stable performance regardless of the number of connected users.
 
-Lost Vaults is a semi-traditional MUD where users interact with other players and take on quests in parties 
+We decided to call the game Lost Vaults and it is a semi-traditional MUD where users interact with other players and take on quests in parties 
 of multiple players working towards a common goal while still looking out first and foremost for themselves. It is possible to adventure as a group of one person, but the focus of the 
 game will be the group dynamic offered by interaction with other players. 
 The game takes place in one of two locations, the city and the dungeon; the city being where the players may recoup from previous adventures, restock on supplies and 
@@ -126,12 +126,91 @@ The Game Logic section contains all the internal classes as well as the Dungeon 
 only through a Dungeon class that a Player can perform any actions apart from the server-wide \textit{WHISPER} command. The Dungeon class keeps track of explored and unexplored rooms, 
 quests, groups, objects and NPCs. The Dungeon also keeps track of all Players currently connected and associated with the given dungeon.
 \section{Game Design}
-[TODO: Describe game design here!]
+\subsection{Dungeon}
+The meat of the game takes place in procedurally generated dungeons, each unique to the group of players who enter that dungeon. Once a dungeon has been created and a group has 
+been assigned to it, no new players may enter that dungeon. A player who dies in the dungeon will be forced to leave the dungeon, as described below, and a player who has left the dungeon 
+may not reenter it.
+
+The dungeon's room are created procedurally on demand. That is to say, a new room is only created when a player tries to enter a room that does not yet exist. There are exceptions to 
+this, as will be described in the quest section of this document.
+\subsubsection{Rooms}
+The dungeon is made up of interconnected rooms, which may have one or more exits, each representing a door on one of the room's four walls. A room may contain any number of players, monsters 
+and items. A room may also contain a ``trap'' which can be harmful as well as beneficial, performing an action on the first player to enter that room. Players may attack any other player or 
+NPC occupying the same room. Combat is described in more detail below. When the combat is between players, neither player currently fighting may escape the room until one of them has fallen. 
+Escaping from a battle with an NPC will cost the escaping player one extra food.
+\subsubsection{Food}
+Food is the main type of resource to be managed in the game as food is needed to explore the dungeon. Each player has their own supply of food, starting at a minimum of five pieces of food 
+and additional food can be bought from the city merchant or be found in the dungeon. When a player enters a room that player has not yet explored, one piece of food is subtracted from their 
+personal supply. Entering a room previously explored by that player does not consume food. The players' progress is therefore limited by how much food they bring with them into the dungeon.
+\subsubsection{Leaving The Dungeon}
+Upon leaving the dungeon, all the consumables found or brought down will be lost to the player (food and potions rot), and all treasure items that are found are sold off for gold. 
+Furthermore, every player leaving a dungeon is awarded gold for the quests they have completed both as a group or individually. Dead players do not gain gold for completed quests.
+
+If a player dies, they are forced to leave the dungeon, and gain no gold from either treasures found or quests completed.
+\subsection{Player}
+The player has four distinct attributes to aid her in her adventure. Life signifies the current health of the player, when life reaches zero the player dies and she will face the penalty 
+described below. Defense represents her ability to withstand damage and is in direct opposite to the Attack attribute of an opposing entity. Attack then is the ability to inflict damage, 
+and the damage calculation is a simple calculation of subtracting the defender's defense score from the attacker's attack score. The result, if greater than zero, is then subtracted from 
+the defender's current life. If the defender's life reaches zero, she dies. The final attribute is food, and as described above it represents the player's ability to explore the dungeon 
+as well as her ability to flee from combat against foes that are too dangerous. 
+\subsection{Combat}
+Lost Vaults uses a turn-based combat system, where each participant get their chance to attack any of the other occupants in the room. Attacking another player forces them to join in the 
+combat, denying them the ability to escape the room. During player versus player combat, neither player may send a private message or perform a dungeon wide yell command, limiting their 
+ability to communicate to only the room they're occupying. Combat against an NPC does not have this limitation, and players may both escape at the cost of one additional food, and they 
+may use yells to call in aid from their allies.
+\subsubsection{Death}
+Dying in Lost Vaults carries a penalty in the form of losing all consumable items and treasures the dying player carries, as well as being forced back into the city without the possibility 
+to rejoin their comrades still exploring the dungeon. This means all progress made inside the dungeon is lost upon death, as well as all gold spent preparing for the adventure. All treasure 
+and consumables held by the dying player will be left on the floor of the room in which she died.
+\subsection{Quests}
+When entering a dungeon, the group is given one or more quests to complete which will net them extra gold upon leaving. However, individual players may also be given an additional quest, 
+which they alone stand to gain from and which is in direct opposition to the group's best interest.
+\subsubsection{Group Quests}
+Group quests are quests that all players of the group benefit from, and completing the quest is in everyone's best interest. The reward for a completed quest is given to each player who 
+is alive to leave the dungeon after completion. The group quests are as follows.
+
+\textit{Kill a specified monster}. The group is tasked to kill a specific monster, appropriate to the strength of the group. The monster is placed in a random location and a path is 
+guaranteed from the start to the monster's room.\\
+\textit{Find an item}. A specific piece of treasure is to be located and taken out of the dungeon. Similarly to the previous quest, a room is created containing the item and a path is 
+guaranteed to it from the start.\\
+\textit{Kill X monsters}. A specified number of monsters are to be slain. The types of monsters do not matter, and every killed monster works towards this goal.\\
+\textit{Every ally must leave}. This quest works against traiterous players. Whenever a player gains the Kill a specified player or Kill all other players quests, the group gains this quest.
+In order for this quest to be completed, not only does everyone not tasked with a kill quest leave the dungeon but the player who does have that quest must not. That is to say, the 
+traitor has to bee rooted out of the group and killed in order for the group to accomplish this quest. This quest does not require a traitor be present, but if a traitor is present this 
+quest will always accompany it.
+\subsubsection{Player Quests}
+Player quests are quests given to individual players and they alone stand to gain from it. It's in opposition to the best interest of the rest of the group and their rewards are 
+greater than the others, providing an incentive to complete them. The player quests are as follows.
+
+\textit{Kill a specified player}. The player is tasked with killing one of the other players in his or her group and then manage to leave the dungeon alive. There is no requirement to leave 
+the dungeon immediately, however, but an enterprising player may continue to play as part of the group if possible, reaping the rewards from the group quests as well. However, the group 
+knows that someone has been tasked to kill someone else through the \textit{Every ally must leave} quest. The player does not have to be the one killing the target, as long as the target 
+does not exit the dungeon alive.\\
+\textit{Earn the most money}. Be the player who has earned the most gold during the adventure, either by making sure other players do not leave or by taking all treasure that they come across.\\
+\textit{Kill all other players}. The player is tasked with being the only one to leave the dungeon alive. Not only do they stand to gain the reward of all items found in the dungeon, they also gain 
+a substantial reward for completing this quest, greater than any other quest available. Completion of this quest will be difficult and require more than brute strength on the part of the player. 
+Similarly to the \textit{Kill a specified player} quest, this will force a \textit{Every ally must leave} quest on the group.
+\subsection{Items}
+Lost Vaults have three subsets of items, as described below.
+
+\subsubsection{Equipment}
+Equipment provide the player a bonus to their attack or defense score, making them stronger or more resiliant. Equipment is the only way to increase the player characters' powers and 
+equipment is upgraded either by purchasing them from the city merchant or finding them in the dungeon. The player may only hold one offensive and one defensive equipment item at a time and 
+finding or buying new equipment means the old equipment is dropped or lost respectively.
+
+\subsubsection{Consumables}
+Consumables come in two further flavours, food and potions. Food allow players to progress deeper into the dungeon and potions recover Life when used. Consumables are good for exactly 
+one round of adventuring and both potions and food can be found in dungeons or bought from the city merchant. Consumables may also be given from player to player. Consumables are lost 
+either when the player dies or when the player leaves the dungeon they are in.
+
+\subsubsection{Treasure}
+Treasure is a type of item which has no practical use but instead has a monetary value. When a player exits a dungeon, the treasures she holds are converted into gold which is rewarded 
+to the player carrying the item. It is a personal reward and only the player carrying a treasure item gains its value upon exit.
 \part{Development Process}
 \section{Development Tools}
 For this project we intend to use a number of tools to facilitate development.
 Since we will be working in Scala we will be writing our code in Eclipse. We decided to use Eclipse because we consider it far the easiest way to develop code 
-when writing in Java or Scala. Despite writing our code in Eclipse, however, we make use of the Ant build system to automate compilation and building of our client and server, ready
+when writing in Java or Scala. Despite writing our code in Eclipse, however, we make use of the Ant build system to automate compilation and building of our client and server, ready 
 to be run in a Java virtual machine.
  
 To handle version control we intend to use the reliable and well known tool Git. We setup a fresh git repository on GitHub.com specifically for this project and we chose 
