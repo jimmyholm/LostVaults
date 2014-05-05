@@ -15,6 +15,9 @@ object playGameCommunication {
   def updateDynamicInfo(msg: String) {
     gui.updateDynamicInfo(msg)
   }
+
+
+
   def setDungeonPlayers(playerList: String) {
     gui.setDungeonPlayers(playerList)
   }
