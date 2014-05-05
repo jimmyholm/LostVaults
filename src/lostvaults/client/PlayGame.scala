@@ -58,8 +58,6 @@ class playGame extends Actor {
         case "LOGINFAIL" =>
           game.updateDynamicInfo("\nI'm sorry, but you cannot use that username")
         case "SAY" => {
-          //println("HÄR ÄR JAG")
-          println(Parser.findWord(c, 1))
           if (game.getName.equals(Parser.findWord(c, 1)))
             game.updateDynamicInfo("You say: " + Parser.findRest(c, 1) + "\n")
           else
