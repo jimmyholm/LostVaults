@@ -13,7 +13,8 @@ class Player extends Actor {
   var dungeon = self
   var whisperTo = ""
   var whisperMsg = ""
-
+  val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
+  
   def receive = {
     case Received(msg) => {
       connection = sender
@@ -31,13 +32,20 @@ class Player extends Actor {
             context stop self
           } else {
             connection ! Write(ByteString("LOGINOK"))
+<<<<<<< HEAD
             PMap ! PMapAddPlayer(name, self)
+=======
+            PMap ! PMapAddPlayer(name,self)
+>>>>>>> fea8578946503f184b8822d76fdc51615d9b92aa
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
             become(LoggedIn)
           }
         }
       }
+      
+      // Här finns Receive satsen för servern - här tar vi emot alla användar-meddelanden från GUI:t
+      
       def LoggedIn: Receive = {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
@@ -54,6 +62,10 @@ class Player extends Actor {
             case "LOGOUT" => {
               connection ! Write(ByteString("Bye"))
               connection ! Close
+            }
+            case "Help" => {
+              connection ! Write(ByteString(helpList.mkString))
+
             }
             case _ => {
               connection ! Write(ByteString("SYSTEM I have no idea what you're wanting to do."))
