@@ -249,14 +249,21 @@ public class GUI {
 
 	public void actionPerformed(ActionEvent e) {
 	    String user = userNameInput.getText();
+	    String password = passwordInput.getText();
+	    String ip = ipInput.getText();
 	    if(user.equals("")) {
 		message.setText("You must enter a username\n");
+	    } else if (password.equals("")){
+	    message.setText("You must enter a password\n")
+	    }
 	    } else {
 		//String pwd = passwordInput.getText();
 		//String ip = IPInput.getText();
 		user = user.replace(" ", "");
 		name = user;
-		playGameCommunication.sendMessage("LOGIN " + user); /// Obs, ändra till caps
+		playGameCommunication.sendMessage("LOGIN " + user);
+		playGameCommunication.sendMessage("PASSWORD " + password); // Login + pass borde antagligen sickas tillsammans i ett gemensamt meddelande.
+		playGameCommunication.sendIP("IP " + ip);
 		window.setVisible(true);
 		dispose();
 	    }

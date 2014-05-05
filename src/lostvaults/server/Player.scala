@@ -15,6 +15,9 @@ class Player extends Actor {
   var whisperMsg = ""
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
   
+  "LOGIN Anna Häst"
+  
+  
   def receive = {
     case Received(msg) => {
       connection = sender

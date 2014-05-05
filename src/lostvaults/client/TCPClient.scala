@@ -12,17 +12,18 @@ case object ShutDown extends MyMsg
 case object Ok extends MyMsg
 
 object TCPClient {
-  def props(listener: ActorRef): Props = Props(new TCPClient(listener))
+  def props(listener: ActorRef, requestedIP: InetSocketAddress): Props = Props(new TCPClient(listener, requestedIP))
 }
 
-class TCPClient(listener: ActorRef) extends Actor {
+class TCPClient(listener: ActorRef, requestedIP: InetSocketAddress) extends Actor {
   import Tcp._
   import context.system
   val manager = IO(Tcp)
   var connection: Option[ActorRef] = None
+  
 
   override def preStart() = {
-    manager ! Connect(new InetSocketAddress("localhost", 51234))
+    manager ! Connect(requestedIP) // ändra "localhost" till den IP:n man skriver in i GUI:t 
     // Ändra localhost i slutversionen till IP'n för Servern.
   }
 

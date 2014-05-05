@@ -11,6 +11,9 @@ object playGameCommunication {
   def sendMessage(msg: String) {
     game.sendMessage(msg)
   }
+  def sendIP(msg: String){
+    game.sendIP(msg)
+  }
 
   def updateDynamicInfo(msg: String) {
     gui.updateDynamicInfo(msg)
