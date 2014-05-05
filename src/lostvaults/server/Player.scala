@@ -32,11 +32,7 @@ class Player extends Actor {
             context stop self
           } else {
             connection ! Write(ByteString("LOGINOK"))
-<<<<<<< HEAD
             PMap ! PMapAddPlayer(name, self)
-=======
-            PMap ! PMapAddPlayer(name,self)
->>>>>>> fea8578946503f184b8822d76fdc51615d9b92aa
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
             become(LoggedIn)
