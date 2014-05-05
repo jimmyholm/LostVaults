@@ -182,7 +182,6 @@ public class GUI {
 	    window = _window;
 	   
 	    //Setting up the fields
-	    new BorderLayout();
 	    button = new JButton("OK");
 	    button.addActionListener(this);
 	    button.setBackground(mediumBackground);
@@ -217,17 +216,15 @@ public class GUI {
 	    IP.add(IPInput, BorderLayout.CENTER);
 	    IP.add(IPLabel, BorderLayout.WEST);
 
-	    JPanel northbox = new JPanel(new BorderLayout());
-	    JPanel southbox = new JPanel(new BorderLayout());
 
-	    northbox.add(userName, BorderLayout.NORTH);
-	    northbox.add(password, BorderLayout.CENTER);
-	    southbox.add(IP, BorderLayout.NORTH);
-	    southbox.add(button, BorderLayout.CENTER);
-	    add(northbox, BorderLayout.NORTH);
-	    add(southbox, BorderLayout.CENTER);
-	    
-	    setSize(600, 120);
+	    JPanel frame = new JPanel(new GridLayout(0, 1));
+	    frame.add(userName);
+	    frame.add(password);
+	    frame.add(IP);
+	    frame.add(button);
+	    add(frame);
+	    setPreferredSize(new Dimension(600, 200));
+	    pack();
 
 	    setLocationRelativeTo(null);
 	    setVisible(true);
@@ -235,13 +232,19 @@ public class GUI {
 
 	public void actionPerformed(ActionEvent e) {
 	    String user = userNameInput.getText();
-	    //String pwd = passwordInput.getText();
-	    //String ip = IPInput.getText();
-	    user = user.replace(" ", "");
-	    playGameCommunication.sendMessage("LOGIN " + user); /// Obs, ändra till caps
-	    window.setVisible(true);
-	    dispose();
-
+	    if(user.equals("")) {
+		userNameInput.setText("Enter username here");
+	    } else {
+		System.out.println(user);
+		System.out.println("Hello");
+		//String pwd = passwordInput.getText();
+		//String ip = IPInput.getText();
+		user = user.replace(" ", "");
+		game = user;
+		playGameCommunication.sendMessage("LOGIN " + user); /// Obs, ändra till caps
+		window.setVisible(true);
+		dispose();
+	    }
 	}
     }
 
