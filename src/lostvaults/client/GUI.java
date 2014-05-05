@@ -157,6 +157,7 @@ public class GUI {
 	
 	JFrame window;
 	JButton button;
+	JTextArea message = new JTextArea();
 
 	JTextField userNameInput = new JTextField();	    
 	JLabel userNameLabel = new JLabel("User name: ");
@@ -178,6 +179,8 @@ public class GUI {
 	Color mediumBackground = new Color(0xC2A366);
 
 
+
+
 	public LogInPopUp(JFrame _window) {
 	    window = _window;
 	   
@@ -190,6 +193,8 @@ public class GUI {
 	    
 	    userNameLabel.setPreferredSize(new Dimension(150, 0));
 	    userNameInput.setBackground(mediumBackground);
+	    userNameInput.setFont(font);
+	    userNameInput.setForeground(textColor);
 	    userName.setBackground(darkBackground);
 	    userNameLabel.setFont(font);
 	    userNameLabel.setForeground(lightTextColor);
@@ -200,6 +205,8 @@ public class GUI {
 
 	    passwordLabel.setPreferredSize(new Dimension(150, 0));
 	    passwordInput.setBackground(mediumBackground);
+	    passwordInput.setFont(font);
+	    passwordInput.setForeground(textColor);
 	    password.setBackground(darkBackground);
 	    passwordLabel.setFont(font);
 	    passwordLabel.setForeground(lightTextColor);
@@ -209,6 +216,8 @@ public class GUI {
 
 	    IPLabel.setPreferredSize(new Dimension(150, 0));
 	    IPInput.setBackground(mediumBackground);
+	    IPInput.setFont(font);
+	    IPInput.setForeground(textColor);
 	    IP.setBackground(darkBackground);
 	    IPLabel.setFont(font);
 	    IPLabel.setForeground(lightTextColor);
@@ -216,16 +225,24 @@ public class GUI {
 	    IP.add(IPInput, BorderLayout.CENTER);
 	    IP.add(IPLabel, BorderLayout.WEST);
 
-
+	    
+	    new BorderLayout();
 	    JPanel frame = new JPanel(new GridLayout(0, 1));
 	    frame.add(userName);
 	    frame.add(password);
 	    frame.add(IP);
-	    frame.add(button);
-	    add(frame);
-	    setPreferredSize(new Dimension(600, 200));
-	    pack();
 
+	    message.setText("\n");
+	    message.setFont(font);
+	    message.setForeground(textColor);
+	    message.setEditable(false);
+	    message.setBackground(mediumBackground);
+	    add(message, BorderLayout.NORTH);
+	    add(frame, BorderLayout.CENTER);
+	    add(button, BorderLayout.SOUTH);
+
+	    setSize(new Dimension(600, 180));
+	    
 	    setLocationRelativeTo(null);
 	    setVisible(true);
 	}
@@ -233,14 +250,12 @@ public class GUI {
 	public void actionPerformed(ActionEvent e) {
 	    String user = userNameInput.getText();
 	    if(user.equals("")) {
-		userNameInput.setText("Enter username here");
+		message.setText("You must enter a username\n");
 	    } else {
-		System.out.println(user);
-		System.out.println("Hello");
 		//String pwd = passwordInput.getText();
 		//String ip = IPInput.getText();
 		user = user.replace(" ", "");
-		game = user;
+		name = user;
 		playGameCommunication.sendMessage("LOGIN " + user); /// Obs, ändra till caps
 		window.setVisible(true);
 		dispose();
