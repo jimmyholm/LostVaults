@@ -201,7 +201,6 @@ public class GUI {
 	    userName.setBorder(BorderFactory.createLineBorder(darkBackground, 1));
 	    userName.add(userNameInput, BorderLayout.CENTER);
 	    userName.add(userNameLabel, BorderLayout.WEST);
-	    
 
 	    passwordLabel.setPreferredSize(new Dimension(150, 0));
 	    passwordInput.setBackground(mediumBackground);

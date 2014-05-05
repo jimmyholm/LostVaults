@@ -73,9 +73,11 @@ class Player extends Actor {
         }
         case GamePlayerEnter(name) => {
           connection ! Write(ByteString("SYSTEM Player " + name + " has entered the dungeon"))
+	  connection ! Write(ByteString("DUNGEONJOIN " + name))
         }
         case GamePlayerLeft(name) => {
           connection ! Write(ByteString("SYSTEM Player " + name + " has left the dungeon"))
+	  connection ! Write(ByteString("DUNGEONLEFT " + name))
         }
         case GameSay(name, msg) => {
           connection ! Write(ByteString("SAY " + name + " " + msg))
