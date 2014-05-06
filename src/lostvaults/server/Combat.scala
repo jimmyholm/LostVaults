@@ -14,10 +14,11 @@ case class RestData(PlayerList: List[Tuple2[String, Int]], Duration: Int) extend
 case class ActionData(PlayerList: List[Tuple2[String, Int]], TurnList: List[String], Duration: Int) extends CombatData
 
 class Combat extends Actor with FSM[CombatState, CombatData] {
+  val PMap = Main.PMap.get
+
   startWith(Rest, RestData(List(), 0))
 
   when(Rest, stateTimeout = 10.milliseconds) {
-
     case Event(AddPlayer(name, speed), data: RestData) => {
       val NextList = data.PlayerList :+ Tuple2[String, Int](name, speed)
       goto(Rest) using RestData(NextList.sortWith((a, b) => a._2 < b._2), data.Duration)
@@ -25,22 +26,49 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
 
     case Event(StateTimeout, data: RestData) => {
       val nextDuration = data.Duration + 1
-      val TurnList: List[String] = List()
-      data.PlayerList.foreach(c => if(nextDuration % c._2 == 0) TurnList :+ c._1)
-      goto(Rest) using RestData(data.PlayerList, nextDuration)
+      var turnList: List[String] = List()
+      data.PlayerList.foreach(c => if (nextDuration % c._2 == 0) c._1 :: turnList)
+      if (turnList isEmpty) {
+        goto(Rest) using RestData(data.PlayerList, nextDuration)
+      } else {
+        goto(Action) using ActionData(data.PlayerList, turnList, data.Duration)
+      }
     }
   }
-  
-  
+
+  onTransition {
+    case _ -> Action => {
+      var player = nextStateData.asInstanceOf[ActionData].TurnList.head
+      PMap ! PMapSendMessage(player, GameYourTurn)
+    }
+  }
+
   when(Action) {
     case Event(AttackPlayer(target), data: ActionData) => {
-    	val nextPlayer = data.TurnList.head
-    	val turnList = data.TurnList.tail
-    	//ask player for action and act
-    	if(turnList isEmpty)
-    		goto(Rest) using RestData(data.PlayerList, data.Duration)
-    	else    		
-    		goto(Action) using ActionData(data.PlayerList, turnList, data.Duration)
-      }
+      val nextPlayer = data.TurnList.head
+      val turnList = data.TurnList.tail
+      if (turnList isEmpty)
+        goto(Rest) using RestData(data.PlayerList, data.Duration)
+      else
+        goto(Action) using ActionData(data.PlayerList, turnList, data.Duration)
+    }
+    case Event(DrinkPotion, data: ActionData) => {
+      val turnList = data.TurnList.tail
+      if (turnList isEmpty)
+        goto(Rest) using RestData(data.PlayerList, data.Duration)
+      else
+        goto(Action) using ActionData(data.PlayerList, turnList, data.Duration)
+
+    }
   }
 }
+
+
+
+
+
+
+
+
+
+

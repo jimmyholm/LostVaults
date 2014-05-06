@@ -2,6 +2,7 @@ package lostvaults.client
 
 import akka.actor.{ Actor, ActorRef, Props }
 import lostvaults.Parser
+import java.net.InetSocketAddress
 
 object playGame {
   def props = Props(new playGame)
@@ -15,7 +16,10 @@ class playGame extends Actor {
   def sendMessage(msg: String) {
     TCPActorRef ! msg
   }
-
+  def sendIP(ip: String) {
+    println(ip)
+    TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
+  }
   def receive = {
     case "Connect failed" => {
       game.updateDynamicInfo("Connect failed\n")

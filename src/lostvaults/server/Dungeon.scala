@@ -40,43 +40,29 @@ class Dungeon extends Actor {
   def CityReceive: Receive = {
     case GameSay(name, msg) => {
       PSet foreach (c =>
-        PMap ! PMapGetPlayer(c, "Say " + name + " " + msg))
+        PMap ! PMapSendGameMessage(c, GameSay(name, msg)))
     }
+    
     case GameAddPlayer(name) => {
-      PSet foreach (c => PMap ! PMapGetPlayer(c, "AddPlayer " + name)) // Send "GamePlayerEnter" to all other players*/
+      PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
       PSet += name
-      PMap ! PMapGetPlayer(name, "MovePlayer " + name)
+      PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
     }
+    
     case GameRemovePlayer(name) => {
       PSet -= name
-      PSet foreach (c => if (name != c) PMap ! PMapGetPlayer(c, "RemovePlayer " + name)) // Send "GamePlayerEnter" to all other players*/ 
+      PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players*/ 
     }
-    case PMapGetPlayerResponse(player, purpose) => {
-      val action = Parser.findWord(purpose, 0)
-      action match {
-        case "Say" => {
-          val name = Parser.findWord(purpose, 1)
-          val msg = Parser.findRest(purpose, 1)
-          if (!player.isEmpty)
-            player.get ! GameSay(name, msg)
-        }
-        case "AddPlayer" => {
-          val name = Parser.findWord(purpose, 1)
-          if (!player.isEmpty)
-            player.get ! GamePlayerEnter(name)
-        }
-        case "RemovePlayer" => {
-          val name = Parser.findWord(purpose, 1)
-          if (!player.isEmpty)
-            player.get ! GamePlayerLeft(name)
-        }
-        case "MovePlayer" => {
-          val name = Parser.findWord(purpose, 1)
-          if (!player.isEmpty)
-            player.get ! GameMoveToDungeon(self)
-        }
-      }
+    
+    case GameNotifyDungeon(msg) => {
+      PSet foreach(c => ( PMap ! PMapSendGameMessage(c, GameSystem(msg))))
+    }
+    case GameNotifyRoom(msg) => {
+      // Find all players in room 
+    }
+    
+    case PMapFailure => {
+      println("DUNGEON: Failed to send a player a message.\nEnter \"Quit\" to exit > ")
     }
   }
-
 }
