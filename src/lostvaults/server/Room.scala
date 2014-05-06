@@ -11,12 +11,20 @@ class Room() {
   var created = false
   var connected = false
   
-  def isCreated() = {
+  def setCreated() = {
     created = true
   }
   
-  def isConnected() = {
+  def isCreated() : Boolean = {
+    return created
+  }
+  
+  def setConnected() = {
     connected = true
+  }
+  
+  def isConnected() : Boolean = {
+    return connected
   }
   
   def northConnected = {

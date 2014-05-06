@@ -3,7 +3,6 @@ package lostvaults.server
 import akka.actor.Actor
 import scala.collection.mutable.Set
 import lostvaults.Parser
-import scala.util.Random
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
  * to a single dungeon actor instance at the start of the server's life.
