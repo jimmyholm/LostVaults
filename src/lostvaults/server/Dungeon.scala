@@ -3,11 +3,14 @@ package lostvaults.server
 import akka.actor.Actor
 import scala.collection.mutable.Set
 import lostvaults.Parser
+import scala.util.Random
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
  * to a single dungeon actor instance at the start of the server's life.
  */
 case object DungeonMakeCity
+
+case object NewDungeon
 /**
  * Dungeon is an actor class in charge of carrying the Main logic of the game,
  *  either as a dungeon or as the special-case City actor. The dungeon allows for
@@ -21,10 +24,20 @@ class Dungeon extends Actor {
   val PMap = Main.PMap.get
   def receive() = {
     case DungeonMakeCity => {
+      val CityRoom = new Room()
+      // lägg till alla NPCs
       become(CityReceive)
+    }
+    case NewDungeon => {
+      val Rooms = new Array[Room](100)	// 10 x 10 Room array
+      RoomRandom.init(Rooms)
+      //become(DungeonReceive)
+
+      
     }
   }
 
+  
   def CityReceive: Receive = {
     case GameSay(name, msg) => {
       PSet foreach (c =>

@@ -25,7 +25,7 @@ class ConMan extends Actor {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
-      printf("Hejsan")
+      // printf("Hejsan")
       // Do interesting stuff
     }
     case c @ Connected(remote, local) => {
