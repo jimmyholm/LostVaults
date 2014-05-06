@@ -25,7 +25,7 @@ class ConMan extends Actor {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
-      // Do interesting stuff
+    	// Do interesting stuff
     }
     case c @ Connected(remote, local) => {
       val newplayer = context.actorOf(Props[Player])
