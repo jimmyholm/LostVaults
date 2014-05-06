@@ -17,7 +17,7 @@ class ConMan extends Actor {
   val manager = IO(Tcp)
 
   override def preStart() {
-    manager ! Bind(self, new InetSocketAddress("localhost", 51234))
+    manager ! Bind(self, new InetSocketAddress("0.0.0.0", 51234))
   }
   
   def receive() = {
@@ -25,13 +25,11 @@ class ConMan extends Actor {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
-      printf("Hejsan")
-      // Do interesting stuff
+    	// Do interesting stuff
     }
     case c @ Connected(remote, local) => {
       val newplayer = context.actorOf(Props[Player])
       sender ! Register(newplayer)
-      println("New connection from: " + remote)
     }
   }
 }

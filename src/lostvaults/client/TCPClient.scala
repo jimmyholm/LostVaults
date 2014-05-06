@@ -9,48 +9,50 @@ sealed trait MyMsg
 case class Print(msg: String) extends MyMsg
 case object ConnClosed extends MyMsg
 case object ShutDown extends MyMsg
+case class ConnectTo(ip: InetSocketAddress) extends MyMsg
 case object Ok extends MyMsg
 
 object TCPClient {
-  def props(listener: ActorRef, requestedIP: InetSocketAddress): Props = Props(new TCPClient(listener, requestedIP))
+  def props(listener: ActorRef): Props = Props(new TCPClient(listener))
 }
 
-class TCPClient(listener: ActorRef, requestedIP: InetSocketAddress) extends Actor {
+class TCPClient(listener: ActorRef) extends Actor {
   import Tcp._
-  import context.system
+  import context.{ system, become }
   val manager = IO(Tcp)
   var connection: Option[ActorRef] = None
-  
-
-  override def preStart() = {
-    manager ! Connect(requestedIP) // ändra "localhost" till den IP:n man skriver in i GUI:t 
-    // Ändra localhost i slutversionen till IP'n för Servern.
-  }
 
   def receive = {
-    case CommandFailed(_: Connect) => {
-      listener ! "Connect failed"
-      context stop self
+    case ConnectTo(ipAddress) => {
+      manager ! Connect(ipAddress)
+      become({
+        case CommandFailed(_: Connect) => {
+          listener ! "Connect failed"
+          context stop self
+        }
+        case c @ Connected(remote, local) => {
+          listener ! "Connected"
+          connection = Some(sender)
+          sender ! Register(self)
+        }
+        case Received(c) => {
+          val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
+          println("Received message from server: " + msg)
+          listener ! msg
+        }
+        case msg: String =>
+          connection.get ! Write(ByteString(msg))
+        case x: ConnectionClosed => {
+          println("Connection closed - shutting down.")
+          listener ! x.getErrorCause
+          self ! ShutDown
+        }
+        case _ =>
+          println("other")
+      })
     }
-    case c @ Connected(remote, local) => {
-      listener ! "Connected"
-      connection = Some(sender)
-      sender ! Register(self)
+    case _ => {
+      // Do nothing.
     }
-    //sender ! Write(ByteString("Login Jimmy"))
-    case Received(c) => {
-      val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
-      println("Received message from server: " + msg)
-      listener ! msg
-    }
-    case msg: String =>
-      connection.get ! Write(ByteString(msg))
-    case x: ConnectionClosed => {
-      println("Connection closed - shutting down.")
-      listener ! x.getErrorCause
-      self ! ShutDown
-    }
-    case _ =>
-      println("other")
   }
 }

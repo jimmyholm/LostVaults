@@ -19,7 +19,6 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
   startWith(Rest, RestData(List(), 0))
 
   when(Rest, stateTimeout = 10.milliseconds) {
-
     case Event(AddPlayer(name, speed), data: RestData) => {
       val NextList = data.PlayerList :+ Tuple2[String, Int](name, speed)
       goto(Rest) using RestData(NextList.sortWith((a, b) => a._2 < b._2), data.Duration)
