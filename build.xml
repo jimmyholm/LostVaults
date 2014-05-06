@@ -61,6 +61,7 @@
 		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src" />
 			<exclude name="**/*.scala" />
+			<exclude name="test/*" />
 			<classpath refid="LostVaults.classpath" />
 		</javac>
 	</target>
@@ -91,6 +92,7 @@
 			<include name="lostvaults/Parser$.class" />
 			<include name="lostvaults/server/*.class" />
 			<include name="*.jar" />
+			<exclude name="lostvaults/test/*" />
 			<manifest>
 				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
 				<attribute name="Main-Class" value="lostvaults.server.Main" />

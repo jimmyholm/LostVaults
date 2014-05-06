@@ -14,7 +14,9 @@ class Player extends Actor {
   var hp = 0
   var defense = 0
   var attack = 0
-  var knownRooms = List()
+  var food = 0
+  var speed = 0
+  var knownRooms: List[Tuple2[Int, Int]] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
 
   def receive = {

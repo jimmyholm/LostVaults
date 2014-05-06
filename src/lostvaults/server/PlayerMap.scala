@@ -10,6 +10,7 @@ case class PMapGetPlayer(name: String, purpose: String) extends PMapMsg
 case class PMapGetPlayerResponse(player: Option[ActorRef], purpose: String) extends PMapMsg
 case class PMapIsOnline(name: String, purpose: String) extends PMapMsg
 case class PMapIsOnlineResponse(online: Boolean, purpose: String) extends PMapMsg
+case class PMapSendGameMessage(name: String, msg: GameMsg) extends PMapMsg
 case object PMapSuccess extends PMapMsg
 case object PMapFailure extends PMapMsg
 case object PMapStartUp extends PMapMsg
@@ -19,6 +20,17 @@ class PlayerMap extends Actor {
   var PMap: HashMap[String, ActorRef] = HashMap()
 
   def receive = {
+    case PMapSendGameMessage(name: String, msg: GameMsg) => {
+      val sendTo = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      if (sendTo.isEmpty) {
+        sender ! PMapFailure
+      }
+      else {
+        sendTo.get._2 ! msg
+        sender ! PMapSuccess
+      }
+    }
+    
     case PMapAddPlayer(name: String, ref: ActorRef) => {
       val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
       if (exist.isEmpty) {
