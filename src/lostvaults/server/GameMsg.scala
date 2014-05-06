@@ -56,8 +56,18 @@ case class GamePlayerEnter(name: String) extends GameMsg
  */
 case class GameMoveToDungeon(dungeon: ActorRef) extends GameMsg
 /**
- * Passed along to a player, this will send the message "System msg" to the 
+ * Passed along to a player, this will send the message "SYSTEM msg" to the 
  * remote connection.
  * @param msg The system message to be sent to the client. 
  */
 case class GameSystem(msg: String) extends GameMsg
+/**
+ * Passed along to a dungeon, this will send a system message to all players in the dungeon passed along to it.
+ * @param msg The notification to be sent. 
+ */
+case class GameNotifyDungeon(msg: String) extends GameMsg
+/**
+ * Passed along to a dungeon, this will send a system message to the room the sender is in. 
+ * @param msg The notification to be sent.
+ */
+case class GameNotifyRoom(msg: String) extends GameMsg
