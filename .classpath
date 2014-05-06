@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src"/>
-  <classpathentry kind="lib" path="libs/akka-actor_2.10-2.3.2.jar"/>
-  <classpathentry kind="lib" path="libs/config-1.2.0.jar"/>
-  <classpathentry kind="lib" path="libs/scala-actors.jar" />
-  <classpathentry kind="lib" path="libs/scala-library.jar" />
-  <classpathentry kind="lib" path="libs/scala-reflect.jar" />
-  <classpathentry kind="lib" path="libs/scala-swing.jar" />
-  <classpathentry kind="lib" path="libs/junit.jar" />
-  <classpathentry kind="lib" path="libs/org.hamcrest.core_1.3.0.v201303031735.jar" />
-  <classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/akka-actor_2.10-2.3.2.jar"/>
+	<classpathentry kind="lib" path="libs/config-1.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/scala-actors.jar"/>
+	<classpathentry kind="lib" path="libs/scala-library.jar"/>
+	<classpathentry kind="lib" path="libs/scala-reflect.jar"/>
+	<classpathentry kind="lib" path="libs/scala-swing.jar"/>
+	<classpathentry kind="lib" path="libs/junit.jar"/>
+	<classpathentry kind="lib" path="libs/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
