@@ -1,4 +1,5 @@
 package lostvaults.server
+import scala.mutable 
 import akka.actor.Actor
 import akka.util.ByteString
 import akka.io.{ Tcp }
@@ -13,6 +14,9 @@ class Player extends Actor {
   var dungeon = self
   var whisperTo = ""
   var whisperMsg = ""
+  	var HP = 0
+    var Defense = 0
+    var Attack = 0 
 
   def receive = {
     case Received(msg) => {

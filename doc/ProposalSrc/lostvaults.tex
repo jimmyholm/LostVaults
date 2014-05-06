@@ -4,8 +4,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage{appendix}
-\usepackage{longtable}
 \DeclareGraphicsExtensions{.png}
 
 \title{The Lost Vaults: Uneasy Alliance\\\small{An online multi-user Dungeon Client and Server.}\\\small{Project Proposal for group 4}}
@@ -35,13 +33,13 @@ We decided to call the game Lost Vaults and it is a semi-traditional MUD where u
 of multiple players working towards a common goal while still looking out first and foremost for themselves. It is possible to adventure as a group of one person, but the focus of the 
 game will be the group dynamic offered by interaction with other players. 
 The game takes place in one of two locations, the city and the dungeon; the city being where the players may recoup from previous adventures, restock on supplies and 
-form parties to delve back into the dungeon. The second location is the dungeon, a procedurally generated set of rooms populated with monsters, traps and treasures.
+form parties to delve down into the dungeons. The second location is the dungeon itself, a procedurally generated set of rooms populated with monsters, traps and treasures.
 The dungeon is procedurally generated and instanced in such a way that each party of players has its own dungeon, uniquely generated when the party delves down into 
 the magical caves underneath the city. Once inside, the party is given one or several quests they should take on while exploring.
 
-A quest can be finding an object and bringing it back to the surface, killing a number of monsters or collecting a set amount of gold. The party works together to accomplish 
-the goals, but at the same time only one of the party members reaps the rewards, making the party a tense and fragile alliance of rogues. Gold earned in the dungeon can be 
-spent in the city on equipment and consumables to increase the player’s chance of surviving in the dungeon and taking on more difficult and threatening monsters.
+As described in the game design portion of this document, there are two types of quests: group quests and player quests. Group quests are to everyone's benefit, and player 
+quests are individual quests of subterfuge. We aim to create an atmosphere where the players need to rely on each other to achieve the tougher group quests while at the same 
+time remaining weary about each other as any one of them could be a traitor, looking out only for themselves and thus creating an air of an uneasy alliance as you enter the dungeon.
 
 The final product of this project will be a fully functional and interactive multiplayer online role playing game called The Lost Vaults.
 
@@ -156,7 +154,7 @@ as well as her ability to flee from combat against foes that are too dangerous.
 \subsection{Combat}
 Lost Vaults uses a turn-based combat system, where each participant get their chance to attack any of the other occupants in the room. Attacking another player forces them to join in the 
 combat, denying them the ability to escape the room. During player versus player combat, neither player may send a private message or perform a dungeon wide yell command, limiting their 
-ability to communicate to only the room they're occupying. Combat against an NPC does not have this limitation, and players may both escape at the cost of one additional food, and they 
+ability to communicate to only the room they are occupying. Combat against an NPC does not have this limitation, and players may both escape at the cost of one additional food, and they 
 may use yells to call in aid from their allies.
 \subsubsection{Death}
 Dying in Lost Vaults carries a penalty in the form of losing all consumable items and treasures the dying player carries, as well as being forced back into the city without the possibility 
@@ -168,28 +166,30 @@ which they alone stand to gain from and which is in direct opposition to the gro
 \subsubsection{Group Quests}
 Group quests are quests that all players of the group benefit from, and completing the quest is in everyone's best interest. The reward for a completed quest is given to each player who 
 is alive to leave the dungeon after completion. The group quests are as follows.
-
-\textit{Kill a specified monster}. The group is tasked to kill a specific monster, appropriate to the strength of the group. The monster is placed in a random location and a path is 
-guaranteed from the start to the monster's room.\\
-\textit{Find an item}. A specific piece of treasure is to be located and taken out of the dungeon. Similarly to the previous quest, a room is created containing the item and a path is 
-guaranteed to it from the start.\\
-\textit{Kill X monsters}. A specified number of monsters are to be slain. The types of monsters do not matter, and every killed monster works towards this goal.\\
-\textit{Every ally must leave}. This quest works against traiterous players. Whenever a player gains the Kill a specified player or Kill all other players quests, the group gains this quest.
-In order for this quest to be completed, not only does everyone not tasked with a kill quest leave the dungeon but the player who does have that quest must not. That is to say, the 
+\begin{description}
+\item[Kill a specified monster] The group is tasked to kill a specific monster, appropriate to the strength of the group. The monster is placed in a random location and a path is 
+guaranteed from the start to the monster's room.
+\item[Find an item] A specific piece of treasure is to be located and taken out of the dungeon. Similarly to the previous quest, a room is created containing the item and a path is 
+guaranteed to it from the start.
+\item[Kill X monsters] A specified number of monsters are to be slain. The types of monsters do not matter, and every killed monster works towards this goal.
+\item[Every ally must survive] This quest works against traiterous players. Whenever a player gains the \textbf{Kill a specified player character} or \textbf{Be the only survivor} players quests, the group gains this quest.
+In order for this quest to be completed, not only does everyone not tasked with a kill quest leave the dungeon but the player who does have that quest must not. That is to say, an eventual  
 traitor has to bee rooted out of the group and killed in order for the group to accomplish this quest. This quest does not require a traitor be present, but if a traitor is present this 
 quest will always accompany it.
+\end{description}
 \subsubsection{Player Quests}
-Player quests are quests given to individual players and they alone stand to gain from it. It's in opposition to the best interest of the rest of the group and their rewards are 
+Player quests are quests given to individual players and they alone stand to gain from it. It is in opposition to the best interest of the rest of the group and their rewards are 
 greater than the others, providing an incentive to complete them. The player quests are as follows.
-
-\textit{Kill a specified player}. The player is tasked with killing one of the other players in his or her group and then manage to leave the dungeon alive. There is no requirement to leave 
+\begin{description}
+\item[Kill a specified player character] The player is tasked with killing one of the other players in his or her group and then manage to leave the dungeon alive. There is no requirement to leave 
 the dungeon immediately, however, but an enterprising player may continue to play as part of the group if possible, reaping the rewards from the group quests as well. However, the group 
-knows that someone has been tasked to kill someone else through the \textit{Every ally must leave} quest. The player does not have to be the one killing the target, as long as the target 
-does not exit the dungeon alive.\\
-\textit{Earn the most money}. Be the player who has earned the most gold during the adventure, either by making sure other players do not leave or by taking all treasure that they come across.\\
-\textit{Kill all other players}. The player is tasked with being the only one to leave the dungeon alive. Not only do they stand to gain the reward of all items found in the dungeon, they also gain 
+knows that someone has been tasked to kill someone else through the \textbf{Every ally must leave} quest. The player does not have to be the one killing the target, as long as the target 
+does not exit the dungeon alive.
+\item[Earn the most gold] Be the player who has earned the most gold during the adventure, either by making sure other players do not leave or by taking all treasure that they come across.
+\item[Be the only survivor] The player is tasked with being the only one to leave the dungeon alive. Not only do they stand to gain the reward of all items found in the dungeon, they also gain 
 a substantial reward for completing this quest, greater than any other quest available. Completion of this quest will be difficult and require more than brute strength on the part of the player. 
-Similarly to the \textit{Kill a specified player} quest, this will force a \textit{Every ally must leave} quest on the group.
+Similarly to the \textbf{Kill a specified player character} quest, this will force a \textbf{Every ally must survive} quest on the group.
+\end{description}
 \subsection{Items}
 Lost Vaults have three subsets of items, as described below.
 
@@ -239,73 +239,4 @@ quality idea when ideas could be put on the table and refined by the group as a 
 
 The main challenges that we expect to face during the development of both client and server are writing network code as well as learning a new programming language.
 \newpage
-\part{Appendices}
-\begin{appendices}
-\section{Network Messages}\label{app:NetworkMessages}
-\begin{longtable}{|l|c|p{8 cm}|}
-\hline
-Message & Direction & Description\\
-\hline
-\endhead
-\textit{SAY [msg]} & Client $\rightarrow$ Server & Chat message sent from client to server.\\
-\hline
-\textit{SAY [name] [msg]} & Client $\leftarrow$ Server & The Chat message sent by [name] and relayed to the relevant clients.\\
-\hline
-\textit{WHISPER [to] [msg]} & Client $\rightarrow$ Server & A private message sent from a player to another player named [to].\\
-\hline
-\textit{WHISPER [from] [to] [msg]} & Client $\leftarrow$ Server & A private message sent from a player named [from], to another player named [to].\\
-\hline
-\textit{LOGIN [name]} & Client $\rightarrow$ Server & A request to sign onto the server using [name] as the player's username.\\
-\hline
-\textit{LOGOUT} & Client $\rightarrow$ Server & A Request to sign out of the server.\\
-\hline
-\textit{LOGINOK} & Client $\leftarrow$ Server & Response from server that a login request has been accepted.\\
-\hline
-\textit{LOGINFAIL} & Client $\leftarrow$ Server & Response from server that a login request has been denied.\\
-\hline
-\textit{BYE} & Client $\leftarrow$ Server & Connection Closed message sent from server to client.\\
-\hline
-\textit{SYSTEM} & Client $\leftarrow$ Server & System mesage sent from the server to the client.\\
-\hline
-\textit{INVENTORY} & Client $\rightarrow$ Server & Request from a client to list a player's current inventory.\\
-\hline
-\textit{INVENTORY [list]} & Client $\leftarrow$ Server & Response to a client's inventory request. [list] is a comma delimited list of item names.\\
-\hline
-\textit{ROOMENTER [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has entered the room which the client receiving the message is in.\\
-\hline
-\textit{ROOMLEAVE [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has left the room which the client receiving the message is in.\\
-\hline
-\textit{ROOMLIST [list]} & Client $\leftarrow$ Server & Notification that the list of players in the client's current room should be repopulated. [list] is a newline-delimited list of names.\\
-\hline
-\textit{NPCLIST [list]}  & Client $\leftarrow$ Server & Notification that the list of NPCs should be updated. [list] is a newline-delimited list of NPC names.\\
-\hline
-\textit{ROOMITEMS [list]} & Client $\leftarrow$ Server & Notification of all the items in the current room. [list] is a newline- delimited list of all the items in the room.\\
-\hline
-\textit{ROOMDESC [description} & Client $\leftarrow$ Server & Notification of the client's current room's description.\\
-\hline
-\textit{ROOMEXITS [list]} & Client $\leftarrow$ Server & Notification of all possible exits from the client's current room.\\
-\hline
-\textit{ROOMPLAYERS} & Client $\rightarrow$ Server & Request for a list of players in the client's current room.\\
-\hline
-\textit{DUNGEONPLAYERS} & Client $\rightarrow$ Server & Request for a list of players in the client's current dungeon.\\
-\hline
-\textit{ROOMNPCS} & Client $\rightarrow$ Server & Request for a list of NPCs in the client's current room.\\
-\hline
-\textit{DESCRIBE} & Client $\rightarrow$ Server & Request for a room description of the client's current room.\\
-\hline
-\textit{ITEMS} & Client $\rightarrow$ Server & Request for a list of items in the client's current room.\\
-\hline
-\textit{EXITS} & Client $\rightarrow$ Server & Request for a list of exits in the client's current room.\\
-\hline
-\textit{HELP} & Client $\rightarrow$ Server & Request for a list of available commands and their descriptions.\\
-\hline
-\textit{DUNGEONENTER [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has entered the same dungeon the client is currently in.\\
-\hline
-\textit{DUNGEONLEAVE [name]} & Client $\leftarrow$ Server & Notification that a player named [name] has left the room which the client receiving the message is in.\\
-\hline
-\textit{DUNGEONLIST [list]} & Client $\leftarrow$ Server & Notification that the list of players in the client's current room should be repopulated. [list] is a newline-delimited list of names.\\
-\hline
-\end{longtable}
-\end{appendices}
-
 \end{document}
