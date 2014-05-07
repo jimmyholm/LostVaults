@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.JDialog;
 import java.awt.*;
 import java.awt.event.*;
+import lostvaults.Parser;
 
 public class GUI {
 
@@ -123,7 +124,9 @@ public class GUI {
 		commandInputField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField source = (JTextField) (e.getSource());
-				playGameCommunication.sendMessage(source.getText());
+				String firstWord = Parser.findWord(source, 0).toUpper();
+				String rest = Parser.findRest(source, 0);
+				playGameCommunication.sendMessage(firstWord + " " + rest);
 				source.setText("");
 			}
 		});
