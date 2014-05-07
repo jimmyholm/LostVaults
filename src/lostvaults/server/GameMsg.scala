@@ -62,6 +62,21 @@ case class GameMoveToDungeon(dungeon: ActorRef) extends GameMsg
  */
 case class GameSystem(msg: String) extends GameMsg
 /**
+ * Passed along to a player when it is that player's turn in combat
+ */
+case object GameYourTurn extends GameMsg
+/**
+ * Passed along to a player, tells how much damage that player has suffered
+ * @param damage The amount of damage the player has suffered
+ * @param from Who has afflicted the damage on the player
+ */
+case class GameDamage(from: String, damage: Int) extends GameMsg
+/**
+ * Passed along to a combad, when a player has died
+ * @param player The player that is dead
+ */
+case class GameHasDied(player: String) extends GameMsg
+/**
  * Passed along to a dungeon, this will send a system message to all players in the dungeon passed along to it.
  * @param msg The notification to be sent. 
  */
@@ -71,3 +86,4 @@ case class GameNotifyDungeon(msg: String) extends GameMsg
  * @param msg The notification to be sent.
  */
 case class GameNotifyRoom(msg: String) extends GameMsg
+

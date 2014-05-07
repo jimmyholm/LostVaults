@@ -4,6 +4,11 @@ import akka.util.ByteString
 import akka.io.{ Tcp }
 import lostvaults.Parser
 
+sealed trait PlayerAction
+case object PAttack extends PlayerAction
+case object PDrinkPotion extends PlayerAction
+case object PDecide extends PlayerAction
+
 class Player extends Actor {
   import Tcp._
   import context.{ system, become, unbecome }
@@ -18,6 +23,8 @@ class Player extends Actor {
   var speed = 0
   var knownRooms: List[Tuple2[Int, Int]] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
+  var state: PlayerAction = PDecide
+  var target = ""
 
   def receive = {
     case Received(msg) => {
@@ -68,6 +75,29 @@ class Player extends Actor {
             case _ => {
               connection ! Write(ByteString("SYSTEM I have no idea what you're wanting to do."))
             }
+          }
+        }
+        case GameYourTurn => {
+          state match {
+            case PAttack => {
+              sender ! AttackPlayer(target)
+            }
+            case PDrinkPotion => {
+              hp = hp + 10
+              sender ! DrinkPotion
+            }
+            case PDecide => {
+              connection ! Write(ByteString("SYSTEM It's your turn"))
+            }
+          }
+        }
+        case GameDamage(from, damage) => {
+          hp = hp - damage
+          if (hp <= 0) {
+        	  connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
+        	  sender ! GameHasDied(name)
+          } else {
+        	  connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
           }
         }
         case GamePlayerEnter(name) => {
