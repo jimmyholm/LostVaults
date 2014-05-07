@@ -39,7 +39,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
   onTransition {
     case _ -> Action => {
       var player = nextStateData.asInstanceOf[ActionData].TurnList.head
-      PMap ! PMapSendMessage(player, GameYourTurn)
+      PMap ! PMapSendGameMessage(player, GameYourTurn)
     }
   }
 
