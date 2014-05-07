@@ -3,10 +3,10 @@ package lostvaults.server
 
 
 class Room() {
-  var north: Boolean
-  var east: Boolean
-  var south: Boolean
-  var west: Boolean
+  var north: Boolean = false
+  var east: Boolean = false
+  var south: Boolean = false
+  var west: Boolean = false
 
   var created = false
   var connected = false
@@ -33,8 +33,8 @@ class Room() {
   }  
   
   
-  var playerList: List[String]
-  var itemList: List[Item]
+  var playerList: List[String] = List()
+  var itemList: List[Item] = List()
 //  var NPCList: List[NPC]
     
   

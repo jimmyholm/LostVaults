@@ -24,7 +24,7 @@ A proposal for implementing a concurrent server model as the basis for an online
 \newpage
 \section{Introduction}
 Concurrency is becoming a more and more important facet of software development as computers rely more heavily on parallel processing and because of this the way we write programs has to change. 
-This new kind of architecture brings with it a new type of problems, and without adapting we will not be able to make use of the increase in processing power. 
+This new kind of architecture brings with it a new type of problems and without adapting we will not be able to make use of the increase in processing power. 
 As a way for us to explore these challenges and their solutions, we opted to work on a server-client system over a TCP/IP network connection. The problem we attempt to solve is maintaining a responsive 
 environment for multiple, simultaneous connections as well as multiple active and independent sections of program logic. We represent this problem through a multi-user dungeon or 
 MUD, a form of online multiplayer game, where we aim to make sure that the server maintains stable performance regardless of the number of connected users.
@@ -37,7 +37,7 @@ form parties to delve down into the dungeons. The second location is the dungeon
 The dungeon is procedurally generated and instanced in such a way that each party of players has its own dungeon, uniquely generated when the party delves down into 
 the magical caves underneath the city. Once inside, the party is given one or several quests they should take on while exploring.
 
-As described in the game design portion of this document, there are two types of quests: group quests and player quests. Group quests are to everyone's benefit, and player 
+As described in the game design portion of this document, there are two types of quests: group quests and player quests. Group quests are to everyone's benefit and player 
 quests are individual quests of subterfuge. We aim to create an atmosphere where the players need to rely on each other to achieve the tougher group quests while at the same 
 time remaining weary about each other as any one of them could be a traitor, looking out only for themselves and thus creating an air of an uneasy alliance as you enter the dungeon.
 
@@ -129,8 +129,8 @@ The meat of the game takes place in procedurally generated dungeons, each unique
 been assigned to it, no new players may enter that dungeon. A player who dies in the dungeon will be forced to leave the dungeon, as described below, and a player who has left the dungeon 
 may not reenter it.
 
-The dungeon's room are created procedurally on demand. That is to say, a new room is only created when a player tries to enter a room that does not yet exist. There are exceptions to 
-this, as will be described in the quest section of this document.
+The dungeon's room are created procedurally at the creation of the dungeon. Each cell in a two-dimensional grid is assigned a room, and random routes connecting them to a starting room are placed 
+down to ensure each room is potentially reachable, provided players have enough food.
 \subsubsection{Rooms}
 The dungeon is made up of interconnected rooms, which may have one or more exits, each representing a door on one of the room's four walls. A room may contain any number of players, monsters 
 and items. A room may also contain a ``trap'' which can be harmful as well as beneficial, performing an action on the first player to enter that room. Players may attack any other player or 
@@ -183,7 +183,7 @@ greater than the others, providing an incentive to complete them. The player que
 \begin{description}
 \item[Kill a specified player character] The player is tasked with killing one of the other players in his or her group and then manage to leave the dungeon alive. There is no requirement to leave 
 the dungeon immediately, however, but an enterprising player may continue to play as part of the group if possible, reaping the rewards from the group quests as well. However, the group 
-knows that someone has been tasked to kill someone else through the \textbf{Every ally must leave} quest. The player does not have to be the one killing the target, as long as the target 
+knows that someone has been tasked to kill someone else through the \textbf{Every ally must survive} quest. The player does not have to be the one killing the target, as long as the target 
 does not exit the dungeon alive.
 \item[Earn the most gold] Be the player who has earned the most gold during the adventure, either by making sure other players do not leave or by taking all treasure that they come across.
 \item[Be the only survivor] The player is tasked with being the only one to leave the dungeon alive. Not only do they stand to gain the reward of all items found in the dungeon, they also gain 
