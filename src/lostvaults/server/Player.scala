@@ -94,10 +94,10 @@ class Player extends Actor {
         case GameDamage(from, damage) => {
           hp = hp - damage
           if (hp <= 0) {
-        	  connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
-        	  sender ! GameHasDied(name)
+            connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
+            sender ! GameHasDied(name)
           } else {
-        	  connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
+            connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
           }
         }
         case GamePlayerEnter(name) => {
