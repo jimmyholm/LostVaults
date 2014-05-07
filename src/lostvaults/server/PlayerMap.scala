@@ -60,14 +60,7 @@ case object PMapSuccess extends PMapMsg
  * PMapFailure is a message denoting an unsuccessful request.
  */
 case object PMapFailure extends PMapMsg
-/**
- *
- */
-case object PMapStartUp extends PMapMsg
-/**
- *
- */
-case object PMapStarted extends PMapMsg
+
 
 /**
  *
