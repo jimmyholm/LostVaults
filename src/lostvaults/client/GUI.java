@@ -336,9 +336,9 @@ public class GUI {
 	}
 
 	public void removeNpc(String npc) {
-		String npc = npc.getText();
-		npc = npc.replace(npc + "\n", "");
-		npc.setText(npc);
+		String npctxt = npcs.getText();
+		npctxt = npctxt.replace(npc + "\n", "");
+		npcs.setText(npctxt);
 	}
 
 	public void setItems(String itemsList) {
