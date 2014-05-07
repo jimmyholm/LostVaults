@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
 <project basedir="." default="build_jars" name="LostVaults">
 	<!-- Define scala compiler, scaladoc, etc command -->
 	<property environment="env" />
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.7" />
 	<property name="source" value="1.7" />
-	<path id="JUnit 4.userclasspath">
-		<pathelement location="libs/junit.jar" />
-		<pathelement location="libs/org.hamcrest.core_1.3.0.v201303031735.jar" />
-	</path>
 	<path id="Scala Libraries [2.10.4].userclasspath">
 		<pathelement location="libs/scala-actors.jar" />
 		<pathelement location="libs/scala-library.jar" />
@@ -27,7 +18,8 @@
 		<pathelement location="bin" />
 		<pathelement location="libs/akka-actor_2.10-2.3.2.jar" />
 		<pathelement location="libs/config-1.2.0.jar" />
-		<path refid="JUnit 4.userclasspath" />
+		<pathelement location="libs/akka-testkit_2.10-2.3.2.jar"/>
+		<path refid="Scalatest Libraries" />
 		<path refid="Scala Libraries [2.10.4].userclasspath" />
 	</path>
 	<target name="init">
@@ -38,12 +30,18 @@
 				<pathelement location="libs/scala-library.jar" />
 			</classpath>
 		</taskdef>
+		<taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestAntTask">
+			<classpath>
+				<pathelement location="libs/scalatest.jar" />
+				<pathelement location="libs/scala-library.jar" />
+			</classpath>
+		</taskdef>
 		<mkdir dir="bin" />
-		<copy includeemptydirs="false" todir="bin">
+		<!--<copy includeemptydirs="false" todir="bin">
 			<fileset dir="src">
 				<exclude name="**/*.java" />
 			</fileset>
-		</copy>
+		</copy> -->
 	</target>
 	<target name="clean">
 		<delete dir="bin" />
@@ -109,4 +107,14 @@
 		<java jar="server.jar" fork="true" />
 	</target>
 	<target name="build_jars" depends="client,server" />
+	<target name="run_tests" depends="build" description="Build and run scala tests.">
+		<scalatest wildcard="lostvaults.tests">
+			<runpath>
+				<pathelement location="bin/" />
+				<path refid="LostVaults.classpath" />
+			</runpath>
+			<reporter type="stdout" />
+			<!--<wildcard package="lostvaults.tests" /> -->
+		</scalatest>
+	</target>
 </project>

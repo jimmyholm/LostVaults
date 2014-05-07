@@ -3,7 +3,6 @@ import akka.actor.{ Actor, ActorRef }
 import akka.util.ByteString
 import akka.io.{ Tcp }
 import lostvaults.Parser
-
 sealed trait PlayerAction
 case object PAttack extends PlayerAction
 case object PDrinkPotion extends PlayerAction

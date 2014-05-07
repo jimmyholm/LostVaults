@@ -52,8 +52,7 @@ ant server => Compile and build only the server jar file.
 ant run_client => Compile, build and execute the client jar file.
 ant run_server => Compile, build and execute the server jar file.
 ant doc => Compile code documentation
-TODO:
-ant run_tests => Compile, build and execute the tests jar file.
+ant run_tests => Compile, build and execute the scalatest test suites.
 
 
 ==== TO COMPILE ==== 
@@ -64,4 +63,4 @@ Running ant will build both client and server jar files.
 
 The build targets run_client and run_server have been provided in order to rapidly build and run 
 the client and server jar files respectively.
-TODO: build target run_tests compiles, builds and executes the tests jar file.
+build target run_tests compiles, builds and executes the scalatest test suites.
