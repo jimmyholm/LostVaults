@@ -5,7 +5,7 @@ import java.net.InetSocketAddress
 sealed trait ConManMsg
 case object ConManShutDown extends ConManMsg
 
-/** Connection Manager class used to monitor incoming connections
+/** Connection Manager class is used to monitor incoming connections
  *  which are then matched up with newly-spawned player actors.
  *  
  *  The Connection manager performs no other function than to act as an entry
