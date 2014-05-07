@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.JDialog;
 import java.awt.*;
 import java.awt.event.*;
-import lostvaults.Parser;
+//import lostvaults.Parser;
 
 public class GUI {
 
@@ -124,9 +124,9 @@ public class GUI {
 		commandInputField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField source = (JTextField) (e.getSource());
-				String firstWord = Parser.findWord(source, 0).toUpper();
-				String rest = Parser.findRest(source, 0);
-				playGameCommunication.sendMessage(firstWord + " " + rest);
+				//String firstWord = Parser.findWord(source, 0).toUpper();
+				//String rest = Parser.findRest(source, 0);
+				//playGameCommunication.sendMessage(firstWord + " " + rest);
 				source.setText("");
 			}
 		});
@@ -280,11 +280,12 @@ public class GUI {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
+				//playGameCommunication.sendIP(ip);
 				playGameCommunication.sendMessage("LOGIN " + user);
-				playGameCommunication.sendMessage("PASSWORD " + password);
+				//playGameCommunication.sendMessage("PASSWORD " + password);
 				// Login + pass borde antagligen sickas tillsammans i ett
 				// gemensamt meddelande.
-				playGameCommunication.sendIP(ip);
+				
 				window.setVisible(true);
 				dispose();
 			}

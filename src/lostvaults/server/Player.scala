@@ -17,7 +17,7 @@ class Player extends Actor {
   var dungeon = self
   var hp = 0
   var defense = 0
-  var attack = 0
+  var attack = 1
   var food = 0
   var speed = 0
   var knownRooms: List[Tuple2[Int, Int]] = List()
@@ -27,6 +27,7 @@ class Player extends Actor {
   var target = ""
   var battle: Option[ActorRef] = None
 
+  
   def receive = {
     case Received(msg) => {
       connection = sender
