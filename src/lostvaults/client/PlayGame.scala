@@ -4,22 +4,51 @@ import akka.actor.{ Actor, ActorRef, Props }
 import lostvaults.Parser
 import java.net.InetSocketAddress
 
+/**
+ * The object playGame is responsible for creating an instance of playGame in a new actor.
+ *
+ */
 object playGame {
+
+  /**
+   * Creates a new actor for the object playGame
+   *
+   */
   def props = Props(new playGame)
 }
 
+/**
+ * The playGame class is responsible for setting up the game and the references to the current game.
+ *
+ */
 class playGame extends Actor {
   val TCPActorRef = context.actorOf(TCPClient.props(self))
   val game = playGameCommunication
   game.setGame(this)
 
+  /**
+   * This method sends a message to an ActorRef in the TCP Client.
+   * @param msg The message that will be sent.
+   */
   def sendMessage(msg: String) {
     TCPActorRef ! msg
   }
+
+  /**
+   * This method will print the IP given and it will also send a a connection request with the given IP to the TCP Clients ActorRef.
+   * @param ip The IP that will be sent.
+   */
   def sendIP(ip: String) {
     println(ip)
     TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
   }
+
+  /**
+   * This is where messages from the TCP Client are received. 
+   *
+   * In this method we receive different messages from the TCP Client which all have a specific action connected to them. 
+   * All of the actions earlier mentioned will have some specific effect on the current game.
+   */
   def receive = {
     case "Connect failed" => {
       game.updateDynamicInfo("Connect failed\n")
@@ -43,12 +72,12 @@ class playGame extends Actor {
           game.addRoomPlayer(Parser.findRest(c, 0))
         case "ROOMLEFT" =>
           game.removeRoomPlayer(Parser.findRest(c, 0))
-        case "OTHERLIST" =>
-          game.setOthers(Parser.findRest(c, 0))
-        case "OTHERJOIN" =>
-          game.addOther(Parser.findRest(c, 0))
-        case "OTHERLEFT" =>
-          game.removeOther(Parser.findRest(c, 0))
+        case "NPCLIST" =>
+          game.setNpcs(Parser.findRest(c, 0))
+        case "NPCJOIN" =>
+          game.addNpc(Parser.findRest(c, 0))
+        case "NPCLEFT" =>
+          game.removeNpc(Parser.findRest(c, 0))
         case "ITEMLIST" =>
           game.setItems(Parser.findRest(c, 0))
         case "ITEMJOIN" =>
@@ -78,6 +107,6 @@ class playGame extends Actor {
       }
     }
     case _ =>
-      println("A misstake has happened\n")
+      println("A misstake has occurred\n")
   }
 }

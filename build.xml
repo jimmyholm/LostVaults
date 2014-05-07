@@ -20,6 +20,9 @@
 		<pathelement location="libs/scala-reflect.jar" />
 		<pathelement location="libs/scala-swing.jar" />
 	</path>
+	<path id="Scalatest Libraries">
+		<pathelement location="libs/scalatest.jar" />
+	</path>
 	<path id="LostVaults.classpath">
 		<pathelement location="bin" />
 		<pathelement location="libs/akka-actor_2.10-2.3.2.jar" />

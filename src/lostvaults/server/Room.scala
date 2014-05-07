@@ -2,11 +2,12 @@ package lostvaults.server
 
 
 
-class Room (_north : Boolean, _east: Boolean, _south: Boolean, _west: Boolean) {
-  var north = _north
-  var east = _east
-  var south = _south
-  var west = _west
+
+class Room() {
+  var north: Boolean = false
+  var east: Boolean = false
+  var south: Boolean = false
+  var west: Boolean = false
 
   var created = false
   var connected = false

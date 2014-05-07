@@ -6,6 +6,10 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class GUI {
+
+	/*******************************************
+	 * * Declarations * *
+	 *******************************************/
 	String name;
 
 	int screenWidth;
@@ -16,7 +20,7 @@ public class GUI {
 
 	JTextArea dungeonPlayers = new JTextArea();
 	JTextArea roomPlayers = new JTextArea();
-	JTextArea others = new JTextArea();
+	JTextArea npcs = new JTextArea();
 	JTextArea items = new JTextArea();
 	JTextArea exits = new JTextArea();
 	JLabel stats = new JLabel();
@@ -32,10 +36,9 @@ public class GUI {
 	Font font = new Font("Serif", Font.BOLD + Font.ITALIC, 14);
 	Font bigFont = new Font("Serif", Font.BOLD + Font.ITALIC, 15);
 
-	public String getName() {
-		return name;
-	}
-
+	/*******************************************
+	 * * Windows in the GUI * *
+	 *******************************************/
 	public GUI() {
 		// Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		screenWidth = 1000; // screenSize.width;
@@ -55,6 +58,10 @@ public class GUI {
 		dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
 		dynamicInfoScroll.setBorder(BorderFactory.createEmptyBorder());
 
+		/*******************************************
+		 * * Static window in the GUI * *
+		 *******************************************/
+		
 		stats.setText("HP: 20/20 \t Food: 30/30");
 		stats.setFont(font);
 		stats.setForeground(lightTextColor);
@@ -63,7 +70,7 @@ public class GUI {
 				"Players in Dungeon: ");
 		JPanel roomPlayersPanel = createRightBox(roomPlayers,
 				"Players in Room: ");
-		JPanel othersPanel = createRightBox(others, "Others in Room: ");
+		JPanel npcsPanel = createRightBox(npcs, "NPCs in Room: ");
 		JPanel itemsPanel = createRightBox(items, "Items in Room: ");
 
 		exits.setFont(font);
@@ -84,7 +91,7 @@ public class GUI {
 		staticInfo.setBackground(darkBackground);
 		staticInfo.add(dungeonPlayersPanel);
 		staticInfo.add(roomPlayersPanel);
-		staticInfo.add(othersPanel);
+		staticInfo.add(npcsPanel);
 		staticInfo.add(itemsPanel);
 
 		JPanel rightPanel = new JPanel(new BorderLayout());
@@ -103,6 +110,9 @@ public class GUI {
 		// mainPanel.add(dynamicInfoScroll, BorderLayout.CENTER);
 		// mainPanel.add(rightPanel, BorderLayout.EAST);
 
+		/*******************************************
+		 * * Command box in the GUI * *
+		 *******************************************/
 		JLabel commandLabel = new JLabel("Command: ");
 		commandLabel.setFont(new Font("Serif", Font.BOLD, 16));
 		commandLabel.setForeground(lightTextColor);
@@ -130,7 +140,9 @@ public class GUI {
 
 		new LogInPopUp(window);
 	}
-
+	/*******************************************
+	 * * Right window in the GUI * *
+	 *******************************************/
 	public JPanel createRightBox(JTextArea c, String label) {
 		c.setFont(font);
 		c.setForeground(textColor);
@@ -148,6 +160,10 @@ public class GUI {
 		cPanel.add(cScroll, BorderLayout.CENTER);
 		return cPanel;
 	}
+
+	/*******************************************
+	 * * Login in pop up box * *
+	 *******************************************/
 
 	public class LogInPopUp extends JDialog implements ActionListener {
 
@@ -174,6 +190,9 @@ public class GUI {
 		Color lightTextColor = new Color(0xDE9D5C);
 		Color mediumBackground = new Color(0xC2A366);
 
+		/*******************************************
+		 * * Creation of the login window * *
+		 *******************************************/
 		public LogInPopUp(JFrame _window) {
 			window = _window;
 
@@ -242,7 +261,9 @@ public class GUI {
 			setLocationRelativeTo(null);
 			setVisible(true);
 		}
-
+		/*******************************************
+		 * * Action event for popup window * *
+		 *******************************************/
 		public void actionPerformed(ActionEvent e) {
 			String user = userNameInput.getText();
 			String password = passwordInput.getText();
@@ -270,6 +291,10 @@ public class GUI {
 	/*******************************************
 	 * * Funktioner * *
 	 *******************************************/
+	public String getName() {
+		return name;
+	}
+
 	public void updateDynamicInfo(String msg) {
 		dynamicInfo.append(msg);
 	}
@@ -302,18 +327,18 @@ public class GUI {
 		roomPlayers.setText(players);
 	}
 
-	public void setOthers(String otherList) {
-		others.setText(otherList);
+	public void setNpcs(String npcsList) {
+		npcs.setText(npcsList);
 	}
 
-	public void addOther(String other) {
-		others.append(other + "\n");
+	public void addNpc(String npc) {
+		npcs.append(npc + "\n");
 	}
 
-	public void removeOther(String other) {
-		String npc = others.getText();
-		npc = npc.replace(other + "\n", "");
-		others.setText(npc);
+	public void removeNpc(String npc) {
+		String npc = npc.getText();
+		npc = npc.replace(npc + "\n", "");
+		npc.setText(npc);
 	}
 
 	public void setItems(String itemsList) {

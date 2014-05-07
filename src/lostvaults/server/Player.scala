@@ -117,6 +117,7 @@ class Player extends Actor {
           if (hp <= 0) {
             connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
             battle.get ! GameHasDied(name)
+
           } else {
             connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
           }
