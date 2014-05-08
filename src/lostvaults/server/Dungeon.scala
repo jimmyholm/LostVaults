@@ -27,6 +27,7 @@ class Dungeon extends Actor {
     case GameAttackPlayer(attacker, attackee) => {
       if (activeCombat == None) {
         activeCombat = Some(context.actorOf(Props[Combat]))
+        activeCombat.get ! self
       }
         PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get))
         PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
