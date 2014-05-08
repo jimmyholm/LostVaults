@@ -72,7 +72,7 @@ case object GameYourTurn extends GameMsg
  */
 case class GameDamage(from: String, damage: Int) extends GameMsg
 /**
- * Passed along to a combad, when a player has died
+ * Passed along to a combat, when a player has died
  * @param player The player that is dead
  */
 case class GameHasDied(player: String) extends GameMsg
