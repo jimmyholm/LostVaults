@@ -52,11 +52,11 @@ class playGame extends Actor {
    */
   def receive = {
     case "Connect failed" => {
-      game.updateDynamicInfo("Connect failed\n")
+      game.updateDynamicInfo("Connect failed")
       context stop self
     }
     case "Connected" =>
-      game.updateDynamicInfo("Connected\n")
+      game.updateDynamicInfo("Connected")
       val name = game.getName()
       //val passwd = game.getPassword()
       TCPActorRef ! "LOGIN " + name;
@@ -91,26 +91,26 @@ class playGame extends Actor {
         case "ROOMEXITS" =>
           game.setExits(Parser.findRest(c, 0))
         case "LOGINOK" =>
-          game.updateDynamicInfo("You are logged in\n")
+          game.updateDynamicInfo("You are logged in")
         case "LOGINFAIL" =>
-          game.updateDynamicInfo("\nI'm sorry, but you cannot use that username")
+          game.updateDynamicInfo("I'm sorry, but you cannot use that username")
         case "SAY" => {
           if (game.getName.equals(Parser.findWord(c, 1)))
-            game.updateDynamicInfo("You say: " + Parser.findRest(c, 1) + "\n")
+            game.updateDynamicInfo("You say: " + Parser.findRest(c, 1))
           else
-            game.updateDynamicInfo(Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1) + "\n")
+            game.updateDynamicInfo(Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1) )
         }
         case "BYE" =>
-          game.updateDynamicInfo("Bye bye, have a good day\n")
+          game.updateDynamicInfo("Bye bye, have a good day")
         case "WHISPER" =>
-          game.updateDynamicInfo(Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2) + "\n")
+          game.updateDynamicInfo(Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2))
         case "SYSTEM" =>
-          game.updateDynamicInfo("System says: " + Parser.findRest(c, 0) + "\n")
+          game.updateDynamicInfo("System says: " + Parser.findRest(c, 0))
         case _ =>
-          game.updateDynamicInfo(c + "\n")
+          game.updateDynamicInfo(c)
       }
     }
     case _ =>
-      println("A misstake has occurred\n")
+      println("A misstake has occurred")
   }
 }
