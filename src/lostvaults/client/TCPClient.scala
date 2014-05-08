@@ -59,6 +59,7 @@ class TCPClient(listener: ActorRef) extends Actor {
   /**
    *
    */
+  self ! ConnectTo(new InetSocketAddress("localhost", 51234))
   def receive = {
     case ConnectTo(ipAddress) => {
     	println("Connecting to " + ipAddress)

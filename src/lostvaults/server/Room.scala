@@ -2,6 +2,7 @@ package lostvaults.server
 
 
 
+
 class Room() {
   var north: Boolean = false
   var east: Boolean = false

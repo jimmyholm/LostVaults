@@ -86,4 +86,22 @@ case class GameNotifyDungeon(msg: String) extends GameMsg
  * @param msg The notification to be sent.
  */
 case class GameNotifyRoom(msg: String) extends GameMsg
+/**
+ * Passed along to a dungeon, this will start a combat between two players, 
+ * or continue a combat in action
+ * @param attacker The player that is performing the attack
+ * @param speed Speed of the attacker
+ * @param attackee The player that is being attacked 
+ */
+case class GameAttackPlayer(attacker: String, attackee: String) extends GameMsg
+/**
+ * Passed along to a player, when that player is being attacked and will 
+ * lead to that player being added to a combat
+ * @param The actor reference to the battle the player should join
+ */
+case class GamePlayerJoinBattle(battle: ActorRef) extends GameMsg
+/**
+ * Passed along to a player, telling that player that it can drink its potion
+ */
+case object GameDrinkPotion extends GameMsg
 
