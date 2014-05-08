@@ -17,3 +17,6 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 /bin
+*~
+*.lof
+.settings/
