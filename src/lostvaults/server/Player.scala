@@ -27,7 +27,6 @@ class Player extends Actor {
   var target = ""
   var battle: Option[ActorRef] = None
 
-  
   def receive = {
     case Received(msg) => {
       connection = sender
@@ -59,7 +58,7 @@ class Player extends Actor {
       def LoggedIn: Receive = {
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
-          println("(Player["+name+"]) Received message: " + decodedMsg)
+          println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
             case "SAY" => {
@@ -162,6 +161,5 @@ class Player extends Actor {
           context stop self
         }
       }
-
   }
 }
