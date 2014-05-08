@@ -25,9 +25,10 @@ class ConMan extends Actor {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
-    	// Do interesting stuff
+    	println("Bound to " + local + "\nEnter \"Quit\" to close server.")
     }
     case c @ Connected(remote, local) => {
+      println("ConnectionManager: New connection from " + remote.getHostName())
       val newplayer = context.actorOf(Props[Player])
       sender ! Register(newplayer)
     }

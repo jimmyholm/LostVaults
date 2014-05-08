@@ -61,6 +61,7 @@ class TCPClient(listener: ActorRef) extends Actor {
    */
   def receive = {
     case ConnectTo(ipAddress) => {
+    	println("Connecting to " + ipAddress)
       manager ! Connect(ipAddress)
       become({
         case CommandFailed(_: Connect) => {
@@ -77,8 +78,11 @@ class TCPClient(listener: ActorRef) extends Actor {
           println("Received message from server: " + msg)
           listener ! msg
         }
-        case msg: String =>
+        case msg: String =>{ 
+          println("Sending: " + msg)
           connection.get ! Write(ByteString(msg))
+        }
+          
         case x: ConnectionClosed => {
           println("Connection closed - shutting down.")
           listener ! x.getErrorCause

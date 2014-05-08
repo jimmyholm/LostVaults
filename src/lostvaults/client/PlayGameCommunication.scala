@@ -55,6 +55,7 @@ object playGameCommunication {
    * @param player The player to be added to the dungeon
    */
   def addDungeonPlayer(player: String) {
+    updateDynamicInfo("Player " + player + " has joined the dungeon.")
     gui.addDungeonPlayer(player)
   }
 
@@ -63,6 +64,7 @@ object playGameCommunication {
    * @param player The player to be removed from the dungeon.
    */
   def removeDungeonPlayer(player: String) {
+    updateDynamicInfo("Player " + player + " has left the dungeon.")
     gui.removeDungeonPlayer(player)
   }
 

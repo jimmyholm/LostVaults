@@ -31,7 +31,9 @@ class playGame extends Actor {
    * @param msg The message that will be sent.
    */
   def sendMessage(msg: String) {
-    TCPActorRef ! msg
+    val action = Parser.findWord(msg, 0)
+    val sendMsg = action.toUpperCase + " " + Parser.findRest(msg, 0)
+    TCPActorRef ! sendMsg
   }
 
   /**
@@ -39,8 +41,7 @@ class playGame extends Actor {
    * @param ip The IP that will be sent.
    */
   def sendIP(ip: String) {
-    println(ip)
-    TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
+	  TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
   }
 
   /**
@@ -56,6 +57,9 @@ class playGame extends Actor {
     }
     case "Connected" =>
       game.updateDynamicInfo("Connected\n")
+      val name = game.getName()
+      //val passwd = game.getPassword()
+      TCPActorRef ! "LOGIN " + name;
     case c: String => {
       println(c)
       val firstWord = Parser.findWord(c, 0)
