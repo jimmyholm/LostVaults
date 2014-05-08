@@ -300,7 +300,7 @@ public class GUI {
 	}
 
 	public void updateDynamicInfo(String msg) {
-		dynamicInfo.append(msg);
+		dynamicInfo.append(msg + "\n");
 	}
 
 	public void setDungeonPlayers(String playerList) {
