@@ -15,7 +15,7 @@ class Player extends Actor {
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
-  var hp = 0
+  var hp = 10
   var defense = 0
   var attack = 1
   var food = 0
@@ -75,11 +75,17 @@ class Player extends Actor {
               connection ! Write(ByteString(helpList.mkString))
             }
             case "ATTACK" => {
-              dungeon ! GameAttackPlayer(Parser.findWord(decodedMsg, 1), Parser.findWord(decodedMsg, 2))
+              dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+              target = Parser.findWord(decodedMsg, 1)
+              state = PAttack
             }
             case "DRINKPOTION" => {
-              battle.get ! DrinkPotion(name)
-              state = PDrinkPotion
+              if (battle != None) {
+                battle.get ! DrinkPotion(name)
+                state = PDrinkPotion
+              } else {
+                self ! GameDrinkPotion
+              }
             }
             case "STOP" => {
               state = PDecide
@@ -95,15 +101,19 @@ class Player extends Actor {
         case GameYourTurn => {
           state match {
             case PAttack => {
-              battle.get ! AttackPlayer(target, attack)
-              previousState = PAttack
+              if (battle != None) {
+                battle.get ! AttackPlayer(name, target, attack)
+                previousState = state
+              }
             }
             case PDrinkPotion => {
-              battle.get ! DrinkPotion
+              if (battle != None) {
+                battle.get ! DrinkPotion
+              }
             }
             case PDecide => {
               connection ! Write(ByteString("SYSTEM It's your turn"))
-              previousState = PDecide
+              previousState = state
             }
           }
         }
@@ -116,11 +126,13 @@ class Player extends Actor {
           if (damage < 0) { damage = 0 }
           hp = hp - damage
           if (hp <= 0) {
-            connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
-            battle.get ! GameHasDied(name)
-
+            dungeon ! GameNotifyDungeon("SYSTEM Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
+            //dungeon ! GameHasDied(name)
+            if (battle != None) {
+              battle.get ! GameRemovePlayer(name)
+            }
           } else {
-            connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
+            dungeon ! GameNotifyDungeon("SYSTEM Player " + name + " has received " + damage + " damage from " + from + ".")
           }
         }
         case GamePlayerEnter(name) => {
