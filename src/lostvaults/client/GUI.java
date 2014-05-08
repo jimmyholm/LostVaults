@@ -124,9 +124,7 @@ public class GUI {
 		commandInputField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField source = (JTextField) (e.getSource());
-				//String firstWord = Parser.findWord(source, 0).toUpper();
-				//String rest = Parser.findRest(source, 0);
-				//playGameCommunication.sendMessage(firstWord + " " + rest);
+				playGameCommunication.sendMessage(source.getText());
 				source.setText("");
 			}
 		});
@@ -280,12 +278,7 @@ public class GUI {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
-				//playGameCommunication.sendIP(ip);
-				playGameCommunication.sendMessage("LOGIN " + user);
-				//playGameCommunication.sendMessage("PASSWORD " + password);
-				// Login + pass borde antagligen sickas tillsammans i ett
-				// gemensamt meddelande.
-				
+				playGameCommunication.sendIP(ip);
 				window.setVisible(true);
 				dispose();
 			}
