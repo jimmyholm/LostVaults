@@ -112,4 +112,8 @@ class PlayerMap extends Actor {
       sender ! PMapIsOnlineResponse(!exist.isEmpty, purpose)
     }
   }
+  
+  override def toString() = {
+    "PlayerMap"
+  }
 }

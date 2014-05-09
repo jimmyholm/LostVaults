@@ -3,12 +3,14 @@ import akka.actor.{ Actor, ActorRef }
 import akka.util.ByteString
 import akka.io.{ Tcp }
 import lostvaults.Parser
+import scala.util.Random
 sealed trait PlayerAction
 case object PAttack extends PlayerAction
 case object PDrinkPotion extends PlayerAction
 case object PDecide extends PlayerAction
 
 class Player extends Actor {
+  val random = new Random
   import Tcp._
   import context.{ system, become, unbecome }
   var connection = self
@@ -19,7 +21,7 @@ class Player extends Actor {
   var defense = 0
   var attack = 1
   var food = 0
-  var speed = 0
+  var speed = 3//3 + random.nextInt(3)
   var knownRooms: List[Tuple2[Int, Int]] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
   var state: PlayerAction = PDecide
@@ -75,7 +77,10 @@ class Player extends Actor {
               connection ! Write(ByteString(helpList.mkString))
             }
             case "ATTACK" => {
-              dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+              if (battle == None)
+                dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+              else
+                battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
               target = Parser.findWord(decodedMsg, 1)
               state = PAttack
             }
@@ -126,13 +131,14 @@ class Player extends Actor {
           if (damage < 0) { damage = 0 }
           hp = hp - damage
           if (hp <= 0) {
-            dungeon ! GameNotifyDungeon("SYSTEM Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
+            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
             //dungeon ! GameHasDied(name)
             if (battle != None) {
               battle.get ! GameRemovePlayer(name)
+              battle = None
             }
           } else {
-            dungeon ! GameNotifyDungeon("SYSTEM Player " + name + " has received " + damage + " damage from " + from + ".")
+            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
           }
         }
         case GamePlayerEnter(name) => {
