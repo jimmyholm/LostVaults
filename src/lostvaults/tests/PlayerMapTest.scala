@@ -8,8 +8,9 @@ class PlayerMapTest
   extends FunSuite 
   with TestKitBase 
   with ImplicitSender{
-  val actorRef = TestActorRef[PlayerMap]
   implicit lazy val system = ActorSystem("PlayerMapTestSystem")
+  val actorRef = TestActorRef[PlayerMap]
+  
   test("IsOnline with empty playerMap.") {
     actorRef ! PMapIsOnline("Noone", "")
     expectMsg(PMapIsOnlineResponse(false, ""))
