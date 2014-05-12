@@ -83,7 +83,7 @@ class PlayerMap extends Actor {
     }
 
     case PMapAddPlayer(name: String, ref: ActorRef) => {
-      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0)
       if (exist.isEmpty) {
         PMap += Tuple2[String, ActorRef](name, ref)
         sender ! PMapSuccess
@@ -92,7 +92,7 @@ class PlayerMap extends Actor {
       }
     }
     case PMapRemovePlayer(name: String) => {
-      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0)
       if (exist.isEmpty) {
         sender ! PMapFailure
       } else {
@@ -101,14 +101,14 @@ class PlayerMap extends Actor {
       }
     }
     case PMapGetPlayer(name: String, purpose: String) => {
-      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0 )
       if (exist.isEmpty)
         sender ! PMapGetPlayerResponse(None, purpose)
       else
         sender ! PMapGetPlayerResponse(Some((exist.get)._2), purpose)
     }
     case PMapIsOnline(name: String, purpose: String) => {
-      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      val exist = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0)
       sender ! PMapIsOnlineResponse(!exist.isEmpty, purpose)
     }
   }

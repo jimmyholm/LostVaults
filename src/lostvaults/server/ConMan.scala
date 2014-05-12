@@ -25,7 +25,7 @@ class ConMan extends Actor {
       println("Failed to bind to 0.0.0.0:51234")
     }
     case Bound(local) => {
-    	println("Bound to " + local + "\nEnter \"Quit\" to close server.")
+    	println("Bound to port " + local.getPort)
     }
     case c @ Connected(remote, local) => {
       println("ConnectionManager: New connection from " + remote.getHostName())

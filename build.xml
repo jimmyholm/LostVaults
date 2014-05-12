@@ -42,18 +42,14 @@
 	<target name="clean">
 		<delete dir="bin" />
 	</target>
-	<target depends="clean" name="cleanall" />
 	<target depends="init" name="build">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<scalac destdir="bin" scalacdebugging="true">
-			<src path="src" />
+		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath">
+			<src path="src/" />
 			<exclude name="**/*.java" />
-			<classpath refid="LostVaults.classpath" />
 		</scalac>
-		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-			<src path="src" />
+		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
 			<exclude name="**/*.scala" />
-			<exclude name="**/tests/*" />
 			<classpath refid="LostVaults.classpath" />
 		</javac>
 	</target>
@@ -68,8 +64,9 @@
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
 	<target depends="build" name="client" description="Build runnable client Jar File">
 		<jar destfile="client.jar" basedir="bin/">
-			<include name="lostvaults/Parser.class" />
-			<include name="lostvaults/Parser$.class" />
+			<include name="application.conf" />
+			<include name="lostvaults/*.class" />
+			<include name="lostvaults/Logger.class" />
 			<include name="lostvaults/client/*.class" />
 			<include name="*.jar" />
 			<manifest>
@@ -80,8 +77,8 @@
 	</target>
 	<target depends="build" name="server" description="Build runnable server Jar File">
 		<jar destfile="server.jar" basedir="bin/">
-			<include name="lostvaults/Parser.class" />
-			<include name="lostvaults/Parser$.class" />
+			<include name="application.conf" />
+			<include name="lostvaults/*.class" />
 			<include name="lostvaults/server/*.class" />
 			<include name="*.jar" />
 			<exclude name="lostvaults/test/*" />

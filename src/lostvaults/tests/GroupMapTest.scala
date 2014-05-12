@@ -4,7 +4,7 @@ import akka.testkit.{ TestKitBase, TestActorRef, ImplicitSender }
 import org.scalatest.FunSuite
 import lostvaults.server._
 
-class PlayerGroupTest
+class GroupMapTest
   extends FunSuite
   with TestKitBase
   with ImplicitSender {
@@ -21,9 +21,9 @@ class PlayerGroupTest
     expectMsg(GMapGetPlayerCountResponse(1))
   }
   test("Test adding name to playerlist.") {
-    val actorRef = TestActorRef[GroupMap]
-    val testee = actorRef.underlyingActor
-    actorRef ! GMapJoin("test", "Test2")
+    val aref = TestActorRef[GroupMap]
+    val testee = aref.underlyingActor
+    aref ! GMapJoin("test", "Test2")
     assertResult(true) {
       testee.groupMap.exists((c => c._1 == "test"))
     }
