@@ -110,7 +110,7 @@ class Player extends Actor {
             }
             case "ATTACK" => {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
-                connection ! Write(ByteString("Don't hit yourself"))
+                pushToNetwork("Don't hit yourself")
               } else {
                 if (battle == None)
                   dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
@@ -137,7 +137,7 @@ class Player extends Actor {
           }
         }
         case GameAttackNotInRoom(_name) => {
-          connection ! Write(ByteString(_name + " is not in room, so you cannot attack her/him"))
+          pushToNetwork(_name + " is not in room, so you cannot attack her/him")
         }
         case GamePlayerJoinBattle(_battle) => {
           battle = Some(_battle)
