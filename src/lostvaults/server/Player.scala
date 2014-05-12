@@ -109,12 +109,16 @@ class Player extends Actor {
               pushToNetwork(helpList.mkString)
             }
             case "ATTACK" => {
-              if (battle == None)
-                dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-              else
-                battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
-              target = Parser.findWord(decodedMsg, 1)
-              state = PAttack
+              if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
+                connection ! Write(ByteString("Don't hit yourself"))
+              } else {
+                if (battle == None)
+                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                else
+                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                target = Parser.findWord(decodedMsg, 1)
+                state = PAttack
+              }
             }
             case "DRINKPOTION" => {
               if (battle != None) {
@@ -132,9 +136,13 @@ class Player extends Actor {
             }
           }
         }
-        case GamePlayerJoinBattle(_battle) =>
+        case GameAttackNotInRoom(_name) => {
+          connection ! Write(ByteString(_name + " is not in room, so you cannot attack her/him"))
+        }
+        case GamePlayerJoinBattle(_battle) => {
           battle = Some(_battle)
           _battle ! AddPlayer(name, speed)
+        }
         case GameYourTurn => {
           state match {
             case PAttack => {

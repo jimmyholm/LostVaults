@@ -38,16 +38,20 @@ class Dungeon extends Actor {
 
   def CityReceive: Receive = {
     case GameAttackPlayer(attacker, attackee) => {
-      println(attacker + " attacks " + attackee)
-      if (activeCombat == None) {
-        println("New combat actor created.")
-        activeCombat = Some(context.actorOf(Props[Combat]))
-        activeCombat.get ! self
-      }
-      println("Adding " + attacker + " to combat")
+      if (PSet.contains(attackee)) {
+        println(attacker + " attacks " + attackee)
+        if (activeCombat == None) {
+          println("New combat actor created.")
+          activeCombat = Some(context.actorOf(Props[Combat]))
+          activeCombat.get ! self
+        }
+        println("Adding " + attacker + " to combat")
         PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get))
         println("Adding " + attackee + " to combat")
         PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
+      } else {
+    	  PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
+      }
     }
     case GameSay(name, msg) => {
       PSet foreach (c =>
