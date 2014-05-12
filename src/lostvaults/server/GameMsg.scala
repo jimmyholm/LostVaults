@@ -80,7 +80,7 @@ case class GameDamage(from: String, damage: Int) extends GameMsg
  * Passed along to a combat, when a player has died
  * @param player The player that is dead
  */
-case class GameHasDied(player: String) extends GameMsg
+case class GamePlayerHasDied(player: String) extends GameMsg
 /**
  * Passed along to a dungeon, this will send a system message to all players in the dungeon passed along to it.
  * @param msg The notification to be sent. 
@@ -118,4 +118,7 @@ case object GameCombatOver extends GameMsg
  * @param name The name of the player being attacked.
  */
 case class GameAttackNotInRoom(name: String) extends GameMsg
-
+/**
+ * Passed along to the room, notifying that room that the battle has ended
+ */
+case object GameCombatFinished extends GameMsg

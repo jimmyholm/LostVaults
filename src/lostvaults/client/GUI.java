@@ -278,6 +278,7 @@ public class GUI {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
+				stats.setText("The Lost Vaults - " + name);
 				playGameCommunication.sendIP(ip);
 				window.setVisible(true);
 				dispose();

@@ -40,7 +40,6 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
     }
   }
 
-
   when(Action) {
     case Event(AttackPlayer(name, target, strength), data: ActionData) => {
       val nextPlayer = data.TurnList.head
@@ -106,18 +105,29 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
     case Event(RemovePlayer(name), data: RestData) => {
       println("COMBAT: Remove Player called for " + name + ".")
       val NextList = data.PlayerList.filterNot(x => x._1.equals(name))
+      println("COMBAT: Players still in combat: " + NextList)
       if (NextList.tail isEmpty) {
         if (dungeon != None) {}
-        dungeon.get ! GameNotifyDungeon("Combat is over")
+        dungeon.get ! GameNotifyDungeon(NextList.head._1 + " is the winner.")
         context stop self
       }
-      stay using RestData(NextList, data.Duration)
+      goto(Rest) using RestData(NextList, data.Duration)
     }
     case Event(RemovePlayer(name), data: ActionData) => {
       println("COMBAT: Remove Player called for " + name + ".")
       val NextList = data.PlayerList.filterNot(x => x._1.equals(name))
       val NextTurnList = data.TurnList.filterNot(x => x.equals(name))
-      stay using ActionData(NextList, NextTurnList, data.Duration)
+      println("COMBAT: Players still in combat: " + NextList)
+      if (NextList.tail.isEmpty) {
+        if (dungeon != None) {}
+        dungeon.get ! GameNotifyDungeon(NextList.head._1 + " is the winner.")
+        dungeon.get ! GameCombatFinished
+        context stop self
+      }
+      var player = NextTurnList.head
+      println("COMBAT: It's " + player + "'s turn to take an action.")
+      PMap ! PMapSendGameMessage(player, GameYourTurn)
+      goto(Action) using ActionData(NextList, NextTurnList, data.Duration)
     }
     case Event(_dungeon: ActorRef, _) => {
       dungeon = Some(_dungeon)

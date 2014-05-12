@@ -14,7 +14,7 @@ case object PDecide extends PlayerAction
 class Player extends Actor {
   val random = new Random
   import Tcp._
-  import context.{ system, become, unbecome, dispatcher}
+  import context.{ system, become, unbecome, dispatcher }
   var connection = self
   val PMap = Main.PMap.get
   var name = ""
@@ -34,7 +34,7 @@ class Player extends Actor {
   var waitForAck: Boolean = false
   case object Ack extends Event
   case object SendNext
-  
+
   def pushToNetwork(msg: String) {
     if (waitForAck) {
       msgQueue.enqueue(msg)
@@ -62,11 +62,10 @@ class Player extends Actor {
             context stop self
           } else {
             pushToNetwork("LOGINOK")
-            var i = 0
+            /*var i = 0
             for (i <- 0 until 100) {
               pushToNetwork("SYSTEM test #" + (i + 1))
-            }
-
+            }*/
             PMap ! PMapAddPlayer(name, self)
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
@@ -128,6 +127,12 @@ class Player extends Actor {
                 self ! GameDrinkPotion
               }
             }
+            case "LEAVE" => {
+              if (battle != None) {
+                battle.get ! RemovePlayer(name)
+                state = PDecide
+              }
+            }
             case "STOP" => {
               state = PDecide
             }
@@ -172,20 +177,27 @@ class Player extends Actor {
           hp = hp - damage
           if (hp <= 0) {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
-            //dungeon ! GameHasDied(name)
             if (battle != None) {
-              battle.get ! GameRemovePlayer(name)
+              battle.get ! RemovePlayer(name)
+              dungeon ! GameRemovePlayer(name)
               battle = None
             }
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
           }
         }
+         case GameMessage(msg) => {
+          pushToNetwork(msg)
+        }
+        case GamePlayerLeft(playerName) => {
+          pushToNetwork("DUNGEONLEFT " + playerName)
+          if (playerName == target) {
+            target = ""
+            state = PDecide
+          }
+        }
         case GamePlayerEnter(name) => {
           pushToNetwork("DUNGEONJOIN " + name)
-        }
-        case GamePlayerLeft(name) => {
-          pushToNetwork("DUNGEONLEFT " + name)
         }
         case GameSay(name, msg) => {
           pushToNetwork("SAY " + name + " " + msg)

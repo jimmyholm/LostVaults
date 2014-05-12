@@ -50,8 +50,11 @@ class Dungeon extends Actor {
         println("Adding " + attackee + " to combat")
         PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
       } else {
-    	  PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
+        PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
       }
+    }
+    case GameCombatFinished => {
+      activeCombat = None
     }
     case GameSay(name, msg) => {
       PSet foreach (c =>
@@ -60,8 +63,11 @@ class Dungeon extends Actor {
 
     case GameAddPlayer(name) => {
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
+      var PString = ""
+      PSet foreach (c => PString = c + "\n" + PString)
       PSet += name
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
+      PMap ! PMapSendGameMessage(name, GameMessage("DUNGEONLIST " + PString))
     }
 
     case GameRemovePlayer(name) => {
