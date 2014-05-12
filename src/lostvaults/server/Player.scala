@@ -21,7 +21,7 @@ class Player extends Actor {
   var defense = 0
   var attack = 1
   var food = 0
-  var speed = 3//3 + random.nextInt(3)
+  var speed = 3 //3 + random.nextInt(3)
   var knownRooms: List[Tuple2[Int, Int]] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
   var state: PlayerAction = PDecide
@@ -77,12 +77,16 @@ class Player extends Actor {
               connection ! Write(ByteString(helpList.mkString))
             }
             case "ATTACK" => {
-              if (battle == None)
-                dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-              else
-                battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
-              target = Parser.findWord(decodedMsg, 1)
-              state = PAttack
+              if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
+                connection ! Write(ByteString("Don't hit yourself"))
+              } else {
+                if (battle == None)
+                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                else
+                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                target = Parser.findWord(decodedMsg, 1)
+                state = PAttack
+              }
             }
             case "DRINKPOTION" => {
               if (battle != None) {
@@ -100,9 +104,13 @@ class Player extends Actor {
             }
           }
         }
-        case GamePlayerJoinBattle(_battle) =>
+        case GameAttackNotInRoom(_name) => {
+          connection ! Write(ByteString(_name + " is not in room, so you cannot attack her/him"))
+        }
+        case GamePlayerJoinBattle(_battle) => {
           battle = Some(_battle)
           _battle ! AddPlayer(name, speed)
+        }
         case GameYourTurn => {
           state match {
             case PAttack => {

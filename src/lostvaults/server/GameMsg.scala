@@ -4,6 +4,11 @@ import akka.actor.{ActorRef}
  * Internal messages passed between Player and Dungeon actors
  */
 sealed trait GameMsg
+
+/**
+ * Passed along to a player, general message that has to follow the form of the client receive 
+ */
+case class GameMessage(msg: String) extends GameMsg
 /**
  * Passed along to a dungeon, it will cause msg to be sent to every player in the
  * same room as the player named name. Passed along to a player, it will send
@@ -108,4 +113,9 @@ case object GameDrinkPotion extends GameMsg
  * Passed along to a dungeon, notifying that a battle has ended
  */
 case object GameCombatOver extends GameMsg
+/**
+ * Passed along to a player, when that player is trying to attack someone that is not in room
+ * @param name The name of the player being attacked.
+ */
+case class GameAttackNotInRoom(name: String) extends GameMsg
 
