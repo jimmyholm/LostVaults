@@ -2,10 +2,19 @@ package lostvaults.server
 
 import scala.util.Random
 
+/**
+ * 
+ * 
+ */
 object RoomRandom {
   val Random = new Random()
 
 
+  /**
+   * This method creates a start room with four possible directions to go.
+   * @param Rooms An array of rooms.
+   * 
+   */
   def init(Rooms: Array[Room]) = {
     var StartRoom = Random.nextInt(89)
     if (StartRoom < 10) {
@@ -44,8 +53,12 @@ object RoomRandom {
     
     makeMagic
   }
-  
+  /**
+   * This method makes magic.
+   */
   def makeMagic() = {
+    
+    
     
   }
 
