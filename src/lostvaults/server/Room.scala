@@ -21,7 +21,7 @@ class Room() {
   //  var NPCList: List[NPC]
 
   /**
-   * This method changes a rooms created status to true.
+   * This method changes the rooms created status to true.
    *
    */
   def setCreated() = {
