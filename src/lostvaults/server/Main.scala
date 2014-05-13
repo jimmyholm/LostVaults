@@ -4,11 +4,14 @@ import scala.concurrent.duration._
 import akka.util.Timeout
 object Main {
   var PMap: Option[ActorRef] = None
+  var GMap: Option[ActorRef] = None
   val system = ActorSystem("LostVaultsServer")
   var City: Option[ActorRef] = None
   def main(args: Array[String]) {
     val pmap = system.actorOf(Props[PlayerMap])
     PMap = Some(pmap) // Start up our player hashmap actor
+    val gmap = system.actorOf(Props[GroupMap])
+    GMap = Some(gmap)
     val conMan = system.actorOf(Props[ConMan])
     City = Some(system.actorOf(Props[Dungeon]))
     var input = ""

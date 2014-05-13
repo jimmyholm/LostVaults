@@ -24,7 +24,7 @@ class Player extends Actor {
   var attack = 1
   var food = 0
   var speed = 3 //3 + random.nextInt(3)
-  var knownRooms: List[Tuple2[Int, Int]] = List()
+  var knownRooms: List[(Int, Int)] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
   var state: PlayerAction = PDecide
   var previousState: PlayerAction = PDecide
@@ -35,6 +35,15 @@ class Player extends Actor {
   case object Ack extends Event
   case object SendNext
 
+  def costToMove(cell: (Int, Int)): Int = {
+    if (knownRooms.exists(a => a == cell))
+      0
+    else
+      1
+  }
+  def clearKnownRooms() {
+    knownRooms = List()
+  }
   def pushToNetwork(msg: String) {
     if (waitForAck) {
       msgQueue.enqueue(msg)
@@ -62,10 +71,6 @@ class Player extends Actor {
             context stop self
           } else {
             pushToNetwork("LOGINOK")
-            /*var i = 0
-            for (i <- 0 until 100) {
-              pushToNetwork("SYSTEM test #" + (i + 1))
-            }*/
             PMap ! PMapAddPlayer(name, self)
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
@@ -79,7 +84,7 @@ class Player extends Actor {
       def LoggedIn: Receive = {
         case Ack => {
           println("Ack received.")
-          system.scheduler.scheduleOnce(5.milliseconds, self, SendNext)
+          system.scheduler.scheduleOnce(10.milliseconds, self, SendNext)
         }
         case SendNext => {
           if (msgQueue isEmpty)
@@ -136,6 +141,28 @@ class Player extends Actor {
             case "STOP" => {
               state = PDecide
             }
+            case "MOVE" => {
+              val dirStr = Parser.findWord(decodedMsg, 1).toUpperCase
+              val dir =
+                dirStr match {
+                  case "NORTH" => 0
+                  case "EAST" => 1
+                  case "SOUTH" => 2
+                  case "WEST" => 3
+                  case _ => -1
+                }
+              if (dir == -1)
+                pushToNetwork("SYSTEM That is not a valid direction. Try North, East, West or South.")
+              else {
+                dungeon ! GamePlayerMove(name, dir)
+                }
+            }
+            case "ENTER" => {
+              dungeon ! GameEnterDungeon(name)
+            }
+            case "EXIT" => {
+              dungeon ! GameExitDungeon(name)
+            }
             case _ => {
               pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
             }
@@ -186,7 +213,7 @@ class Player extends Actor {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
           }
         }
-         case GameMessage(msg) => {
+        case GameMessage(msg) => {
           pushToNetwork(msg)
         }
         case GamePlayerLeft(playerName) => {
@@ -207,6 +234,13 @@ class Player extends Actor {
         }
         case GameMoveToDungeon(dungeon) => {
           this.dungeon = dungeon
+          clearKnownRooms
+        }
+        case GameDungeonMove(room, start) => {
+          if (!start)
+            food -= costToMove(room)
+          knownRooms = room :: knownRooms
+          	println("Player " + name + " received dungeon move")
         }
         case GameSystem(msg) => {
           pushToNetwork("SYSTEM " + msg)
