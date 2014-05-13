@@ -3,31 +3,47 @@ import akka.actor.{ Actor, ActorRef }
 import akka.util.ByteString
 import akka.io.{ Tcp }
 import lostvaults.Parser
+import scala.util.Random
+import scala.collection.mutable.Queue
+import scala.concurrent.duration._
 sealed trait PlayerAction
 case object PAttack extends PlayerAction
 case object PDrinkPotion extends PlayerAction
 case object PDecide extends PlayerAction
 
 class Player extends Actor {
+  val random = new Random
   import Tcp._
-  import context.{ system, become, unbecome }
+  import context.{ system, become, unbecome, dispatcher }
   var connection = self
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
-  var hp = 0
+  var hp = 10
   var defense = 0
   var attack = 1
   var food = 0
-  var speed = 0
+  var speed = 3 //3 + random.nextInt(3)
   var knownRooms: List[Tuple2[Int, Int]] = List()
   val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
   var state: PlayerAction = PDecide
   var previousState: PlayerAction = PDecide
   var target = ""
   var battle: Option[ActorRef] = None
+  var msgQueue: Queue[String] = Queue()
+  var waitForAck: Boolean = false
+  case object Ack extends Event
+  case object SendNext
 
-  
+  def pushToNetwork(msg: String) {
+    if (waitForAck) {
+      msgQueue.enqueue(msg)
+    } else {
+      waitForAck = true
+      connection ! Write(ByteString(msg), Ack)
+    }
+  }
+
   def receive = {
     case Received(msg) => {
       connection = sender
@@ -42,10 +58,14 @@ class Player extends Actor {
       {
         if (Parser.findWord(purpose, 0) == "LOGIN") {
           if (response) {
-            connection ! Write(ByteString("LOGINFAIL"))
+            pushToNetwork("LOGINFAIL")
             context stop self
           } else {
-            connection ! Write(ByteString("LOGINOK"))
+            pushToNetwork("LOGINOK")
+            /*var i = 0
+            for (i <- 0 until 100) {
+              pushToNetwork("SYSTEM test #" + (i + 1))
+            }*/
             PMap ! PMapAddPlayer(name, self)
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
@@ -57,9 +77,21 @@ class Player extends Actor {
       // Här finns Receive satsen för servern - här tar vi emot alla användar-meddelanden från GUI:t
 
       def LoggedIn: Receive = {
+        case Ack => {
+          println("Ack received.")
+          system.scheduler.scheduleOnce(5.milliseconds, self, SendNext)
+        }
+        case SendNext => {
+          if (msgQueue isEmpty)
+            waitForAck = false
+          else {
+            val msg = msgQueue.dequeue
+            connection ! Write(ByteString(msg), Ack)
+          }
+        }
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
-          println("(Player["+name+"]) Received message: " + decodedMsg)
+          println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
             case "SAY" => {
@@ -69,42 +101,69 @@ class Player extends Actor {
               PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
             }
             case "LOGOUT" => {
-              connection ! Write(ByteString("Bye"))
+              pushToNetwork("Bye")
               connection ! Close
             }
             case "HELP" => {
-              connection ! Write(ByteString(helpList.mkString))
+              pushToNetwork(helpList.mkString)
             }
             case "ATTACK" => {
-              dungeon ! GameAttackPlayer(Parser.findWord(decodedMsg, 1), Parser.findWord(decodedMsg, 2))
+              if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
+                pushToNetwork("Don't hit yourself")
+              } else {
+                if (battle == None)
+                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                else
+                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                target = Parser.findWord(decodedMsg, 1)
+                state = PAttack
+              }
             }
             case "DRINKPOTION" => {
-              battle.get ! DrinkPotion(name)
-              state = PDrinkPotion
+              if (battle != None) {
+                battle.get ! DrinkPotion(name)
+                state = PDrinkPotion
+              } else {
+                self ! GameDrinkPotion
+              }
+            }
+            case "LEAVE" => {
+              if (battle != None) {
+                battle.get ! RemovePlayer(name)
+                state = PDecide
+              }
             }
             case "STOP" => {
               state = PDecide
             }
             case _ => {
-              connection ! Write(ByteString("SYSTEM I have no idea what you're wanting to do."))
+              pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
             }
           }
         }
-        case GamePlayerJoinBattle(_battle) =>
+        case GameAttackNotInRoom(_name) => {
+          pushToNetwork(_name + " is not in room, so you cannot attack her/him")
+        }
+        case GamePlayerJoinBattle(_battle) => {
           battle = Some(_battle)
           _battle ! AddPlayer(name, speed)
+        }
         case GameYourTurn => {
           state match {
             case PAttack => {
-              battle.get ! AttackPlayer(target, attack)
-              previousState = PAttack
+              if (battle != None) {
+                battle.get ! AttackPlayer(name, target, attack)
+                previousState = state
+              }
             }
             case PDrinkPotion => {
-              battle.get ! DrinkPotion
+              if (battle != None) {
+                battle.get ! DrinkPotion
+              }
             }
             case PDecide => {
-              connection ! Write(ByteString("SYSTEM It's your turn"))
-              previousState = PDecide
+              pushToNetwork("SYSTEM It's your turn")
+              previousState = state
             }
           }
         }
@@ -117,30 +176,40 @@ class Player extends Actor {
           if (damage < 0) { damage = 0 }
           hp = hp - damage
           if (hp <= 0) {
-            connection ! Write(ByteString("SYSTEM Player " + name + " is dead. Hen was killed by " + from))
-            battle.get ! GameHasDied(name)
-
+            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
+            if (battle != None) {
+              battle.get ! RemovePlayer(name)
+              dungeon ! GameRemovePlayer(name)
+              battle = None
+            }
           } else {
-            connection ! Write(ByteString("SYSTEM Player " + name + " has received " + damage + " damage from " + from))
+            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
+          }
+        }
+         case GameMessage(msg) => {
+          pushToNetwork(msg)
+        }
+        case GamePlayerLeft(playerName) => {
+          pushToNetwork("DUNGEONLEFT " + playerName)
+          if (playerName == target) {
+            target = ""
+            state = PDecide
           }
         }
         case GamePlayerEnter(name) => {
-          connection ! Write(ByteString("DUNGEONJOIN " + name))
-        }
-        case GamePlayerLeft(name) => {
-          connection ! Write(ByteString("DUNGEONLEFT " + name))
+          pushToNetwork("DUNGEONJOIN " + name)
         }
         case GameSay(name, msg) => {
-          connection ! Write(ByteString("SAY " + name + " " + msg))
+          pushToNetwork("SAY " + name + " " + msg)
         }
         case GameWhisper(from, to, msg) => {
-          connection ! Write(ByteString("WHISPER " + from + " " + to + " " + msg))
+          pushToNetwork("WHISPER " + from + " " + to + " " + msg)
         }
         case GameMoveToDungeon(dungeon) => {
           this.dungeon = dungeon
         }
         case GameSystem(msg) => {
-          connection ! Write(ByteString("SYSTEM " + msg))
+          pushToNetwork("SYSTEM " + msg)
         }
         case PMapGetPlayerResponse(player, purpose) => {
           val action = Parser.findWord(purpose, 0).toUpperCase
@@ -152,7 +221,7 @@ class Player extends Actor {
                 player.get ! GameWhisper(name, to, msg)
                 self ! GameWhisper(name, to, msg)
               } else
-                connection ! Write(ByteString("SYSTEM No Such Player Online"))
+                pushToNetwork("SYSTEM No Such Player Online")
             }
           }
         }
@@ -162,6 +231,5 @@ class Player extends Actor {
           context stop self
         }
       }
-
   }
 }

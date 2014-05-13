@@ -24,13 +24,6 @@ class Dungeon extends Actor {
   var activeCombat: Option[ActorRef] = None
 
   def receive() = {
-    case GameAttackPlayer(attacker, attackee) => {
-      if (activeCombat == None) {
-        activeCombat = Some(context.actorOf(Props[Combat]))
-      }
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get))
-        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
-    }
     case DungeonMakeCity => {
       //val CityRoom = new Room()
       // lägg till alla NPCs
@@ -44,6 +37,25 @@ class Dungeon extends Actor {
   }
 
   def CityReceive: Receive = {
+    case GameAttackPlayer(attacker, attackee) => {
+      if (PSet.contains(attackee)) {
+        println(attacker + " attacks " + attackee)
+        if (activeCombat == None) {
+          println("New combat actor created.")
+          activeCombat = Some(context.actorOf(Props[Combat]))
+          activeCombat.get ! self
+        }
+        println("Adding " + attacker + " to combat")
+        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get))
+        println("Adding " + attackee + " to combat")
+        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
+      } else {
+        PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
+      }
+    }
+    case GameCombatFinished => {
+      activeCombat = None
+    }
     case GameSay(name, msg) => {
       PSet foreach (c =>
         PMap ! PMapSendGameMessage(c, GameSay(name, msg)))
@@ -51,8 +63,11 @@ class Dungeon extends Actor {
 
     case GameAddPlayer(name) => {
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
+      var PString = ""
+      PSet foreach (c => PString = c + "\n" + PString)
       PSet += name
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
+      PMap ! PMapSendGameMessage(name, GameMessage("DUNGEONLIST " + PString))
     }
 
     case GameRemovePlayer(name) => {

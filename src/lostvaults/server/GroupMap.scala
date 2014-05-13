@@ -64,7 +64,7 @@ class GroupMap extends Actor {
     else
       Some(e.get._2)
   }
-  def receive() = {
+  def receive = {
     case GMapJoin(joinee, group) => {
       val groupOp = _FindName(group)
       if (!groupOp.isEmpty) {
