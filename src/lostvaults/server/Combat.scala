@@ -69,7 +69,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
           goto(WaitForDamageAck) using ActionData(data.PlayerList, turnList, data.Duration, data.CombatsPerPlayer)
         }
       } else {
-        println("COMBAT: Attack messge from a player whose turn it is not.")
+        println("COMBAT: Attack message from a player whose turn it is not.")
         stay
       }
     }
