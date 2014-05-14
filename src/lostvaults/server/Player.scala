@@ -25,7 +25,7 @@ class Player extends Actor {
   var food = 0
   var speed = 3 //3 + random.nextInt(3)
   var knownRooms: List[(Int, Int)] = List()
-  val helpList: List[String] = List("Say \n", "Whisper \n", "LogOut \n")
+  val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n")
   var state: PlayerAction = PDecide
   var previousState: PlayerAction = PDecide
   var target = ""
@@ -83,7 +83,6 @@ class Player extends Actor {
 
       def LoggedIn: Receive = {
         case Ack => {
-          println("Ack received.")
           system.scheduler.scheduleOnce(10.milliseconds, self, SendNext)
         }
         case SendNext => {
@@ -116,10 +115,8 @@ class Player extends Actor {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
                 pushToNetwork("Don't hit yourself")
               } else {
-                if (battle == None)
-                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-                else
-                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
                 target = Parser.findWord(decodedMsg, 1)
                 state = PAttack
               }
@@ -130,12 +127,6 @@ class Player extends Actor {
                 state = PDrinkPotion
               } else {
                 self ! GameDrinkPotion
-              }
-            }
-            case "LEAVE" => {
-              if (battle != None) {
-                battle.get ! RemovePlayer(name)
-                state = PDecide
               }
             }
             case "STOP" => {
@@ -171,9 +162,9 @@ class Player extends Actor {
         case GameAttackNotInRoom(_name) => {
           pushToNetwork(_name + " is not in room, so you cannot attack her/him")
         }
-        case GamePlayerJoinBattle(_battle) => {
+        case GamePlayerJoinBattle(_battle, enemy) => {
           battle = Some(_battle)
-          _battle ! AddPlayer(name, speed)
+          _battle ! AddPlayer(name, speed, enemy)
         }
         case GameYourTurn => {
           state match {
@@ -212,6 +203,13 @@ class Player extends Actor {
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
           }
+          if (battle != None) {
+            battle.get ! DamageAck
+          }
+        }
+        case GameCombatWin => {
+          pushToNetwork("You won that battle")
+          battle = None
         }
         case GameMessage(msg) => {
           pushToNetwork(msg)
