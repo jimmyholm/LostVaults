@@ -45,7 +45,7 @@ class Dungeon extends Actor {
   def receive() = {
     case DungeonMakeCity => {
       //val CityRoom = new Room()
-      // lägg till alla NPCs
+      //lägg till alla NPCs
       become(CityReceive)
     }
     case NewDungeon => {
@@ -147,6 +147,7 @@ class Dungeon extends Actor {
 
   def CityReceive: Receive = {
     case GameAttackPlayer(attacker, attackee) => {
+      println("PSet: " + PSet + " attackee: " + attackee)
       if (PSet.contains(attackee)) {
         println(attacker + " attacks " + attackee)
         if (activeCombat == None) {
@@ -155,16 +156,27 @@ class Dungeon extends Actor {
           activeCombat.get ! self
         }
         println("Adding " + attacker + " to combat")
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get))
+        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+        PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
         println("Adding " + attackee + " to combat")
-        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get))
+        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
+        PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
       } else {
         PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
       }
     }
+    case GameAttackPlayerInCombat(attackee) => {
+      if (PSet contains(attackee)) {
+        sender() ! GameYourTurn
+      } else {
+        sender() ! GameMessage("The player you are trying to attack is not in the game")
+      }
+    }
+      
     case GameCombatFinished => {
       activeCombat = None
     }
+    
     case GameSay(name, msg) => {
       PSet foreach (c =>
         PMap ! PMapSendGameMessage(c, GameSay(name, msg)))
@@ -181,7 +193,8 @@ class Dungeon extends Actor {
 
     case GameRemovePlayer(name) => {
       PSet -= name
-      PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players*/ 
+      PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players*/
+      println("PSet after remove of " + name + ": " + PSet)
     }
 
     case GameNotifyDungeon(msg) => {

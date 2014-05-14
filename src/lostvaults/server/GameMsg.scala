@@ -101,11 +101,22 @@ case class GameNotifyRoom(name: String, msg: String) extends GameMsg
  */
 case class GameAttackPlayer(attacker: String, attackee: String) extends GameMsg
 /**
+ * Passed along to a player, when that player is trying to attack someone that is not in room
+ * @param name The name of the player being attacked.
+ */
+case class GameAttackNotInRoom(name: String) extends GameMsg
+/**
+ * Passed along to a room, when the message sender is trying to attack attackee
+ * @param attackee The player that is being attacked
+ */
+case class GameAttackPlayerInCombat(attackee: String) extends GameMsg
+/**
  * Passed along to a player, when that player is being attacked and will 
  * lead to that player being added to a combat
- * @param The actor reference to the battle the player should join
+ * @param battle The actor reference to the battle the player should join
+ * @param enemy The name of the player under attack
  */
-case class GamePlayerJoinBattle(battle: ActorRef) extends GameMsg
+case class GamePlayerJoinBattle(battle: ActorRef, enemy: String) extends GameMsg
 /**
  * Passed along to a player, telling that player that it can drink its potion
  */
@@ -115,10 +126,10 @@ case object GameDrinkPotion extends GameMsg
  */
 case object GameCombatOver extends GameMsg
 /**
- * Passed along to a player, when that player is trying to attack someone that is not in room
- * @param name The name of the player being attacked.
+ * Passed along to a player when that player has won a battle
  */
-case class GameAttackNotInRoom(name: String) extends GameMsg
+case object GameCombatWin extends GameMsg
+
 /**
  * Passed along to the room, notifying that room that the battle has ended
  */

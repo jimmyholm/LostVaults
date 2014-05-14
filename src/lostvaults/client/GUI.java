@@ -56,7 +56,7 @@ public class GUI {
 		dynamicInfo.setFont(font);
 		dynamicInfo.setForeground(textColor);
 		JScrollPane dynamicInfoScroll = new JScrollPane(dynamicInfo);
-		dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
+		//dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
 		dynamicInfoScroll.setBorder(BorderFactory.createEmptyBorder());
 
 		/*******************************************
@@ -295,6 +295,7 @@ public class GUI {
 
 	public void updateDynamicInfo(String msg) {
 		dynamicInfo.append(msg + "\n");
+		dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
 	}
 
 	public void setDungeonPlayers(String playerList) {
