@@ -122,11 +122,14 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
       combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
       println("COMBAT: Action Addplayer combatList: " + combatList)
+      var player = data.TurnList.head
+      println("COMBAT: It's " + player + "'s turn to take an action.")
+      PMap ! PMapSendGameMessage(player, GameYourTurn)
       if (data.PlayerList.exists(x => x == Tuple2(name, speed))) {
-        stay using ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
+        goto(Action) using ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
       } else {
         val nextList = data.PlayerList :+ Tuple2[String, Int](name, speed)
-        stay using ActionData(nextList sortWith((a, b) => a._2 < b._2), data.TurnList, data.Duration, combatList)
+        goto(Action) using ActionData(nextList sortWith ((a, b) => a._2 < b._2), data.TurnList, data.Duration, combatList)
       }
     }
 
@@ -161,12 +164,11 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       println("COMBAT: Remove Player called for " + name + ".")
       var NextPlayerList = data.PlayerList.filterNot(x => x._1.equals(name))
       var NextTurnList = data.TurnList.filterNot(x => x.equals(name))
-     
-      
+
       //Removes players that has emptied their combatPerPlayer list, and notifies them that they won
       combatList foreach (c => if (c._2 isEmpty) { PMap ! PMapSendGameMessage(c._1, GameCombatWin); NextPlayerList = NextPlayerList filterNot (d => d._1 == c._1) })
       combatList foreach (c => if (c._2 isEmpty) { NextTurnList = NextTurnList filterNot (d => d == c._1) })
-       println("COMBAT: Players still in combat: " + NextPlayerList)
+      println("COMBAT: Players still in combat: " + NextPlayerList)
       combatList = combatList filterNot (c => c._2 isEmpty)
       println("COMBAT: RemovePlayer combatList ActionData: " + combatList)
 
