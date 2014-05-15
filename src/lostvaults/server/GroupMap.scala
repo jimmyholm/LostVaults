@@ -71,7 +71,7 @@ class GroupMap extends Actor {
   val PMap = Main.PMap.get
   var groupMap: HashMap[String, PlayerGroup] = HashMap()
   def _FindName(name: String): Option[PlayerGroup] = {
-    val e = groupMap.find(c => c._1 == name)
+    val e = groupMap.find(c => c._1.compareToIgnoreCase(name) == 0)
     if (e isEmpty)
       None
     else
@@ -79,18 +79,37 @@ class GroupMap extends Actor {
   }
   def receive = {
     case GMapJoin(joinee, group) => {
+      println("Joining " + joinee + " to " + group)
       val groupOp = _FindName(group)
+      val oldGroup = _FindName(joinee)
       if (!groupOp.isEmpty) {
-        if (groupOp.get.inDungeon == false)
-          groupMap += Tuple2(joinee, groupOp.get)
-        else
-          PMap ! PMapSendGameMessage(joinee, GameSystem("You can not join a group of players currently in a dungeon."))
+        if (!groupOp.get.playerInGroup(joinee)) {
+          if (groupOp.get.inDungeon == false) {
+            if (!oldGroup.isEmpty) {
+              oldGroup.get.removePlayer(joinee)
+              oldGroup.get.groupSendMessage(GameSystem(joinee + "has left the group"))
+              groupMap -= joinee
+            }
+            groupOp.get.groupSendMessage(GameSystem(joinee + "has joined the group"))
+            groupMap += Tuple2(joinee, groupOp.get)
+            groupOp.get.addPlayer(joinee)
+          } else {
+            PMap ! PMapSendGameMessage(joinee, GameSystem("You can not join a group of players currently in a dungeon."))
+          }
+        }
       } else {
         var join = new PlayerGroup
+        if (!oldGroup.isEmpty) {
+          oldGroup.get.removePlayer(joinee)
+          groupMap -= joinee
+          oldGroup.get.groupSendMessage(GameSystem(joinee + "has left the group"))
+        }
         join.addPlayer(joinee)
         join.addPlayer(group)
         groupMap += Tuple2(joinee, join)
         groupMap += Tuple2(group, join)
+        PMap ! PMapSendGameMessage(group, GameSystem("You have formed a group with " + joinee))
+        PMap ! PMapSendGameMessage(joinee, GameSystem("You have formed a group with " + group))
       }
     }
     case GMapLeave(name) => {
@@ -98,6 +117,7 @@ class GroupMap extends Actor {
       if (!groupOp.isEmpty) {
         groupOp.get.removePlayer(name)
         groupMap -= name
+        groupOp.get.groupSendMessage(GameSystem(name + " has left the group."))
       }
     }
     case GMapSendGameMessage(name, msg) => {
@@ -133,7 +153,6 @@ class GroupMap extends Actor {
         newDungeon ! NewDungeon
         newDungeon ! GameAddPlayer(name)
         groupMap(name) = join
-
       } else {
         var group = groupOp.get
         group.setReady(name)
@@ -142,7 +161,10 @@ class GroupMap extends Actor {
           val newDungeon = context.actorOf(Props[Dungeon])
           newDungeon ! NewDungeon
           val list = group.listPlayers
+          println("Putting players " + list + " into new dungeon.")
           list.foreach(n => { groupMap(n) = group; newDungeon ! GameAddPlayer(n) })
+        } else {
+          group.groupSendMessage(GameSystem(name + " is ready to enter the dungeon!"))
         }
       }
     }
@@ -151,6 +173,11 @@ class GroupMap extends Actor {
       if (!groupOp.isEmpty) { // Only do something if the player who wishes to exit is actually in a group.
         var group = groupOp.get
         group.setUnready(name)
+        if (group.inDungeon == true) {
+          group.groupSendMessage(GameSystem(name + " has left the dungeon!"))
+        } else {
+          group.groupSendMessage(GameSystem(name + " is no longer ready to enter the dungeon."))
+        }
         val list = group.listPlayers
         if (group.noOneReady)
           group.inDungeon = false

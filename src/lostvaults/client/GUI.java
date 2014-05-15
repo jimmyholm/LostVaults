@@ -1,7 +1,6 @@
 package lostvaults.client;
 
 import javax.swing.*;
-import javax.swing.JDialog;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -166,7 +165,7 @@ public class GUI {
 	 * * Login in pop up box * *
 	 *******************************************/
 
-	public class LogInPopUp extends JDialog implements ActionListener {
+	public class LogInPopUp extends JDialog implements ActionListener, KeyListener {
 
 		JFrame window;
 		JButton button;
@@ -208,6 +207,7 @@ public class GUI {
 			userNameInput.setBackground(mediumBackground);
 			userNameInput.setFont(font);
 			userNameInput.setForeground(textColor);
+			userNameInput.addKeyListener(this);
 			userName.setBackground(darkBackground);
 			userNameLabel.setFont(font);
 			userNameLabel.setForeground(lightTextColor);
@@ -215,11 +215,12 @@ public class GUI {
 					.createLineBorder(darkBackground, 1));
 			userName.add(userNameInput, BorderLayout.CENTER);
 			userName.add(userNameLabel, BorderLayout.WEST);
-
+			
 			passwordLabel.setPreferredSize(new Dimension(150, 0));
 			passwordInput.setBackground(mediumBackground);
 			passwordInput.setFont(font);
 			passwordInput.setForeground(textColor);
+			passwordInput.addKeyListener(this);
 			password.setBackground(darkBackground);
 			passwordLabel.setFont(font);
 			passwordLabel.setForeground(lightTextColor);
@@ -230,11 +231,12 @@ public class GUI {
 			passwordInput.setText("pass");
 			passwordInput.setEditable(false);
 
-			IPInput.setText("lostvaults.dnsdynamic.com"); //127.0.0.1 Om man är på egen dator
+			IPInput.setText("localhost"); //127.0.0.1 Om man är på egen dator
 			IPLabel.setPreferredSize(new Dimension(150, 0));
 			IPInput.setBackground(mediumBackground);
 			IPInput.setFont(font);
 			IPInput.setForeground(textColor);
+			IPInput.addKeyListener(this);
 			IP.setBackground(darkBackground);
 			IPLabel.setFont(font);
 			IPLabel.setForeground(lightTextColor);
@@ -262,10 +264,25 @@ public class GUI {
 			setLocationRelativeTo(null);
 			setVisible(true);
 		}
+		
 		/*******************************************
-		 * * Action event for popup window * *
+		 * *       Keyboard Handling Events      * *
+		 *******************************************/
+		public void keyTyped(KeyEvent e) { }
+		public void keyPressed(KeyEvent e) { }
+		public void keyReleased(KeyEvent e){
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+			tryConnect();
+		}
+		
+		/*******************************************
+		 * *    Action event for popup window    * *
 		 *******************************************/
 		public void actionPerformed(ActionEvent e) {
+			tryConnect();
+		}
+		
+		private void tryConnect() {
 			String user = userNameInput.getText();
 			String password = passwordInput.getText();
 			String ip = IPInput.getText();
@@ -273,8 +290,10 @@ public class GUI {
 				message.setText("You must enter a username\n");
 			} else if (password.equals("")) {
 				message.setText("You must enter a password\n");
-			} else {
+			} else if (ip.equals("")){
 				// String pwd = passwordInput.getText(); //String ip =
+				message.setText("You must enter an IP address.\n");
+			} else {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
