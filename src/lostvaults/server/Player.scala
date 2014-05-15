@@ -25,7 +25,7 @@ class Player extends Actor {
   var food = 0
   var speed = 3 //3 + random.nextInt(3)
   var knownRooms: List[(Int, Int)] = List()
-  val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n")
+  val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
   var previousState: PlayerAction = PDecide
   var target = ""
