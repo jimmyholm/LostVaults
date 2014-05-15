@@ -1,9 +1,20 @@
 package lostvaults.server
 import akka.actor.{ Actor, ActorRef, FSM }
 import scala.concurrent.duration._
-
+/**
+ * Internal messages passed along to a combat
+ */
 sealed trait CombatEvent
+/**
+ * Passed along to a combat, notifying that a player should be added to that combat
+ * @param name The name of the player that should be added to the combat
+ * @param speed The speed of the player that should be added to the combat
+ * @param enemy The player that name is attacking or the player name is being attacked by
+ */
 case class AddPlayer(name: String, speed: Int, enemy: String) extends CombatEvent
+/**
+ * 
+ */
 case class AttackPlayer(name: String, target: String, strength: Int) extends CombatEvent
 case class DrinkPotion(name: String) extends CombatEvent
 case class RemovePlayer(name: String) extends CombatEvent

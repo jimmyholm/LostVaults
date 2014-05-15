@@ -77,11 +77,11 @@ class playGame extends Actor {
         case "ROOMLEFT" =>
           game.removeRoomPlayer(Parser.findRest(c, 0))
         case "NPCLIST" =>
-          game.setNpcs(Parser.findRest(c, 0))
+          game.setNPCs(Parser.findRest(c, 0))
         case "NPCJOIN" =>
-          game.addNpc(Parser.findRest(c, 0))
+          game.addNPC(Parser.findRest(c, 0))
         case "NPCLEFT" =>
-          game.removeNpc(Parser.findRest(c, 0))
+          game.removeNPC(Parser.findRest(c, 0))
         case "ITEMLIST" =>
           game.setItems(Parser.findRest(c, 0))
         case "ITEMJOIN" =>
@@ -105,7 +105,7 @@ class playGame extends Actor {
         case "WHISPER" =>
           game.updateDynamicInfo(Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2))
         case "SYSTEM" =>
-          game.updateDynamicInfo("System says: " + Parser.findRest(c, 0))
+          game.updateDynamicInfo(Parser.findRest(c, 0))
         case _ =>
           game.updateDynamicInfo(c)
       }

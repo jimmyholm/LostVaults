@@ -96,24 +96,24 @@ object playGameCommunication {
    * This method will replace the current list of non-playable characters in the room, shown by the GUI, with the given list of NPCs.
    * @param otherList The list of NPCs that are to be shown as present in the room.
    */
-  def setNpcs(npcList: String) {
-    gui.setNpcs(npcList)
+  def setNPCs(npcList: String) {
+    gui.setNPCs(npcList)
   }
 
   /**
    * This method will add a given NPC to the list of current NPCs in the room.
    * @param npc The name of the NPC to be added to the room.
    */
-  def addNpc(npc: String) {
-    gui.addNpc(npc)
+  def addNPC(npc: String) {
+    gui.addNPC(npc)
   }
 
   /**
    * This method will remove a given NPC from the list of current NPCs in the room.
    * @param npc The name of the NPC to be removed from the room.
    */
-  def removeNpc(npc: String) {
-    gui.removeNpc(npc)
+  def removeNPC(npc: String) {
+    gui.removeNPC(npc)
   }
 
   /**

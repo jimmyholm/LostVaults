@@ -49,10 +49,23 @@ case class GMapGetPlayerListResponse(list: List[String]) extends GMapMsg
 case class GMapGetPlayerCount(name: String) extends GMapMsg
 
 /**
- * GMapGetPlayerCountResponse is a resonse to a GetPlayerCount request.
+ * GMapGetPlayerCountResponse is a response to a GetPlayerCount request.
  * @param count The number of players in the requested group.
  */
 case class GMapGetPlayerCountResponse(count: Int) extends GMapMsg
+
+/**
+ * GMapEnterDungeon is sent by the dungeon to the group manager to set a player as ready to enter the dungeon.
+ * When all players in the group are ready to enter, the group manager will create a new dungeon and move the players.
+ * @param name: The name of the player who is ready to enter the dungeon.
+ */
+case class GMapEnterDungeon(name: String) extends GMapMsg
+/**
+ * GMapExitDungeon is sent by a dungeon when a player decides to exit the dungeon they are in. They are then set to unready and
+ * may not re-enter the dungeon until all players have left.
+ * @param name: The name of the player who is ready to enter the dungeon.
+ */
+case class GMapExitDungeon(name: String) extends GMapMsg
 
 class GroupMap extends Actor {
   val PMap = Main.PMap.get
@@ -68,7 +81,10 @@ class GroupMap extends Actor {
     case GMapJoin(joinee, group) => {
       val groupOp = _FindName(group)
       if (!groupOp.isEmpty) {
-        groupMap += Tuple2(joinee, groupOp.get)
+        if (groupOp.get.inDungeon == false)
+          groupMap += Tuple2(joinee, groupOp.get)
+        else
+          PMap ! PMapSendGameMessage(joinee, GameSystem("You can not join a group of players currently in a dungeon."))
       } else {
         var join = new PlayerGroup
         join.addPlayer(joinee)
@@ -79,34 +95,67 @@ class GroupMap extends Actor {
     }
     case GMapLeave(name) => {
       val groupOp = _FindName(name)
-      if(!groupOp.isEmpty) {
+      if (!groupOp.isEmpty) {
         groupOp.get.removePlayer(name)
         groupMap -= name
       }
     }
     case GMapSendGameMessage(name, msg) => {
-    	val groupOp = _FindName(name)
-    	if(!groupOp.isEmpty) {
-    	  groupOp.get.groupSendMessage(msg)
-    	}
-    	else {
-    	  PMap ! PMapSendGameMessage(name, msg) 
-    	}
+      val groupOp = _FindName(name)
+      if (!groupOp.isEmpty) {
+        groupOp.get.groupSendMessage(msg)
+      } else {
+        PMap ! PMapSendGameMessage(name, msg)
+      }
     }
     case GMapGetPlayerList(name) => {
-    	val groupOp = _FindName(name)
-    	if(!groupOp.isEmpty) {
-    	  sender ! GMapGetPlayerListResponse(groupOp.get.listPlayers)
-    	} else {
-    	  sender ! GMapGetPlayerListResponse(List(name))
-    	}
+      val groupOp = _FindName(name)
+      if (!groupOp.isEmpty) {
+        sender ! GMapGetPlayerListResponse(groupOp.get.listPlayers)
+      } else {
+        sender ! GMapGetPlayerListResponse(List(name))
+      }
     }
     case GMapGetPlayerCount(name) => {
       val groupOp = _FindName(name)
-      if(!groupOp.isEmpty) {
+      if (!groupOp.isEmpty) {
         sender ! GMapGetPlayerCountResponse(groupOp.get.playerCount)
       }
-      	sender ! GMapGetPlayerCountResponse(1)
+      sender ! GMapGetPlayerCountResponse(1)
+    }
+    case GMapEnterDungeon(name) => {
+      val groupOp = _FindName(name)
+      if (groupOp.isEmpty) { // Player is not in a group.
+        var join = new PlayerGroup
+        join.addPlayer(name)
+        PMap ! PMapSendGameMessage(name, GameSystem("Entering dungeon..."))
+        val newDungeon = context.actorOf(Props[Dungeon])
+        newDungeon ! NewDungeon
+        newDungeon ! GameAddPlayer(name)
+        groupMap(name) = join
+
+      } else {
+        var group = groupOp.get
+        group.setReady(name)
+        if (group isGroupReady) {
+          group.groupSendMessage(GameSystem("All players ready! Entering dungeon..."))
+          val newDungeon = context.actorOf(Props[Dungeon])
+          newDungeon ! NewDungeon
+          val list = group.listPlayers
+          list.foreach(n => { groupMap(n) = group; newDungeon ! GameAddPlayer(n) })
+        }
+      }
+    }
+    case GMapExitDungeon(name) => {
+      val groupOp = _FindName(name)
+      if (!groupOp.isEmpty) { // Only do something if the player who wishes to exit is actually in a group.
+        var group = groupOp.get
+        group.setUnready(name)
+        val list = group.listPlayers
+        if (group.noOneReady)
+          group.inDungeon = false
+        list.foreach(n => groupMap(n) = group)
+      }
     }
   }
 }

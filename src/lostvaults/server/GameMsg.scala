@@ -87,10 +87,11 @@ case class GamePlayerHasDied(player: String) extends GameMsg
  */
 case class GameNotifyDungeon(msg: String) extends GameMsg
 /**
- * Passed along to a dungeon, this will send a system message to the room the sender is in. 
+ * Passed along to a dungeon, this will send a system message to the room the sender is in.
+ * @param name The name of the player whose room is to be notified. 
  * @param msg The notification to be sent.
  */
-case class GameNotifyRoom(msg: String) extends GameMsg
+case class GameNotifyRoom(name: String, msg: String) extends GameMsg
 /**
  * Passed along to a dungeon, this will start a combat between two players, 
  * or continue a combat in action
@@ -133,3 +134,26 @@ case object GameCombatWin extends GameMsg
  * Passed along to the room, notifying that room that the battle has ended
  */
 case object GameCombatFinished extends GameMsg
+/**
+ * Passed along to a player to tell the player to move to a room.
+ * @param room The room coordinates to move to
+ * @param start True if the player is moved into the starting room.
+ */
+case class GameDungeonMove(room:(Int, Int), start:Boolean) extends GameMsg
+/**
+ * Passed along to a dungeon to request for a player to move into a new room.
+ * @param direction The direction to move
+ * @param name The player who wishes to move
+ */
+case class GamePlayerMove(name: String, direction: Int) extends GameMsg
+
+/**
+ * Request from a player to exit the dungeon.
+ * @param name The name of the player who wishes to leave.
+ */
+case class GameExitDungeon(name: String) extends GameMsg
+/**
+ * Request from a player to enter a dungeon
+ * @param group Name of a player in the group that wishes to enter.
+ */
+case class GameEnterDungeon(group: String) extends GameMsg

@@ -230,7 +230,7 @@ public class GUI {
 			passwordInput.setText("pass");
 			passwordInput.setEditable(false);
 
-			IPInput.setText("127.0.0.1");
+			IPInput.setText("lostvaults.dnsdynamic.com"); //127.0.0.1 Om man är på egen dator
 			IPLabel.setPreferredSize(new Dimension(150, 0));
 			IPInput.setBackground(mediumBackground);
 			IPInput.setFont(font);
@@ -326,15 +326,15 @@ public class GUI {
 		roomPlayers.setText(players);
 	}
 
-	public void setNpcs(String npcsList) {
+	public void setNPCs(String npcsList) {
 		npcs.setText(npcsList);
 	}
 
-	public void addNpc(String npc) {
+	public void addNPC(String npc) {
 		npcs.append(npc + "\n");
 	}
 
-	public void removeNpc(String npc) {
+	public void removeNPC(String npc) {
 		String npctxt = npcs.getText();
 		npctxt = npctxt.replace(npc + "\n", "");
 		npcs.setText(npctxt);
