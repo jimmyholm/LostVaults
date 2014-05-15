@@ -2,6 +2,7 @@ package lostvaults.tests
 import akka.actor.ActorSystem
 import akka.testkit.{ TestKitBase, TestActorRef, ImplicitSender }
 import org.scalatest.FunSuite
+import scala.concurrent.duration._
 import lostvaults.server._
 
 class GroupMapTest
@@ -35,7 +36,11 @@ class GroupMapTest
     val actorRef = TestActorRef[GroupMap]
     actorRef ! GMapJoin("test", "Test2")
     actorRef ! GMapGetPlayerList("test")
-    expectMsg(GMapGetPlayerListResponse(List("test", "Test2")))
+    //expectMsg(GMapGetPlayerListResponse(List("test", "Test2")) || GMapGetPlayerListResponse(List("Test2", "test"))
+    assertResult(true) {
+      val v = receiveN(1,1.seconds)
+      v.head == GMapGetPlayerListResponse(List("test", "Test2")) || v.head == GMapGetPlayerListResponse(List("Test2", "test"))
+    }
   }
   test("Test of fetching number of players in a group.") {
     val actorRef = TestActorRef[GroupMap]
