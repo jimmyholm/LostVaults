@@ -48,7 +48,7 @@ class PlayerGroup {
   def removePlayer(name: String) {
     val exists = playerSet.find(c => c._1 == name)
     if (!(exists isEmpty)) {
-      playerSet.filterNot(c => c._1 == name)
+      playerSet = playerSet.filterNot(c => c._1 == name)
       groupSendMessage(GameSystem(name + " has left the party."))
     }
   }
