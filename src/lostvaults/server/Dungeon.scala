@@ -32,20 +32,22 @@ class Dungeon extends Actor {
   }
 
   def findRoom(name: String): Int = {
-    if (PSet.find(n => n == name) == None)
+    if (PSet.find(n => n.compareToIgnoreCase(name) == 0) == None)
       -1
-    var i = 0
-    for (i <- 0 until (gen.Width * gen.Height)) {
-      if (rooms(i).hasPlayer(name))
-        i
+    else {
+      for (i <- 0 until (gen.Width * gen.Height)) {
+        if (rooms(i).hasPlayer(name))
+          return i
+      }
+      -1
     }
-    -1
   }
 
   def receive() = {
     case DungeonMakeCity => {
       //val CityRoom = new Room()
       //lägg till alla NPCs
+      //rooms = new Array[Room](1)
       become(CityReceive)
     }
     case NewDungeon => {
@@ -55,15 +57,25 @@ class Dungeon extends Actor {
     }
     case GameSay(name, msg) => {
       val roomNum = findRoom(name)
-      if (roomNum == -1)
+      if (roomNum == -1) {
         sender ! GameSystem("The player who tried to speak is not in this dungeon! The world is crumbling!")
-      val players = rooms(roomNum).getPlayerList
-      players.foreach(n => PMap ! PMapSendGameMessage(name, GameSay(name, msg)))
+      } else {
+        val players = rooms(roomNum).getPlayerList
+        players.foreach(n => PMap ! PMapSendGameMessage(n, GameSay(name, msg)))
+      }
+    }
+
+    case GMapJoin(_, _) => {
+      sender ! GameMessage("You may not join a new group when in a dungeon!")
+    }
+
+    case GMapLeave(_) => {
+      sender ! GameMessage("You may not leave a group when in a dungeon!")
     }
 
     case GameAddPlayer(name) => {
       println("Adding player " + name)
-      PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
+      PSet foreach (c => if (name.compareToIgnoreCase(c) != 0) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
       var PString = ""
       PSet foreach (c => PString = c + "\n" + PString)
       PSet += name
@@ -80,13 +92,13 @@ class Dungeon extends Actor {
       val coord = indexToCoords(room)
       if (rooms(room).canMove(dir)) {
         println("Can move player.")
-        val move = 
+        val move =
           dir match {
-          case 0 => (coord._1, coord._2-1)
-          case 1 => (coord._1+1, coord._2)
-          case 2 => (coord._1, coord._2)
-          case 3 => (coord._1-1, coord._2)
-        }
+            case 0 => (coord._1, coord._2 - 1)
+            case 1 => (coord._1 + 1, coord._2)
+            case 2 => (coord._1, coord._2)
+            case 3 => (coord._1 - 1, coord._2)
+          }
         val nextRoom = gen.coordToIndex(move)
         rooms(room).removePlayer(name)
         val pListOld = rooms(room).getPlayerList()
@@ -117,16 +129,16 @@ class Dungeon extends Actor {
     }
     case GameExitDungeon(name) => {
       val room = findRoom(name)
-      if (room != entrance)
+      if (room != gen.coordToIndex(entrance))
         PMap ! PMapSendGameMessage(name, GameSystem("You can only leave the dungeon from the dungeon exit."))
       else {
-    	self ! GameRemovePlayer(name)
+        self ! GameRemovePlayer(name)
       }
     }
     case GameRemovePlayer(name) => {
       PSet -= name
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players
-      Main.City .get ! GameAddPlayer(name)
+      Main.City.get ! GameAddPlayer(name)
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(Main.City.get))
       GMap ! GMapExitDungeon(name)
       if (PSet isEmpty) {
@@ -134,18 +146,7 @@ class Dungeon extends Actor {
         context stop self
       }
     }
-
-    case GameNotifyDungeon(msg) => {
-      PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
-    }
-    case GameNotifyRoom(name, msg) => {
-      val room = findRoom(name)
-      if(name != (-1,-1))
-        rooms(room).getPlayerList().foreach(n => PMap ! PMapSendGameMessage(n, GameSystem(msg)))
-    }
-  }
-
-  def CityReceive: Receive = {
+    
     case GameAttackPlayer(attacker, attackee) => {
       println("PSet: " + PSet + " attackee: " + attackee)
       if (PSet.contains(attackee)) {
@@ -166,17 +167,34 @@ class Dungeon extends Actor {
       }
     }
     case GameAttackPlayerInCombat(attackee) => {
-      if (PSet contains(attackee)) {
+      if (PSet contains (attackee)) {
         sender() ! GameYourTurn
       } else {
         sender() ! GameMessage("The player you are trying to attack is not in the game")
       }
     }
-      
+
+    case GameNotifyDungeon(msg) => {
+      PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
+    }
+    case GameNotifyRoom(name, msg) => {
+      val room = findRoom(name)
+      if (room != -1)
+        rooms(room).getPlayerList().foreach(n => PMap ! PMapSendGameMessage(n, GameSystem(msg)))
+    }
+  }
+
+  def CityReceive: Receive = {
+    case GMapJoin(joinee, group) => {
+      GMap ! GMapJoin(joinee, group)
+    }
+    case GMapLeave(name) => {
+      GMap ! GMapLeave(name)
+    }
     case GameCombatFinished => {
       activeCombat = None
     }
-    
+
     case GameSay(name, msg) => {
       PSet foreach (c =>
         PMap ! PMapSendGameMessage(c, GameSay(name, msg)))
@@ -201,7 +219,7 @@ class Dungeon extends Actor {
       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
     case GameNotifyRoom(name, msg) => {
-      // Find all players in room 
+       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
     case GameEnterDungeon(name) => {
       GMap ! GMapEnterDungeon(name)

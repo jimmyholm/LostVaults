@@ -73,7 +73,7 @@ class PlayerMap extends Actor {
    */
   def receive = {
     case PMapSendGameMessage(name: String, msg: GameMsg) => {
-      val sendTo = PMap.find((A: Tuple2[String, ActorRef]) => A._1 == name)
+      val sendTo = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0)
       if (sendTo.isEmpty) {
         sender ! PMapFailure
       } else {

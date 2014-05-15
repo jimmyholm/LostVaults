@@ -38,18 +38,23 @@ class PlayerGroup {
    * @param name The name of the player to be added to the group
    */
   def addPlayer(name: String) {
-    groupSendMessage(GameSystem(name + " joined the party."))
-    playerSet += Tuple2(name, false)
+    //groupSendMessage(GameSystem(name + " joined the party."))
+    if (playerSet.find(c => c._1.compareToIgnoreCase(name) == 0) != None) {
+      println(name + " is already a member of this group.")
+    } else {
+      println("Adding " + name + " to group.")
+      playerSet += Tuple2(name, false)
+    }
   }
   /**
    * removePlayer removes a player from the group by name and sends a message to the remaining players that <b>name</b> has left the party.
    * @param name The name of the player to be removed.
    */
   def removePlayer(name: String) {
-    val exists = playerSet.find(c => c._1 == name)
+    val exists = playerSet.find(c => c._1.compareToIgnoreCase(name) == 0)
     if (!(exists isEmpty)) {
-      playerSet.filterNot(c => c._1 == name)
-      groupSendMessage(GameSystem(name + " has left the party."))
+      playerSet -= exists.get
+      //groupSendMessage(GameSystem(name + " has left the party."))
     }
   }
   /**
@@ -57,7 +62,7 @@ class PlayerGroup {
    * @param name The name of the player whose presence is inquired about.
    */
   def playerInGroup(name: String): Boolean = {
-    !(playerSet find (c => c._1 == name) isEmpty)
+    !(playerSet find (c => c._1.compareToIgnoreCase(name) == 0) isEmpty)
   }
   /**
    * listPlayers returns a list of names of all the players currently in this group.
@@ -73,32 +78,32 @@ class PlayerGroup {
   def playerCount(): Int = {
     playerSet size
   }
-  
+
   def isGroupReady: Boolean = {
-    var ret = 0
-    playerSet.foreach(c => if(c._2) ret+=1)
-    ret == (playerSet size)
+    var ret = true
+    playerSet.foreach(c => if (!c._2) ret = false)
+    ret
   }
-  
+
   def setReady(name: String) {
-    val exists = playerSet.find(c => c._1 == name)
+    val exists = playerSet.find(c => c._1.compareToIgnoreCase(name) == 0)
     if (!(exists isEmpty)) {
       removePlayer(name)
       playerSet += Tuple2(name, true)
-      groupSendMessage(GameSystem(name + " is ready to enter the dungeon!"))
+      //groupSendMessage(GameSystem(name + " is ready to enter the dungeon!"))
     }
   }
   def setUnready(name: String) {
-    val exists = playerSet.find(c => c._1 == name)
+    val exists = playerSet.find(c => c._1.compareToIgnoreCase(name) == 0)
     if (!(exists isEmpty)) {
       removePlayer(name)
       playerSet += Tuple2(name, false)
-      groupSendMessage(GameSystem(name + " is no longer ready to enter the dungeon!"))
+      //groupSendMessage(GameSystem(name + " is no longer ready to enter the dungeon!"))
     }
   }
-  def noOneReady():Boolean = {
+  def noOneReady(): Boolean = {
     var ret = 0
-    playerSet.foreach(c => if(c._2) ret+=1)
+    playerSet.foreach(c => if (c._2) ret += 1)
     ret == 0
   }
 }

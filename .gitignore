@@ -1,4 +1,4 @@
-*.class
+ *.class
 *.log
 
 # sbt specific
@@ -22,3 +22,7 @@ bin/*
 .settings/
 log.txt
 /bin
+
+#*#
+*#
+#*
