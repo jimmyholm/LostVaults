@@ -36,7 +36,7 @@ class Room() {
    *
    */
   def addPlayer(player: String) = {
-    player :: playerList
+    playerList = player :: playerList
   }
 
   /**
@@ -52,7 +52,7 @@ class Room() {
    *
    */
   def getPlayerList(): List[String] = {
-    return playerList
+    playerList
   }
 
   /**
@@ -60,7 +60,7 @@ class Room() {
    * @param player The name of the player to search for.
    */
   def hasPlayer(player: String): Boolean = {
-    playerList.find(f => f == player) != None
+    playerList.find(f => f.compareToIgnoreCase(player) == 0) != None
   }
 
   /**
@@ -68,7 +68,7 @@ class Room() {
    * @param newItem The name of the item to be added.
    */
   def addItem(newItem: Item) = {
-    newItem :: itemList
+    itemList = newItem :: itemList
   }
 
   /**
@@ -84,15 +84,23 @@ class Room() {
    *
    */
   def getItemList(): List[Item] = {
-    return itemList
+    itemList
   }
 
   /**
    * This method checks if a given item is in the room.
-   * @param item The name of the item to be searched for.
+   * @param item The item to be examined
    */
   def hasItem(item: Item): Boolean = {
-    return itemList.contains(item)
+    itemList.contains(item)
+  }
+  
+  /**
+   * This method checks if an item with a given name is in the room.
+   * @param item The name of the item to be examined
+   */
+  def hasItem(item: String): Boolean = {
+    itemList.find(i => i.name.compareToIgnoreCase(item) == 0) !=  None
   }
   /**
    * This method adds an NPC to the list of NPCs in the room.
@@ -100,7 +108,7 @@ class Room() {
    *
    */
   //  def addNPC(NPC: NPC) = {
-  //    NPC::NPCList
+  //    NPCList = NPC::NPCList
   //  }
   //
 
@@ -119,7 +127,7 @@ class Room() {
    *
    */
   //  def getNPCList() : List[NPC] = {
-  //    return NPCList
+  //    NPCList
   //  }
   //
 
@@ -129,7 +137,7 @@ class Room() {
    *
    */
   //  def hasNPC(NPC: NPC) : Boolean = {
-  //    return NPCList.contains(nPC) 
+  //    NPCList.contains(nPC) 
   //  }
 
   def getDescription(name: String): String = {
@@ -150,8 +158,8 @@ class Room() {
       itemList.foreach(item => ret += item.name + "\n")
     }
     if (playerList.size > 1) {
-      ret += "Also in the room are: \n"
-      playerList.foreach(o => if (o != name) ret += name + "\n")
+      ret += "With you is: \n"
+      playerList.foreach(o => if (o.compareToIgnoreCase(name) != 0) ret += o + "\n")
     }
     ret
   }

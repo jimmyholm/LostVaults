@@ -49,7 +49,7 @@ class Player extends Actor {
       msgQueue.enqueue(msg)
     } else {
       waitForAck = true
-      connection ! Write(ByteString(msg), Ack)
+      connection ! Write(ByteString(msg))
     }
   }
 
@@ -82,15 +82,15 @@ class Player extends Actor {
       // Här finns Receive satsen för servern - här tar vi emot alla användar-meddelanden från GUI:t
 
       def LoggedIn: Receive = {
-        case Ack => {
+        /*case Ack => {
           system.scheduler.scheduleOnce(10.milliseconds, self, SendNext)
-        }
+        }*/
         case SendNext => {
           if (msgQueue isEmpty)
             waitForAck = false
           else {
             val msg = msgQueue.dequeue
-            connection ! Write(ByteString(msg), Ack)
+            connection ! Write(ByteString(msg))
           }
         }
         case Received(msg) => {
@@ -98,11 +98,19 @@ class Player extends Actor {
           println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
+            case "ACK" => {
+              self ! SendNext
+            }
             case "SAY" => {
               dungeon ! GameSay(name, Parser.findRest(decodedMsg, 0))
             }
             case "WHISPER" => {
-              PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
+              if (name.compareToIgnoreCase(Parser.findWord(decodedMsg, 1)) == 0) {
+                pushToNetwork("SYSTEM Stop talking to yourself, it makes you look crazy...")
+                dungeon ! GameNotifyRoom(name, name + " mumbles something under their breath.")
+              }
+              else
+                PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
             }
             case "LOGOUT" => {
               pushToNetwork("Bye")
@@ -110,6 +118,9 @@ class Player extends Actor {
             }
             case "HELP" => {
               pushToNetwork(helpList.mkString)
+            }
+            case "EMOTE" => {
+              dungeon ! GameNotifyRoom(name, name + " " + Parser.findRest(decodedMsg, 0))
             }
             case "ATTACK" => {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
@@ -146,13 +157,22 @@ class Player extends Actor {
                 pushToNetwork("SYSTEM That is not a valid direction. Try North, East, West or South.")
               else {
                 dungeon ! GamePlayerMove(name, dir)
-                }
+              }
             }
             case "ENTER" => {
               dungeon ! GameEnterDungeon(name)
             }
             case "EXIT" => {
               dungeon ! GameExitDungeon(name)
+            }
+            case "JOIN" => {
+              if (name.compareToIgnoreCase(Parser.findWord(decodedMsg, 1)) == 0)
+                pushToNetwork("SYSTEM You cannot form a group with yourself.")
+              else
+                dungeon ! GMapJoin(name, Parser.findWord(decodedMsg, 1))
+            }
+            case "LEAVE" => {
+              dungeon ! GMapLeave(name)
             }
             case _ => {
               pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
@@ -200,31 +220,32 @@ class Player extends Actor {
               battle.get ! RemovePlayer(name)
               battle = None
             }
-            pushToNetwork("SYSTEM ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
-"██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼█┼┼┼┼██┼██┼┼┼┼\n" +
-"██┼┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼┼██┼██▀▀▀\n" +
-"██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██┼┼┼┼\n" +
-"███▄▄▄██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██▄▄▄\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼┼██┼┼┼┼┼┼┼██\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼┼██┼┼┼┼┼██┼┼\n" +
-"███▄▄▄███┼┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼┼██▄\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
+            pushToNetwork("SYSTEM \n " +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
+              "██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼█┼┼┼┼██┼██┼┼┼┼\n" +
+              "██┼┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼┼██┼██▀▀▀\n" +
+              "██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██┼┼┼┼\n" +
+              "███▄▄▄██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██▄▄▄\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼┼██┼┼┼┼┼┼┼██\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼┼██┼┼┼┼┼██┼┼\n" +
+              "███▄▄▄███┼┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼┼██▄\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
 
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
@@ -264,7 +285,7 @@ class Player extends Actor {
           if (!start)
             food -= costToMove(room)
           knownRooms = room :: knownRooms
-          	println("Player " + name + " received dungeon move")
+          println("Player " + name + " received dungeon move")
         }
         case GameSystem(msg) => {
           pushToNetwork("SYSTEM " + msg)
