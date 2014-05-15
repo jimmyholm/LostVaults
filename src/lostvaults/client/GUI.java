@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.JDialog;
 import java.awt.*;
 import java.awt.event.*;
-//import lostvaults.Parser;
+
 
 public class GUI {
 

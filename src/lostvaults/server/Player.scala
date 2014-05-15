@@ -115,8 +115,12 @@ class Player extends Actor {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
                 pushToNetwork("Don't hit yourself")
               } else {
-                dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-                dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
+                if (battle != None) {
+                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                } else {
+                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                  dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
+                }
                 target = Parser.findWord(decodedMsg, 1)
                 state = PAttack
               }
@@ -146,7 +150,7 @@ class Player extends Actor {
                 pushToNetwork("SYSTEM That is not a valid direction. Try North, East, West or South.")
               else {
                 dungeon ! GamePlayerMove(name, dir)
-                }
+              }
             }
             case "ENTER" => {
               dungeon ! GameEnterDungeon(name)
@@ -167,6 +171,7 @@ class Player extends Actor {
           _battle ! AddPlayer(name, speed, enemy)
         }
         case GameYourTurn => {
+          println("It is " + name + "'s turn")
           state match {
             case PAttack => {
               if (battle != None) {
@@ -188,6 +193,7 @@ class Player extends Actor {
         case GameDrinkPotion => {
           hp = hp + 10
           state = previousState
+          pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
         }
         case GameDamage(from, strength) => {
           var damage = strength - defense
@@ -201,36 +207,36 @@ class Player extends Actor {
               battle = None
             }
             pushToNetwork("SYSTEM ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
-"██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼█┼┼┼┼██┼██┼┼┼┼\n" +
-"██┼┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼┼██┼██▀▀▀\n" +
-"██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██┼┼┼┼\n" +
-"███▄▄▄██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██▄▄▄\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼┼██┼┼┼┼┼┼┼██\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n" +
-"██┼┼┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼┼██┼┼┼┼┼██┼┼\n" +
-"███▄▄▄███┼┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼┼██▄\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n" +
-"┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
+              "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
+              "██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼█┼┼┼┼██┼██┼┼┼┼\n" +
+              "██┼┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼┼██┼██▀▀▀\n" +
+              "██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██┼┼┼┼\n" +
+              "███▄▄▄██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼┼┼┼┼██┼██▄▄▄\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼┼██┼┼┼┼┼┼┼██\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n" +
+              "██┼┼┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼┼██┼┼┼┼┼██┼┼\n" +
+              "███▄▄▄███┼┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼┼██▄\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n" +
+              "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
 
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
-          }
-          if (battle != None) {
-            battle.get ! DamageAck
+            if (battle != None) {
+              battle.get ! ActionAck
+            }
           }
         }
         case GameCombatWin => {
@@ -264,7 +270,7 @@ class Player extends Actor {
           if (!start)
             food -= costToMove(room)
           knownRooms = room :: knownRooms
-          	println("Player " + name + " received dungeon move")
+          println("Player " + name + " received dungeon move")
         }
         case GameSystem(msg) => {
           pushToNetwork("SYSTEM " + msg)
