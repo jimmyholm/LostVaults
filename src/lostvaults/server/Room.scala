@@ -62,6 +62,8 @@ class Room() {
   def hasPlayer(player: String): Boolean = {
     playerList.find(f => f.compareToIgnoreCase(player) == 0) != None
   }
+  
+  // TESTAT FRAM TILL DENNA PUNKT
 
   /**
    * This method adds an item to the list of items in a room.
