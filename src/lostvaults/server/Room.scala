@@ -24,6 +24,11 @@ class Room() {
   var itemList: List[Item] = List()
   //  var NPCList: List[NPC]
 
+  /**
+   * This method returns true if the direction exists in this room
+   * @param direction the direction to check
+   * @return true if this room has an exit in that direction, else false
+   */
   def canMove(direction: Int) = {
     if (exits(direction))
       true
@@ -33,7 +38,6 @@ class Room() {
   /**
    * This method add a player to the list of players in the room.
    * @param player The name of the player to be added to the room.
-   *
    */
   def addPlayer(player: String) = {
     playerList = player :: playerList
@@ -49,7 +53,7 @@ class Room() {
 
   /**
    * This method returns the list of players in a room.
-   *
+   * @return the players in this room
    */
   def getPlayerList(): List[String] = {
     playerList
@@ -58,6 +62,7 @@ class Room() {
   /**
    * This method checks if a given player is in the room.
    * @param player The name of the player to search for.
+   * @return true if that player is in this room, else false
    */
   def hasPlayer(player: String): Boolean = {
     playerList.find(f => f.compareToIgnoreCase(player) == 0) != None
@@ -81,7 +86,7 @@ class Room() {
 
   /**
    * This method returns the list of items in a room.
-   *
+   * @return the items in the room
    */
   def getItemList(): List[Item] = {
     itemList
@@ -90,6 +95,7 @@ class Room() {
   /**
    * This method checks if a given item is in the room.
    * @param item The item to be examined
+   * @return true if this room contains the item, else false
    */
   def hasItem(item: Item): Boolean = {
     itemList.contains(item)
@@ -98,13 +104,14 @@ class Room() {
   /**
    * This method checks if an item with a given name is in the room.
    * @param item The name of the item to be examined
+   * @return true if this room contains the item, else false
    */
   def hasItem(item: String): Boolean = {
     itemList.find(i => i.name.compareToIgnoreCase(item) == 0) !=  None
   }
   /**
    * This method adds an NPC to the list of NPCs in the room.
-   * @param NPC The name of the NPC to be added.
+   * @param NPC the name of the NPC to be added.
    *
    */
   //  def addNPC(NPC: NPC) = {
@@ -114,7 +121,7 @@ class Room() {
 
   /**
    * This method removes an NPC from the list of NPCs in the room.
-   * @param NPC The name of the NPC to be removed.
+   * @param NPC the name of the NPC to be removed.
    *
    */
   //  def removeNPC(NPC: NPC) = {
@@ -124,7 +131,7 @@ class Room() {
 
   /**
    * This method returns the list of NPCs in the room.
-   *
+   * @return the NPC's in this room
    */
   //  def getNPCList() : List[NPC] = {
   //    NPCList
@@ -133,13 +140,20 @@ class Room() {
 
   /**
    * This method checks if a given NPC is in the room.
-   * @param NPC The name of the NPC to be searched for.
+   * @param NPC the name of the NPC to be searched for
+   * @return true if this room has this NPC, else false
    *
    */
   //  def hasNPC(NPC: NPC) : Boolean = {
-  //    NPCList.contains(nPC) 
+  //    NPCList.contains(NPC) 
   //  }
 
+  /**
+   * This method returns a string describing the 
+   * players, items and possible exits in this room.
+   * @param name the name of the player wanting the description
+   * @return representation of the exits,items  and players in this room
+   */
   def getDescription(name: String): String = {
     var ret = "You are standing in a wide, open room.\n"
     ret += "You see exits to the:" + "\n"
@@ -164,6 +178,12 @@ class Room() {
     ret
   }
 
+  /**
+   * String representation of the room with the possible exits
+   * marked by a N,E,S or W character for each direction
+   * and a "*" if this room is a start room
+   * @return string representation of the room
+   */
   override def toString(): String = {
     "|" + (if (exits(3)) "W" else " ") + (if (exits(0)) "N" else " ") + (if (startRoom) "*" else " ") + (if (exits(2)) "S" else " ") + (if (exits(1)) "E" else " ")
   }
