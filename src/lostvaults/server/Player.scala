@@ -27,7 +27,6 @@ class Player extends Actor {
   var knownRooms: List[(Int, Int)] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
-  var previousState: PlayerAction = PDecide
   var target = ""
   var battle: Option[ActorRef] = None
   var msgQueue: Queue[String] = Queue()
@@ -196,23 +195,23 @@ class Player extends Actor {
             case PAttack => {
               if (battle != None) {
                 battle.get ! AttackPlayer(name, target, attack)
-                previousState = state
+                state
               }
             }
             case PDrinkPotion => {
               if (battle != None) {
-                battle.get ! DrinkPotion
+                battle.get ! DrinkPotion(name)
               }
             }
             case PDecide => {
               pushToNetwork("SYSTEM It's your turn")
-              previousState = state
+              state
             }
           }
         }
         case GameDrinkPotion => {
           hp = hp + 10
-          state = previousState
+          state = PDecide
           pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
         }
         case GameDamage(from, strength) => {
