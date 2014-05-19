@@ -121,6 +121,7 @@ class Dungeon extends Actor {
         pListNew.foreach(n => PMap ! PMapSendGameMessage(n, GameSystem("Player " + name + " entered through the " + dirStr + " entrance.")))
         rooms(nextRoom).addPlayer(name)
         PMap ! PMapSendGameMessage(name, GameDungeonMove(move, false))
+        PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(nextRoom).getExitsString))
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
       } else {
         println("Cannot move player.")

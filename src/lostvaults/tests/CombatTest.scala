@@ -62,7 +62,7 @@ class CombatTest
     fsm ! AttackPlayer("Anna", "Jimmy", 2)
     assert(fsm.stateName == WaitForAck)
 
-    fsm ! ActionAck
+    fsm ! DamageAck
     assert(fsm.stateName == Action)
 
     fsm ! AttackPlayer("Jimmy", "Anna", 2)

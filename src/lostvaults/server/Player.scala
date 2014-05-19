@@ -20,10 +20,13 @@ class Player extends Actor {
   var name = ""
   var dungeon = self
   var hp = 10
-  var defense = 0
-  var attack = 1
+  var maxhp = 20
+  var defense = 0 /// Will in the future be an item
+  var attack = 1 /// Will in the future be an item
   var food = 0
-  var speed = 3 //3 + random.nextInt(3)
+  var maxfood = 30
+  var gold = 20
+  var speed = 3 //3 + random.nextInt(3) ///defense.getSpeed + attack.getSpeed ????
   var knownRooms: List[(Int, Int)] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
@@ -73,6 +76,8 @@ class Player extends Actor {
             PMap ! PMapAddPlayer(name, self)
             dungeon = Main.City.get
             dungeon ! GameAddPlayer(name)
+            pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
+            pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
             become(LoggedIn)
           }
         }
@@ -107,8 +112,7 @@ class Player extends Actor {
               if (name.compareToIgnoreCase(Parser.findWord(decodedMsg, 1)) == 0) {
                 pushToNetwork("SYSTEM Stop talking to yourself, it makes you look crazy...")
                 dungeon ! GameNotifyRoom(name, name + " mumbles something under their breath.")
-              }
-              else
+              } else
                 PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
             }
             case "LOGOUT" => {
@@ -211,13 +215,16 @@ class Player extends Actor {
         }
         case GameDrinkPotion => {
           hp = hp + 10
+          if (hp > maxhp) { hp = maxhp }
           state = PDecide
           pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
         }
         case GameDamage(from, strength) => {
           var damage = strength - defense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
@@ -255,7 +262,7 @@ class Player extends Actor {
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
             if (battle != None) {
-              battle.get ! ActionAck
+              battle.get ! DamageAck
             }
           }
         }

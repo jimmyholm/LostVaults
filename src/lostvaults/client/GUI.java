@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
 public class GUI {
 
 	/*******************************************
@@ -15,6 +14,7 @@ public class GUI {
 	int screenWidth;
 	int screenHeight;
 
+	JLabel dynamicInfoLabel = new JLabel("The Lost Vaults - Uneasy alliance ");
 	JTextArea dynamicInfo = new JTextArea();
 	JTextField commandInputField = new JTextField();
 
@@ -23,7 +23,8 @@ public class GUI {
 	JTextArea npcs = new JTextArea();
 	JTextArea items = new JTextArea();
 	JTextArea exits = new JTextArea();
-	JLabel stats = new JLabel();
+	JLabel healthStats = new JLabel();
+	JLabel combatStats = new JLabel();
 	JFrame window = new JFrame("The Lost Vaults");
 
 	Color darkBackground = new Color(0x800000);
@@ -48,23 +49,37 @@ public class GUI {
 		window.setLayout(new BorderLayout());
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		dynamicInfoLabel.setForeground(lightTextColor);
+		dynamicInfoLabel.setFont(font);
 		dynamicInfo.setEditable(false);
 		dynamicInfo.setBackground(lightBackground);
 		dynamicInfo
 				.setBorder(BorderFactory.createLineBorder(darkBackground, 2));
 		dynamicInfo.setFont(font);
 		dynamicInfo.setForeground(textColor);
+		dynamicInfo.setLineWrap(true);
+		dynamicInfo.setWrapStyleWord(true);
 		JScrollPane dynamicInfoScroll = new JScrollPane(dynamicInfo);
-		//dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
 		dynamicInfoScroll.setBorder(BorderFactory.createEmptyBorder());
-
+		dynamicInfoScroll
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		JPanel dynamicInfoPanel = new JPanel(new BorderLayout());
+		dynamicInfoPanel.setBackground(darkBackground);
+		dynamicInfoPanel.add(dynamicInfoScroll, BorderLayout.CENTER);
+		dynamicInfoPanel.add(dynamicInfoLabel, BorderLayout.NORTH);
 		/*******************************************
 		 * * Static window in the GUI * *
 		 *******************************************/
-		
-		stats.setText("HP: 20/20 \t Food: 30/30");
-		stats.setFont(font);
-		stats.setForeground(lightTextColor);
+		healthStats.setText("HP: 0/0 Food: 0/0 Gold: 0     ");
+		healthStats.setFont(font);
+		healthStats.setForeground(lightTextColor);
+		combatStats.setText("Attack: 0 Defense: 0 Speed 0     ");
+		combatStats.setFont(font);
+		combatStats.setForeground(lightTextColor);
+		JPanel statsPanel = new JPanel(new BorderLayout());
+		statsPanel.setBackground(darkBackground);
+		statsPanel.add(healthStats, BorderLayout.NORTH);
+		statsPanel.add(combatStats, BorderLayout.CENTER);
 
 		JPanel dungeonPlayersPanel = createRightBox(dungeonPlayers,
 				"Players in Dungeon: ");
@@ -98,17 +113,15 @@ public class GUI {
 		// rightPanel.setPreferredSize(new Dimension(window.getSize().width / 3,
 		// 0));
 		rightPanel.setBackground(darkBackground);
-		rightPanel.add(stats, BorderLayout.NORTH);
+		rightPanel.add(statsPanel, BorderLayout.NORTH);
 		rightPanel.add(staticInfo, BorderLayout.CENTER);
 		rightPanel.add(exitsPanel, BorderLayout.SOUTH);
 
 		JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				dynamicInfoScroll, rightPanel);
+				dynamicInfoPanel, rightPanel);
 		mainPanel.setResizeWeight(0.85);
 		mainPanel.setBackground(darkBackground);
 		mainPanel.setBorder(null);
-		// mainPanel.add(dynamicInfoScroll, BorderLayout.CENTER);
-		// mainPanel.add(rightPanel, BorderLayout.EAST);
 
 		/*******************************************
 		 * * Command box in the GUI * *
@@ -140,6 +153,7 @@ public class GUI {
 
 		new LogInPopUp(window);
 	}
+
 	/*******************************************
 	 * * Right window in the GUI * *
 	 *******************************************/
@@ -165,7 +179,8 @@ public class GUI {
 	 * * Login in pop up box * *
 	 *******************************************/
 
-	public class LogInPopUp extends JDialog implements ActionListener, KeyListener {
+	public class LogInPopUp extends JDialog implements ActionListener,
+			KeyListener {
 
 		JFrame window;
 		JButton button;
@@ -215,7 +230,7 @@ public class GUI {
 					.createLineBorder(darkBackground, 1));
 			userName.add(userNameInput, BorderLayout.CENTER);
 			userName.add(userNameLabel, BorderLayout.WEST);
-			
+
 			passwordLabel.setPreferredSize(new Dimension(150, 0));
 			passwordInput.setBackground(mediumBackground);
 			passwordInput.setFont(font);
@@ -231,7 +246,7 @@ public class GUI {
 			passwordInput.setText("pass");
 			passwordInput.setEditable(false);
 
-			IPInput.setText("localhost"); //127.0.0.1 Om man är på egen dator
+			IPInput.setText("localhost"); // 127.0.0.1 Om man är på egen dator
 			IPLabel.setPreferredSize(new Dimension(150, 0));
 			IPInput.setBackground(mediumBackground);
 			IPInput.setFont(font);
@@ -264,24 +279,28 @@ public class GUI {
 			setLocationRelativeTo(null);
 			setVisible(true);
 		}
-		
+
 		/*******************************************
-		 * *       Keyboard Handling Events      * *
+		 * * Keyboard Handling Events * *
 		 *******************************************/
-		public void keyTyped(KeyEvent e) { }
-		public void keyPressed(KeyEvent e) { }
-		public void keyReleased(KeyEvent e){
-		if(e.getKeyCode() == KeyEvent.VK_ENTER)
-			tryConnect();
+		public void keyTyped(KeyEvent e) {
 		}
-		
+
+		public void keyPressed(KeyEvent e) {
+		}
+
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER)
+				tryConnect();
+		}
+
 		/*******************************************
-		 * *    Action event for popup window    * *
+		 * * Action event for popup window * *
 		 *******************************************/
 		public void actionPerformed(ActionEvent e) {
 			tryConnect();
 		}
-		
+
 		private void tryConnect() {
 			String user = userNameInput.getText();
 			String password = passwordInput.getText();
@@ -290,14 +309,16 @@ public class GUI {
 				message.setText("You must enter a username\n");
 			} else if (password.equals("")) {
 				message.setText("You must enter a password\n");
-			} else if (ip.equals("")){
+			} else if (ip.equals("")) {
 				// String pwd = passwordInput.getText(); //String ip =
 				message.setText("You must enter an IP address.\n");
 			} else {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
-				stats.setText("The Lost Vaults - " + name);
+				dynamicInfoLabel
+						.setText("The Lost Vaults - Uneasy Alliance --- "
+								+ name);
 				playGameCommunication.sendIP(ip);
 				window.setVisible(true);
 				dispose();
@@ -315,6 +336,14 @@ public class GUI {
 	public void updateDynamicInfo(String msg) {
 		dynamicInfo.append(msg + "\n");
 		dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
+	}
+
+	public void setHealthStats(String stats) {
+		healthStats.setText(" " + stats);
+	}
+
+	public void setCombatStats(String stats) {
+		combatStats.setText(" " + stats);
 	}
 
 	public void setDungeonPlayers(String playerList) {

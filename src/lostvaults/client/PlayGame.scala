@@ -64,6 +64,10 @@ class playGame extends Actor {
       println(c)
       val firstWord = Parser.findWord(c, 0)
       firstWord match {
+        case "HEALTHSTATS" =>
+          game.setHealthStats(Parser.findRest(c, 0))
+        case "COMBATSTATS" =>
+          game.setCombatStats(Parser.findRest(c, 0))
         case "DUNGEONLIST" =>
           game.setDungeonPlayers(Parser.findRest(c, 0))
         case "DUNGEONJOIN" =>

@@ -41,6 +41,12 @@ object playGameCommunication {
     gui.updateDynamicInfo(msg)
   }
 
+  def setHealthStats(stats: String) {
+		gui.setHealthStats(stats)
+	}
+	def setCombatStats(stats: String) {
+		gui.setCombatStats(stats)
+	}
   /**
    * s
    * This method will replace the current list of players in the dungeon, shown by the GUI, with the given list of players.
