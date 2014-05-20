@@ -3,6 +3,9 @@ package lostvaults.server
 import akka.actor.{ Actor, Props, ActorRef }
 import scala.collection.mutable.Set
 import lostvaults.Parser
+import scala.concurrent.Future
+import akka.pattern.ask
+
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
  * to a single dungeon actor instance at the start of the server's life.
@@ -147,11 +150,12 @@ class Dungeon extends Actor {
         context stop self
       }
     }
-    
+
     case GameAttackPlayer(attacker, attackee) => {
       println("PSet: " + PSet + " attackee: " + attackee)
-      if (PSet.contains(attackee)) {
-        println(attacker + " attacks " + attackee)
+      var currentRoom = findRoom(attacker)
+      if (rooms(currentRoom).hasPlayer(attackee)) {
+        println(attacker + " attacks player " + attackee)
         if (activeCombat == None) {
           println("New combat actor created.")
           activeCombat = Some(context.actorOf(Props[Combat]))
@@ -163,6 +167,8 @@ class Dungeon extends Actor {
         println("Adding " + attackee + " to combat")
         PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
         PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
+      } else if (rooms(currentRoom).hasNPC(attackee)) {
+
       } else {
         PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
       }
@@ -178,26 +184,46 @@ class Dungeon extends Actor {
     case GameNotifyDungeon(msg) => {
       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
-    case GameNotifyRoom(name, msg) => {
+    case GameNotifyRoomByName(name, msg) => {
       val room = findRoom(name)
       if (room != -1)
         rooms(room).getPlayerList().foreach(n => PMap ! PMapSendGameMessage(n, GameSystem(msg)))
     }
+    case GameNotifyRoom(room, msg) => {
+      println("-------------------------------------------------------------- GameNotifyRoom Received")
+      if (rooms(room) != -1)
+        println("Sending message to: " + rooms(room).getPlayerList() + " msg: " + msg)
+      rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
+    }
     // Item messeges
     case GamePickUpItem(item, name, index) => {
       // försöka plocka upp item från det rum spelaren är i
-      if(rooms(index).hasItem(item)) {
+      if (rooms(index).hasItem(item)) {
         // plocka upp item
-        
+
+        // rooms(index).takeItem(name)
+        val returnItem = rooms(index).takeItem(name)
+//        if (returnItem.isWeapon || returnItem.isArmor) {
+//          val playerRef: Future[String] = ask(PMap, PMapGetPlayer(name, "purpose")).mapTo[String]
+//          if (returnItem.isWeapon) {
+//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("weapon"))
+//
+//          } else {
+//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("armor"))
+//          }
+//          val itemToDrop: Future[String] = ask(playerRef, GameReturnItem(""))()
+//          //rooms(index).addItem(rooms(index).
+//        }
+        PMap ! PMapSendGameMessage(name, GameItemTaken(returnItem))
       } else {
-        sender() ! GameMessage("No such item in room")
+        PMap ! PMapSendGameMessage(name, GameMessage("No such item in room"))
       }
-      
+
+
     }
     case GameDropItem(item, name, index) => {
-      
     }
-    
+
   }
 
   def CityReceive: Receive = {
@@ -234,8 +260,8 @@ class Dungeon extends Actor {
     case GameNotifyDungeon(msg) => {
       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
-    case GameNotifyRoom(name, msg) => {
-       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
+    case GameNotifyRoomByName(name, msg) => {
+      PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
     case GameEnterDungeon(name) => {
       GMap ! GMapEnterDungeon(name)

@@ -87,16 +87,21 @@ case class GamePlayerHasDied(player: String) extends GameMsg
  */
 case class GameNotifyDungeon(msg: String) extends GameMsg
 /**
+ * Passed along to a dungeon, this will send a system message to room.
+ * @param room Index of the room to be notified. 
+ * @param msg The notification to be sent.
+ */
+case class GameNotifyRoom(room: Int, msg: String) extends GameMsg
+/**
  * Passed along to a dungeon, this will send a system message to the room the sender is in.
  * @param name The name of the player whose room is to be notified. 
  * @param msg The notification to be sent.
  */
-case class GameNotifyRoom(name: String, msg: String) extends GameMsg
+case class GameNotifyRoomByName(name: String, msg: String) extends GameMsg
 /**
  * Passed along to a dungeon, this will start a combat between two players, 
  * or continue a combat in action
  * @param attacker The player that is performing the attack
- * @param speed Speed of the attacker
  * @param attackee The player that is being attacked 
  */
 case class GameAttackPlayer(attacker: String, attackee: String) extends GameMsg
@@ -158,10 +163,28 @@ case class GameExitDungeon(name: String) extends GameMsg
  */
 case class GameEnterDungeon(group: String) extends GameMsg
 /**
- * 
+ * Passed along to Dungeon to inform the Dungeon that a player
+ * wishes to pick up an item.
+ * @param item The name of the item to pick up
+ * @param player The player who wishes to pick up item
+ * @param room The player's current room
  */
 case class GamePickUpItem(item: String, player: String, room: Int) extends GameMsg
 /**
- *
+ * Passed along to a Dungeon to inform the Dungeon that a player
+ * wishes to drop an item.
+ * @param item The name of the item to pick up
+ * @param player The player who wishes to pick up item
+ * @param room The player's current room
  */
 case class GameDropItem(item: String, player: String, room: Int) extends GameMsg
+/**
+ * Message to tell the player to tell to dungeon wich item the player is 
+ * currently carrying.
+ * @param itemType The type of item to return, armor or weapon
+ */
+case class GameReturnItem(itemType: String) extends GameMsg
+/**
+ * TODO kanske inte ska vara kvar
+ */
+case class GameItemTaken(item: Item) extends GameMsg
