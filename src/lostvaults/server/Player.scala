@@ -42,6 +42,7 @@ class Player extends Actor {
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
   var db: Option[Database] = None
+
   case object Ack extends Event
   case object SendNext
   case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, weapon: Int, armor: Int, gold: Int)
@@ -198,7 +199,7 @@ class Player extends Actor {
             case "WHISPER" => {
               if (name.compareToIgnoreCase(Parser.findWord(decodedMsg, 1)) == 0) {
                 pushToNetwork("SYSTEM Stop talking to yourself, it makes you look crazy...")
-                dungeon ! GameNotifyRoom(name, name + " mumbles something under their breath.")
+                dungeon ! GameNotifyRoom(currentRoom, name + " mumbles something under their breath.")
               } else
                 PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
             }
@@ -210,7 +211,7 @@ class Player extends Actor {
               pushToNetwork(helpList.mkString)
             }
             case "EMOTE" => {
-              dungeon ! GameNotifyRoom(name, name + " " + Parser.findRest(decodedMsg, 0))
+              dungeon ! GameNotifyRoom(currentRoom, name + " " + Parser.findRest(decodedMsg, 0))
             }
             case "ATTACK" => {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
@@ -284,7 +285,7 @@ class Player extends Actor {
         }
         case GamePlayerJoinBattle(_battle, enemy) => {
           battle = Some(_battle)
-          _battle ! AddPlayer(name, getSpeed, enemy)
+          _battle ! AddPlayer(self, name, getSpeed, enemy)
         }
         case GameYourTurn => {
           println("It is " + name + "'s turn")
@@ -320,7 +321,7 @@ class Player extends Actor {
           sendStats
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
-            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
+            dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
             if (battle != None) {
               battle.get ! RemovePlayer(name)
               battle = None
@@ -353,7 +354,7 @@ class Player extends Actor {
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
 
           } else {
-            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
+            dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ".")
             if (battle != None) {
               battle.get ! DamageAck
             }

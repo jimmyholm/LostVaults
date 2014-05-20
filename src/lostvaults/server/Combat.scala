@@ -11,7 +11,7 @@ sealed trait CombatEvent
  * @param speed The speed of the player that should be added to the combat
  * @param enemy The player that name is attacking or the player name is being attacked by
  */
-case class AddPlayer(name: String, speed: Int, enemy: String) extends CombatEvent
+case class AddPlayer(self: ActorRef, name: String, speed: Int, enemy: String) extends CombatEvent
 /**
  * Passed along to a combat, notifying that name wants to attach target with strength strength
  * @param name The name of the attacker
@@ -70,7 +70,7 @@ sealed trait CombatData
  * @param Duration The game clock, increased by 1 with each turn
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
-case class RestData(PlayerList: List[Tuple2[String, Int]], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+case class RestData(PlayerList: List[Tuple3[String, Int, ActorRef]], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
 /**
  * Data within Action. 
  * @param PlayerList All players in combat, element in list looks like: Tuple2(name, speed)
@@ -78,10 +78,9 @@ case class RestData(PlayerList: List[Tuple2[String, Int]], Duration: Int, Combat
  * @param Duration The game clock, increased by 1 with each turn
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
-case class ActionData(PlayerList: List[Tuple2[String, Int]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+case class ActionData(PlayerList: List[Tuple3[String, Int, ActorRef]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
 
 class Combat extends Actor with FSM[CombatState, CombatData] {
-  val PMap = Main.PMap.get
   var dungeon: Option[ActorRef] = None
 
   startWith(Rest, RestData(List(), 0, List()))
@@ -98,13 +97,13 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         println("COMBAT-Rest: New round, players " + nextTurnList + " up for their turn.")
         val nextPlayer = nextTurnList.head
         println("COMBAT-Rest: It's " + nextPlayer + "'s turn to take an action.")
-        PMap ! PMapSendGameMessage(nextPlayer, GameYourTurn)
+        combatSendGameMsg(nextPlayer, data.PlayerList, GameYourTurn)
         goto(Action) using ActionData(data.PlayerList, nextTurnList, nextDuration, data.CombatsPerPlayer)
       }
     }
-    case Event(AddPlayer(name, speed, enemy), incomingData: RestData) => {
+    case Event(AddPlayer(nameActorRef, name, speed, enemy), incomingData: RestData) => {
       println("AddPlayer received for: " + name)
-      val data = addPlayer(name, speed, enemy, incomingData)
+      val data = addPlayer(nameActorRef, name, speed, enemy, incomingData)
       goto(Rest) using RestData(data.PlayerList, data.Duration, data.CombatsPerPlayer)
     }
   }
@@ -120,7 +119,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         println("COMBAT-WaitForAck: TurnList: " + data.TurnList + " nextTurnList: " + nextTurnList)
         val nextPlayer = nextTurnList.head
         println("COMBAT-WaitForAck: It's " + nextPlayer + "'s turn to take an action.")
-        PMap ! PMapSendGameMessage(nextPlayer, GameYourTurn)
+        combatSendGameMsg(nextPlayer, data.PlayerList, GameYourTurn)
         goto(Action) using ActionData(data.PlayerList, nextTurnList, data.Duration, data.CombatsPerPlayer)
       }
     }
@@ -137,7 +136,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       /**Now all ocurrences of name has been removed, lets remove all players that had name as their last enemy: **/
 
       //Removes players that has emptied their combatPerPlayer list from nextPlayerList and nextTurnList, and notifies them that they won
-      combatList foreach (c => if (c._2 isEmpty) { PMap ! PMapSendGameMessage(c._1, GameCombatWin); nextPlayerList = nextPlayerList filterNot (d => d._1 == c._1) })
+      combatList foreach (c => if (c._2 isEmpty) { combatSendGameMsg(c._1, data.PlayerList, GameCombatWin); nextPlayerList = nextPlayerList filterNot (d => d._1 == c._1) })
       combatList foreach (c => if (c._2 isEmpty) { nextTurnList = nextTurnList filterNot (d => d == c._1) })
       println("COMBAT-WaitForAck-RemovePlayer: Players still in combat: " + nextPlayerList)
       combatList = combatList filterNot (c => c._2 isEmpty)
@@ -157,13 +156,13 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         println("COMBAT-WaitForAck-RemovePlayer: TurnList: " + data.TurnList + " nextTurnList: " + nextTurnList)
         var nextPlayer = nextTurnList.head
         println("COMBAT-WaitForAck: It's " + nextPlayer + "'s turn to take an action.")
-        PMap ! PMapSendGameMessage(nextPlayer, GameYourTurn)
+        combatSendGameMsg(nextPlayer, nextPlayerList, GameYourTurn)
         goto(Action) using ActionData(nextPlayerList, nextTurnList, data.Duration, combatList)
       }
     }
-    case Event(AddPlayer(name, speed, enemy), data: ActionData) => {
+    case Event(AddPlayer(nameActorRef, name, speed, enemy), data: ActionData) => {
       println("AddPlayer received for: " + name)
-      goto(WaitForAck) using addPlayer(name, speed, enemy, data)
+      goto(WaitForAck) using addPlayer(nameActorRef, name, speed, enemy, data)
     }
   }
 
@@ -173,7 +172,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       if (data.PlayerList.exists(c => c._1.equals(target))) {
         if (name == turnPlayer) {
           println("COMBAT-Action-AttackPlayer: Attack message received from the player whose turn it is.")
-          PMap ! PMapSendGameMessage(target, GameDamage(name, strength))
+          combatSendGameMsg(target, data.PlayerList, GameDamage(name, strength))
           goto(WaitForAck)
 
         } else {
@@ -192,7 +191,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       val nextTurnList = data.TurnList.tail
       if (name == turnPlayer) {
         println("COMBAT-Action-DrinkPotion: DrinkPotion message received from the player whose turn it is.")
-        PMap ! PMapSendGameMessage(turnPlayer, GameDrinkPotion)
+        combatSendGameMsg(turnPlayer, data.PlayerList, GameDrinkPotion)
         if (nextTurnList isEmpty) {
           println("COMBAT-Action-DrinkPotion: TurnList is empty, returning to rest state.")
           goto(Rest) using RestData(data.PlayerList, data.Duration, data.CombatsPerPlayer)
@@ -200,7 +199,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
           val nextPlayer = nextTurnList.head
           println("COMBAT-Action-DrinkPotion: TurnList: " + data.TurnList + " nextTurnList: " + nextTurnList)
           println("COMBAT-Action-DrinkPotion: It's " + nextPlayer + "'s turn to take an action.")
-          PMap ! PMapSendGameMessage(nextPlayer, GameYourTurn)
+          combatSendGameMsg(nextPlayer, data.PlayerList, GameYourTurn)
           goto(Action) using ActionData(data.PlayerList, nextTurnList, data.Duration, data.CombatsPerPlayer)
         }
       } else {
@@ -208,13 +207,13 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         stay
       }
     }
-    case Event(AddPlayer(name, speed, enemy), data: ActionData) => {
+    case Event(AddPlayer(nameActorRef, name, speed, enemy), data: ActionData) => {
       println("AddPlayer received for: " + name)
-      goto(Action) using addPlayer(name, speed, enemy, data)
+      goto(Action) using addPlayer(nameActorRef, name, speed, enemy, data)
     }
   }
 
-  def addPlayer(name: String, speed: Int, enemy: String, incomingData: CombatData) = {
+  def addPlayer(nameActorRef: ActorRef, name: String, speed: Int, enemy: String, incomingData: CombatData) = {
     println("COMBAT-addPlayerFunction: Adding player " + name + " with speed " + speed + ".")
     var data = ActionData(List(), List(), 0, List())
     if (incomingData.isInstanceOf[RestData]) {
@@ -230,14 +229,20 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
     //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
     combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
     println("COMAT-addPlayerFunction: Addplayer combatList: " + combatList)
-    if (data.PlayerList.exists(x => x == Tuple2(name, speed))) {
+    if (data.PlayerList.exists(x => x == Tuple3(name, speed, nameActorRef))) {
       println("COMBAT-addPlayerFunction: no new player. PlayerList: " + data.PlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
       ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
     } else {
-      val nextPlayerList = ((name, speed) :: data.PlayerList).sortWith((a, b) => a._2 < b._2)
+      val nextPlayerList = ((name, speed, nameActorRef) :: data.PlayerList).sortWith((a, b) => a._2 < b._2)
       println("COMBAT-addPlayerFunction: New player was added. PlayerList: " + nextPlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
       ActionData(nextPlayerList, data.TurnList, data.Duration, combatList)
     }
+  }
+  def combatSendGameMsg(name: String, playerList: List[(String, Int, ActorRef)], msg: GameMsg) {
+	  var tupleOption = playerList.find(c => c._1.equalsIgnoreCase(name))
+	  if(tupleOption != None) {
+	    tupleOption.get._3 ! msg
+	  }
   }
 }
 
