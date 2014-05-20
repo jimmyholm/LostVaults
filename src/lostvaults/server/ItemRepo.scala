@@ -19,7 +19,6 @@ object ItemRepo {
       implicit session =>
         Q.queryNA("SELECT * FROM Items") foreach (c => itemArray = itemArray :+ c)
     }
-    itemArray foreach (c => println(c))
   }
   def getAllByType(Type: String): Array[ItemData] = {
     var ret = Array[ItemData]()
@@ -32,21 +31,21 @@ object ItemRepo {
     ret
   }
   def getById(ID: Int): Item = {
-    val itemOp = itemArray.find(item => item.id == ID).get
+    val itemOp = itemArray.find(item => item.id == ID)
     if (itemOp == None)
-      new Item("", 0)
+      new Item(-4, "Invalid Item", 0, 0, 0, 0, "Invalid")
     else {
-      val item = itemOp
-      val ret: Item = new Item(item.name, item.attack)
+      val item = itemOp.get
+      val ret: Item = new Item(item.id, item.name, item.attack, item.defense, item.speed, item.price, item.itemType)
       ret
     }
   }
   def getItem(Index: Int): Item = {
     var item = itemArray(0)
     if (Index < 0 || Index >= itemArray.length)
-      item = itemArray(0)
+      new Item(-4, "Invalid Item", 0, 0, 0, 0, "Invalid")
     item = itemArray(Index)
-    val ret: Item = new Item(item.name, item.attack)
+   val ret: Item = new Item(item.id, item.name, item.attack, item.defense, item.speed, item.price, item.itemType)
     ret
   }
 }

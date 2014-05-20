@@ -29,10 +29,11 @@ class Player extends Actor {
   var dungeon = self
   var maxhp = 10
   var hp = 10
+  var potions = 0
   var food = 5
-  var gold = 0
-  var weapon: Item = ItemRepo.getById(0)
-  var armor: Item = ItemRepo.getById(0)
+  var gold = 10
+  var weapon: Item = ItemRepo.getById(1)
+  var armor: Item = ItemRepo.getById(2)
   var knownRooms: List[Int] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
@@ -43,22 +44,44 @@ class Player extends Actor {
   var db: Option[Database] = None
   case object Ack extends Event
   case object SendNext
-  case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
-  implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
-
+  case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, weapon: Int, armor: Int, gold: Int)
+  implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
+  def equipItem(ID: Int) {
+    val item = ItemRepo.getById(ID)
+    if(item.id <= 0) {
+      pushToNetwork("SYSTEM: You cannot equip that item.")
+    } else {
+      if(item.isWeapon) {
+        
+      }
+    }
+  }
+  def sendStats() {
+    pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
+    pushToNetwork("COMBATSTATS Attack: " + getAttack + " Defense: " + getDefense + " Speed: " + getSpeed)
+  }
+  def savePlayer() {
+    implicit val session = db.get.createSession()
+    val sql = "UPDATE players " + 
+    		   "SET maxHP="+maxhp+", weapon="+weapon.id+", armor="+armor.id+", gold="+gold + " " +
+    		   "WHERE name='"+name+"'"
+            
+    Q.updateNA(sql).execute
+    session.close()
+  }
 
   def getAttack(): Integer = {
     weapon.attack + armor.attack
-  }  
-  
+  }
+
   def getDefense(): Integer = {
     weapon.defense + armor.defense
   }
-  
+
   def getSpeed(): Integer = {
     weapon.speed + armor.speed
   }
-  
+
   def costToMove(cell: Int): Int = {
     if (knownRooms.exists(a => a == cell))
       0
@@ -103,41 +126,42 @@ class Player extends Actor {
             // This guy's not online, check if the passwords match.
             val pass = Parser.findRest(purpose, 1)
             var sql = ""
-            println("Sending Select...")
-            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1)+"'"
+            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1) + "'"
             var res = Q.queryNA[PlayerData](sql)
             if (res.list().isEmpty) { // Player not registered, so add to the database.
-              sql = "INSERT INTO Players (name, pass, maxHP, weapon, armor, potions, food) " +
-                "values ('" + name + "', '" + pass + "', " + maxhp + "0, 1, 0, 0) "
+              sql = "INSERT INTO Players (name, pass, maxHP, weapon, armor, gold) " +
+                "VALUES ('" + name + "', '" + pass + "', " + maxhp + ",1, 2, 20)"
               (Q.u + sql).execute
               pushToNetwork("LOGINOK")
               PMap ! PMapAddPlayer(name, self)
               dungeon = Main.City.get
               dungeon ! GameAddPlayer(name)
+              sendStats
               become(LoggedIn)
+              session.close()
             } else { // Player DOES exist, compare passwords.
               println("Player IS registered.")
               var player = res.list().head
               if (player.pass == pass) { // Passwords match!
                 hp = player.maxHp;
-                food = if (player.food > 5) player.food else 5
-                weapon = ItemRepo.getById(player.weapon)
-                armor = ItemRepo.getById(player.armor)
+                food = 5
+                potions = 5
+                weapon = ItemRepo.getById(3)
+                armor = ItemRepo.getById(6)
+                savePlayer
                 pushToNetwork("LOGINOK")
                 PMap ! PMapAddPlayer(name, self)
                 dungeon = Main.City.get
                 dungeon ! GameAddPlayer(name)
-                
-                pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
-                pushToNetwork("COMBATSTATS Attack: " + getAttack + " Defense: " + getDefense + " Speed: " + getSpeed)
-           
+                sendStats
                 become(LoggedIn)
+                session.close()
               } else { // Passwords do NOT match.
-                pushToNetwork("LOGINFAIL")
                 pushToNetwork("SYSTEM Invalid Password!")
-                //context stop self
+                pushToNetwork("LOGINFAIL")
+                session.close()
+                context stop self
               }
-              session.close()
             }
           }
         }
@@ -281,13 +305,13 @@ class Player extends Actor {
           if (hp > maxhp) { hp = maxhp }
           state = PDecide
           pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
-          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
+          sendStats
         }
         case GameDamage(from, strength) => {
           var damage = strength - getDefense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
-          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
+          sendStats
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
