@@ -158,18 +158,18 @@ case class GameExitDungeon(name: String) extends GameMsg
  */
 case class GameEnterDungeon(group: String) extends GameMsg
 /**
- * 
+ * TODO
  */
 case class GamePickUpItem(item: String, player: String, room: Int) extends GameMsg
 /**
- * 
+ * TODO
  */
 case class GameDropItem(item: String, player: String, room: Int) extends GameMsg
 /**
- *
+ * TODO
  */
 case class GameReturnItem(itemType: String) extends GameMsg
 /**
- *
+ * TODO
  */
 case class GameItemTaken(item: Item) extends GameMsg
