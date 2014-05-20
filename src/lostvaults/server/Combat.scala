@@ -13,18 +13,71 @@ sealed trait CombatEvent
  */
 case class AddPlayer(name: String, speed: Int, enemy: String) extends CombatEvent
 /**
- *
+ * Passed along to a combat, notifying that name wants to attach target with strength strength
+ * @param name The name of the attacker
+ * @param target The name of the attackee
+ * @param strength the strength of the attack (corresponds to name's attack value)
  */
 case class AttackPlayer(name: String, target: String, strength: Int) extends CombatEvent
+/**
+ * Passed along to a combat, notifying that name wants to drink a potion
+ * @param name The name of the player who wants to drink a potion
+ */
 case class DrinkPotion(name: String) extends CombatEvent
+/**
+ * Passed along to a combat, notifying that name should be removed from the combat
+ * @param name The name of the player who should be removed
+ */
 case class RemovePlayer(name: String) extends CombatEvent
-case object ActionAck extends CombatEvent
+/**
+ * Passed along to a combat, notifying that a player has received it's damage
+ */
+case object DamageAck extends CombatEvent
+/**
+ * The states in combat
+ */
 sealed trait CombatState
+/**
+ * The Rest state: Can arrive to this state from Rest, Action and WaitForAck
+ * This state keeps track of the turns, and create a list of all players that is up for their turn
+ * From this state you can go Action or back to Rest
+ * Before going from Rest to Action next player will be informed that it is her turn
+ */
 case object Rest extends CombatState
+/**
+ * The Action state: Can arrive to this state from Action, WaitForAck and Rest
+ * This state waits for a message from the player who's turn it is
+ * From this state you can go to Action, WaitForAck or Rest
+ * Before going from this state to Action next player will be informed that it is her turn 
+ */
 case object Action extends CombatState
+/**
+ * The WaitForAck state: Can arrive to this state from Action
+ * This state wait for a message from the player who was attacked, acknowledging that the player 
+ * has received damage and calculated it's new HP. If the player is alive a DamageAck will be received.
+ * If the player is dead a RemovePlayer will be received.
+ * From this state you can go to Action or Rest 
+ * Before going from this state to Action next player will be informed that it is her turn
+ */
 case object WaitForAck extends CombatState
+/**
+ * The data that the states keep track of. 
+ */
 sealed trait CombatData
+/**
+ * Data within Rest. 
+ * @param PlayerList A list with all players in combat, element in list looks like: Tuple2(name, speed)
+ * @param Duration The game clock, increased by 1 with each turn
+ * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
+ */
 case class RestData(PlayerList: List[Tuple2[String, Int]], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+/**
+ * Data within Action. 
+ * @param PlayerList All players in combat, element in list looks like: Tuple2(name, speed)
+ * @param TurnList The players who are currently up for their turn
+ * @param Duration The game clock, increased by 1 with each turn
+ * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
+ */
 case class ActionData(PlayerList: List[Tuple2[String, Int]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
 
 class Combat extends Actor with FSM[CombatState, CombatData] {
@@ -49,10 +102,15 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         goto(Action) using ActionData(data.PlayerList, nextTurnList, nextDuration, data.CombatsPerPlayer)
       }
     }
+    case Event(AddPlayer(name, speed, enemy), incomingData: RestData) => {
+      println("AddPlayer received for: " + name)
+      val data = addPlayer(name, speed, enemy, incomingData)
+      goto(Rest) using RestData(data.PlayerList, data.Duration, data.CombatsPerPlayer)
+    }
   }
 
   when(WaitForAck) {
-    case Event(ActionAck, data: ActionData) => {
+    case Event(DamageAck, data: ActionData) => {
       println("COMBAT-WaitForAck-ActionAck: ActionAck Received")
       val nextTurnList = data.TurnList.tail
       if (nextTurnList isEmpty) {
@@ -103,24 +161,29 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         goto(Action) using ActionData(nextPlayerList, nextTurnList, data.Duration, combatList)
       }
     }
+    case Event(AddPlayer(name, speed, enemy), data: ActionData) => {
+      println("AddPlayer received for: " + name)
+      goto(WaitForAck) using addPlayer(name, speed, enemy, data)
+    }
   }
 
   when(Action) {
     case Event(AttackPlayer(name, target, strength), data: ActionData) => {
       val turnPlayer = data.TurnList.head
-      if (name == turnPlayer) {
-        if (data.PlayerList.exists(c => c._1.equals(target))) {
+      if (data.PlayerList.exists(c => c._1.equals(target))) {
+        if (name == turnPlayer) {
           println("COMBAT-Action-AttackPlayer: Attack message received from the player whose turn it is.")
           PMap ! PMapSendGameMessage(target, GameDamage(name, strength))
           goto(WaitForAck)
+
         } else {
-          if (dungeon != None) {
-            dungeon.get ! GameAttackPlayer(name, target)
-          }
+          println("COMBAT-Action-AttackPlayer: Attack message from a player whose turn it is not.")
           stay
         }
       } else {
-        println("COMBAT-Action-AttackPlayer: Attack message from a player whose turn it is not.")
+        if (dungeon != None) {
+          dungeon.get ! GameAttackPlayer(name, target)
+        }
         stay
       }
     }
@@ -145,49 +208,35 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         stay
       }
     }
+    case Event(AddPlayer(name, speed, enemy), data: ActionData) => {
+      println("AddPlayer received for: " + name)
+      goto(Action) using addPlayer(name, speed, enemy, data)
+    }
   }
 
-  whenUnhandled {
-    case Event(AddPlayer(name, speed, enemy), data: RestData) => {
-      println("COMBAT-unhandled-AddPlayer-Rest: Adding player " + name + " with speed " + speed + ".")
-      var combatList = data.CombatsPerPlayer
-      if (!(combatList exists (c => c._1 == name)))
-        combatList = (name, List()) :: combatList
-      //Returns a new list which has added enemy to name's CombatsPerPlayer, unless enemy is already in list
-      combatList = combatList map (c => if (c._1 == name) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
-      //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
-      combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
-      println("COMBAT-unhandled-AddPlayer-Rest: Rest Addplayer combatList: " + combatList)
-      if (data.PlayerList.exists(x => x == Tuple2(name, speed))) {
-        goto(Rest) using RestData(data.PlayerList, data.Duration, combatList)
-      } else {
-        val NextPlayerList = data.PlayerList :+ Tuple2[String, Int](name, speed)
-        goto(Rest) using RestData(NextPlayerList.sortWith((a, b) => a._2 < b._2), data.Duration, combatList)
-      }
+  def addPlayer(name: String, speed: Int, enemy: String, incomingData: CombatData) = {
+    println("COMBAT-addPlayerFunction: Adding player " + name + " with speed " + speed + ".")
+    var data = ActionData(List(), List(), 0, List())
+    if (incomingData.isInstanceOf[RestData]) {
+      val restData = incomingData.asInstanceOf[RestData]
+      data = ActionData(restData.PlayerList, List(), restData.Duration, restData.CombatsPerPlayer)
     }
-    case Event(AddPlayer(name, speed, enemy), data: ActionData) => {
-      println("COMBAT-unhandled-AddPlayer-Action: Adding player " + name + " with speed " + speed + ".")
-      var combatList = data.CombatsPerPlayer
-      if (!(combatList exists (c => c._1 == name)))
-        combatList = (name, List()) :: combatList
-      //Returns a new list which has added enemy to name's CombatsPerPlayer, unless enemy is already in list
-      combatList = combatList map (c => if (c._1 == name) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
-      //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
-      combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
-      println("COMBAT-unhandled-AddPlayer-Action: Addplayer combatList: " + combatList)
-      if (data.PlayerList.exists(x => x == Tuple2(name, speed))) {
-        goto(Action) using ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
-      } else {
-        val nextPlayerList = data.PlayerList :+ Tuple2[String, Int](name, speed)
-        goto(Action) using ActionData(nextPlayerList sortWith ((a, b) => a._2 < b._2), data.TurnList, data.Duration, combatList)
-      }
+    var combatList = data.CombatsPerPlayer
+    if (!(combatList exists (c => c._1 == name))) {
+      combatList = (name, List()) :: combatList
     }
-    case Event(_dungeon: ActorRef, _) => {
-      dungeon = Some(_dungeon)
-      stay
-    }
-    case Event(_, _) => {
-      stay // Do nothing
+    //Returns a new list which has added enemy to name's CombatsPerPlayer, unless enemy is already in list
+    combatList = combatList map (c => if (c._1 == name) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
+    //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
+    combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
+    println("COMAT-addPlayerFunction: Addplayer combatList: " + combatList)
+    if (data.PlayerList.exists(x => x == Tuple2(name, speed))) {
+      println("COMBAT-addPlayerFunction: no new player. PlayerList: " + data.PlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
+      ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
+    } else {
+      val nextPlayerList = ((name, speed) :: data.PlayerList).sortWith((a, b) => a._2 < b._2)
+      println("COMBAT-addPlayerFunction: New player was added. PlayerList: " + nextPlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
+      ActionData(nextPlayerList, data.TurnList, data.Duration, combatList)
     }
   }
 }

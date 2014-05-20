@@ -26,20 +26,21 @@ class Player extends Actor {
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
+  var maxhp = 10
   var hp = 10
   var defense = 2
   var attack = 5
   var food = 5
   var speed = 3
+  var gold = 20
   var knownRooms: List[(Int, Int)] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
-  var previousState: PlayerAction = PDecide
   var target = ""
   var battle: Option[ActorRef] = None
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
-  var db:Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
+  var db: Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
   val driver = "org.sqlite.JDBC"
   case object Ack extends Event
   case object SendNext
@@ -130,6 +131,15 @@ class Player extends Actor {
               session.close()
             }
 
+            /*=======
+            pushToNetwork("LOGINOK")
+            PMap ! PMapAddPlayer(name, self)
+            dungeon = Main.City.get
+            dungeon ! GameAddPlayer(name)
+            pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
+            pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
+            become(LoggedIn)
+>>>>>>> 5737c43b55fbc031d8cea3eb67f67a547e0e1f11*/
           }
         }
       }
@@ -250,29 +260,32 @@ class Player extends Actor {
             case PAttack => {
               if (battle != None) {
                 battle.get ! AttackPlayer(name, target, attack)
-                previousState = state
+                state
               }
             }
             case PDrinkPotion => {
               if (battle != None) {
-                battle.get ! DrinkPotion
+                battle.get ! DrinkPotion(name)
               }
             }
             case PDecide => {
               pushToNetwork("SYSTEM It's your turn")
-              previousState = state
+              state
             }
           }
         }
         case GameDrinkPotion => {
           hp = hp + 10
-          state = previousState
+          if (hp > maxhp) { hp = maxhp }
+          state = PDecide
           pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
         }
         case GameDamage(from, strength) => {
           var damage = strength - defense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
@@ -310,7 +323,7 @@ class Player extends Actor {
           } else {
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
             if (battle != None) {
-              battle.get ! ActionAck
+              battle.get ! DamageAck
             }
           }
         }

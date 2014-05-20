@@ -5,6 +5,7 @@ import lostvaults.server.Room
 
 class RoomTest extends FunSuite {
   // implicit lazy val system = ActorSystem("RoomSystem")
+
   var room = new Room()
   val TestMan = "testman"
   val playerList: List[String] = List("Philip", "Jimmy", "Anna", "Felix", "Fredrik")
@@ -12,6 +13,7 @@ class RoomTest extends FunSuite {
   test("This test checks if non existing player is not in room!") {
     assertResult(false) {
       room.hasPlayer(TestMan)
+
     }
   }
 
@@ -24,6 +26,7 @@ class RoomTest extends FunSuite {
     room.removePlayer(TestMan)
     assert(room.hasPlayer(TestMan))
   }
+
 
   test("This test checks the playerlist of a room") {
     room.addPlayer("Jimmy")
@@ -47,6 +50,7 @@ class RoomTest extends FunSuite {
   }
 
   /*	test("This test checks if non existing item is not in room!") {asza<
+
 		assertResult(false) {
 			room.hasItem(TestMan)
 			}

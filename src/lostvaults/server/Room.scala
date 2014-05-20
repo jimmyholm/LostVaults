@@ -51,6 +51,21 @@ class Room() {
     playerList = playerList.filterNot((c => c == player))
   }
 
+  def getExitsString = {
+    var s = ""
+      if(exits(0)) {
+        s = s + "North " 
+      }
+    if(exits(1)) {
+      s = s + "East "
+    }
+    if(exits(2)) {
+      s = s + "South " 
+    }
+    if(exits(3)) {
+      s = s + "West"
+    }
+  }
   /**
    * This method returns the list of players in a room.
    * @return the players in this room
