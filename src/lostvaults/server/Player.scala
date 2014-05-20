@@ -28,11 +28,10 @@ class Player extends Actor {
   var dungeon = self
   var maxhp = 10
   var hp = 10
-  var defense = 2
-  var attack = 5
   var food = 5
-  var speed = 3
-  var gold = 20
+  var gold = 0
+  var weapon: Item = ItemRepo.getById(0)
+  var armor: Item = ItemRepo.getById(0)
   var knownRooms: List[(Int, Int)] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
@@ -47,6 +46,18 @@ class Player extends Actor {
   case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
   implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
 
+  def getAttack(): Integer = {
+    weapon.attack + armor.attack
+  }  
+  
+  def getDefense(): Integer = {
+    weapon.defense + armor.defense
+  }
+  
+  def getSpeed(): Integer = {
+    weapon.speed + armor.speed
+  }
+  
   def costToMove(cell: (Int, Int)): Int = {
     if (knownRooms.exists(a => a == cell))
       0
@@ -93,17 +104,10 @@ class Player extends Actor {
             var sql = ""
             println("Sending Select...")
             sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1)+"'"
-            println(sql)
             var res = Q.queryNA[PlayerData](sql)
-            println("Select received: ")
-            //res.foreach(c => println(c))
-            println(res.list().length)
-            println(res.list().isEmpty)
             if (res.list().isEmpty) { // Player not registered, so add to the database.
-              println("Player is not registered.")
-              sql = "INSERT INTO Players (name, pass, maxHP, attack, defense, speed, potions, food, weapon, armor, accessory) " +
-                "values ('" + name + "', '" + pass + "', " + hp + ", " + attack + ", " + defense + ", " + speed + ", 0, 0, 1, 2, 3) "
-              println(sql)
+              sql = "INSERT INTO Players (name, pass, maxHP, weapon, armor, potions, food) " +
+                "values ('" + name + "', '" + pass + "', " + maxhp + "0, 1, 0, 0) "
               (Q.u + sql).execute
               pushToNetwork("LOGINOK")
               PMap ! PMapAddPlayer(name, self)
@@ -115,14 +119,9 @@ class Player extends Actor {
               var player = res.list().head
               if (player.pass == pass) { // Passwords match!
                 hp = player.maxHp;
-                attack = player.attack
-                defense = player.defense
-                speed = player.speed
-                //potions = player.potions
                 food = if (player.food > 5) player.food else 5
-                // weapon = GetWeapon (DB queries)
-                // armor = GetArmor (DB queries)
-                // accessory = GetAccessory (DB queries)
+                weapon = ItemRepo.getById(player.weapon)
+                armor = ItemRepo.getById(player.armor)
                 pushToNetwork("LOGINOK")
                 PMap ! PMapAddPlayer(name, self)
                 dungeon = Main.City.get
@@ -135,16 +134,6 @@ class Player extends Actor {
               }
               session.close()
             }
-
-            /*=======
-            pushToNetwork("LOGINOK")
-            PMap ! PMapAddPlayer(name, self)
-            dungeon = Main.City.get
-            dungeon ! GameAddPlayer(name)
-            pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
-            pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
-            become(LoggedIn)
->>>>>>> 5737c43b55fbc031d8cea3eb67f67a547e0e1f11*/
           }
         }
       }
@@ -152,9 +141,6 @@ class Player extends Actor {
       // Här finns Receive satsen för servern - här tar vi emot alla användar-meddelanden från GUI:t
 
       def LoggedIn: Receive = {
-        /*case Ack => {
-          system.scheduler.scheduleOnce(10.milliseconds, self, SendNext)
-        }*/
         case SendNext => {
           if (msgQueue isEmpty)
             waitForAck = false
@@ -196,7 +182,7 @@ class Player extends Actor {
                 pushToNetwork("Don't hit yourself")
               } else {
                 if (battle != None) {
-                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), attack)
+                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), getAttack)
                 } else {
                   dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
                   dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
@@ -257,14 +243,14 @@ class Player extends Actor {
         }
         case GamePlayerJoinBattle(_battle, enemy) => {
           battle = Some(_battle)
-          _battle ! AddPlayer(name, speed, enemy)
+          _battle ! AddPlayer(name, getSpeed, enemy)
         }
         case GameYourTurn => {
           println("It is " + name + "'s turn")
           state match {
             case PAttack => {
               if (battle != None) {
-                battle.get ! AttackPlayer(name, target, attack)
+                battle.get ! AttackPlayer(name, target, getAttack)
                 state
               }
             }
@@ -287,7 +273,7 @@ class Player extends Actor {
           pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
         }
         case GameDamage(from, strength) => {
-          var damage = strength - defense
+          var damage = strength - getDefense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
           pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
