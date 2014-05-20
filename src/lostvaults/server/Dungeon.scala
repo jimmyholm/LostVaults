@@ -24,7 +24,7 @@ class Dungeon extends Actor {
   val GMap = Main.GMap.get
   var activeCombat: Option[ActorRef] = None
   var rooms: Array[Room] = Array()
-  var entrance: (Int, Int) = (-1, -1)
+  var entrance: Int = 0
   val gen = new RoomGenerator
 
   def indexToCoords(index: Int): (Int, Int) = {
@@ -51,7 +51,7 @@ class Dungeon extends Actor {
       become(CityReceive)
     }
     case NewDungeon => {
-      entrance = gen.startRoom
+      entrance = gen.coordToIndex(gen.startRoom)
       rooms = gen.generateDungeon()
       println("New dungeon generated!")
     }
@@ -81,16 +81,16 @@ class Dungeon extends Actor {
       PSet += name
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
       PMap ! PMapSendGameMessage(name, GameMessage("DUNGEONLIST " + PString))
-      rooms(gen.coordToIndex(entrance)).addPlayer(name)
+      rooms(entrance).addPlayer(name)
       PMap ! PMapSendGameMessage(name, GameDungeonMove(entrance, true))
-      PMap ! PMapSendGameMessage(name, GameSystem(rooms(gen.coordToIndex(entrance)).getDescription(name)))
+      PMap ! PMapSendGameMessage(name, GameSystem(rooms(entrance).getDescription(name)))
     }
 
-    case GamePlayerMove(name, dir) => {
+    case GamePlayerMove(name, dir, index) => {
       println("Moving player " + name)
-      val room = findRoom(name)
-      val coord = indexToCoords(room)
-      if (rooms(room).canMove(dir)) {
+      //val room = findRoom(name)
+      val coord = indexToCoords(index)
+      if (rooms(index).canMove(dir)) {
         println("Can move player.")
         val move =
           dir match {
@@ -100,8 +100,8 @@ class Dungeon extends Actor {
             case 3 => (coord._1 - 1, coord._2)
           }
         val nextRoom = gen.coordToIndex(move)
-        rooms(room).removePlayer(name)
-        val pListOld = rooms(room).getPlayerList()
+        rooms(index).removePlayer(name)
+        val pListOld = rooms(index).getPlayerList()
         val pListNew = rooms(nextRoom).getPlayerList()
         var dirStr =
           dir match {
@@ -120,7 +120,7 @@ class Dungeon extends Actor {
           }
         pListNew.foreach(n => PMap ! PMapSendGameMessage(n, GameSystem("Player " + name + " entered through the " + dirStr + " entrance.")))
         rooms(nextRoom).addPlayer(name)
-        PMap ! PMapSendGameMessage(name, GameDungeonMove(move, false))
+        PMap ! PMapSendGameMessage(name, GameDungeonMove(nextRoom, false))
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(nextRoom).getExitsString))
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
       } else {
@@ -130,7 +130,7 @@ class Dungeon extends Actor {
     }
     case GameExitDungeon(name) => {
       val room = findRoom(name)
-      if (room != gen.coordToIndex(entrance))
+      if (room != entrance)
         PMap ! PMapSendGameMessage(name, GameSystem("You can only leave the dungeon from the dungeon exit."))
       else {
         self ! GameRemovePlayer(name)
@@ -183,6 +183,21 @@ class Dungeon extends Actor {
       if (room != -1)
         rooms(room).getPlayerList().foreach(n => PMap ! PMapSendGameMessage(n, GameSystem(msg)))
     }
+    // Item messeges
+    case GamePickUpItem(item, name, index) => {
+      // försöka plocka upp item från det rum spelaren är i
+      if(rooms(index).hasItem(item)) {
+        // plocka upp item
+        
+      } else {
+        sender() ! GameMessage("No such item in room")
+      }
+      
+    }
+    case GameDropItem(item, name, index) => {
+      
+    }
+    
   }
 
   def CityReceive: Receive = {

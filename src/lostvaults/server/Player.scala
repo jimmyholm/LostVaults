@@ -22,6 +22,7 @@ class Player extends Actor {
   import Tcp._
   import context.{ system, become, unbecome, dispatcher }
   val random = new Random
+  var currentRoom = 0
   var connection = self
   val PMap = Main.PMap.get
   var name = ""
@@ -32,19 +33,19 @@ class Player extends Actor {
   var gold = 0
   var weapon: Item = ItemRepo.getById(0)
   var armor: Item = ItemRepo.getById(0)
-  var knownRooms: List[(Int, Int)] = List()
+  var knownRooms: List[Int] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
   var target = ""
   var battle: Option[ActorRef] = None
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
-  var db: Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
-//  val driver = "org.sqlite.JDBC"
+  var db: Option[Database] = None
   case object Ack extends Event
   case object SendNext
   case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
   implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
+
 
   def getAttack(): Integer = {
     weapon.attack + armor.attack
@@ -58,7 +59,7 @@ class Player extends Actor {
     weapon.speed + armor.speed
   }
   
-  def costToMove(cell: (Int, Int)): Int = {
+  def costToMove(cell: Int): Int = {
     if (knownRooms.exists(a => a == cell))
       0
     else
@@ -126,6 +127,10 @@ class Player extends Actor {
                 PMap ! PMapAddPlayer(name, self)
                 dungeon = Main.City.get
                 dungeon ! GameAddPlayer(name)
+                
+                pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
+                pushToNetwork("COMBATSTATS Attack: " + getAttack + " Defense: " + getDefense + " Speed: " + getSpeed)
+           
                 become(LoggedIn)
               } else { // Passwords do NOT match.
                 pushToNetwork("LOGINFAIL")
@@ -215,7 +220,7 @@ class Player extends Actor {
               if (dir == -1)
                 pushToNetwork("SYSTEM That is not a valid direction. Try North, East, West or South.")
               else {
-                dungeon ! GamePlayerMove(name, dir)
+                dungeon ! GamePlayerMove(name, dir, currentRoom)
               }
             }
             case "ENTER" => {
@@ -232,6 +237,12 @@ class Player extends Actor {
             }
             case "LEAVE" => {
               dungeon ! GMapLeave(name)
+            }
+            case "PICKUPITEM" => {
+              dungeon ! GamePickUpItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
+            }
+            case "DROPITEM" => {
+              dungeon ! GameDropItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
             }
             case _ => {
               pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
@@ -349,6 +360,7 @@ class Player extends Actor {
           if (!start)
             food -= costToMove(room)
           knownRooms = room :: knownRooms
+          currentRoom = room
           println("Player " + name + " received dungeon move")
         }
         case GameSystem(msg) => {

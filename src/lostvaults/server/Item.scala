@@ -27,7 +27,6 @@ class Item(ID: Int, Name: String, Attack: Int, Defense: Int, Speed: Int, Price: 
   def isTreasure(): Boolean = {
     itemType.compareToIgnoreCase("treasure") == 0
   }
-  
   def isFood(): Boolean = {
     itemType.compareToIgnoreCase("food") == 0
   }
