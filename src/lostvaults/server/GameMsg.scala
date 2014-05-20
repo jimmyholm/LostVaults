@@ -162,6 +162,10 @@ case class GameEnterDungeon(group: String) extends GameMsg
  */
 case class GamePickUpItem(item: String, player: String, room: Int) extends GameMsg
 /**
+ * 
+ */
+case class GameDropItem(item: String, player: String, room: Int) extends GameMsg
+/**
  *
  */
 case class GameReturnItem(itemType: String) extends GameMsg
