@@ -244,8 +244,7 @@ public class GUI {
 					.createLineBorder(darkBackground, 1));
 			password.add(passwordInput, BorderLayout.CENTER);
 			password.add(passwordLabel, BorderLayout.WEST);
-			passwordInput.setText("pass");
-			passwordInput.setEditable(false);
+			passwordInput.setText("");
 
 			IPInput.setText("localhost"); // 127.0.0.1 Om man är på egen dator
 			IPLabel.setPreferredSize(new Dimension(150, 0));

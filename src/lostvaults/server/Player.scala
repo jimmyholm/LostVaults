@@ -41,7 +41,7 @@ class Player extends Actor {
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
   var db: Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
-  val driver = "org.sqlite.JDBC"
+//  val driver = "org.sqlite.JDBC"
   case object Ack extends Event
   case object SendNext
   case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
@@ -68,8 +68,8 @@ class Player extends Actor {
   def receive = {
     case Received(msg) => {
       connection = sender
-      db = Some(Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver))
-      val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name)
+      db = Some(Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC"))
+      val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name)
       println("(Player) Received message: " + decodedMsg)
       if (Parser.findWord(decodedMsg, 0) == "LOGIN") {
         name = Parser.findWord(decodedMsg, 1)
@@ -92,12 +92,17 @@ class Player extends Actor {
             val pass = Parser.findRest(purpose, 1)
             var sql = ""
             println("Sending Select...")
-            sql = "SELECT * FROM Players WHERE name=" + Parser.findRest(purpose, 1)
+            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1)+"'"
+            println(sql)
             var res = Q.queryNA[PlayerData](sql)
+            println("Select received: ")
+            //res.foreach(c => println(c))
+            println(res.list().length)
+            println(res.list().isEmpty)
             if (res.list().isEmpty) { // Player not registered, so add to the database.
               println("Player is not registered.")
               sql = "INSERT INTO Players (name, pass, maxHP, attack, defense, speed, potions, food, weapon, armor, accessory) " +
-                "values (" + name + ", " + pass + ", " + hp + ", " + attack + ", " + defense + ", " + speed + ", 0, 0, 1, 2, 3) "
+                "values ('" + name + "', '" + pass + "', " + hp + ", " + attack + ", " + defense + ", " + speed + ", 0, 0, 1, 2, 3) "
               println(sql)
               (Q.u + sql).execute
               pushToNetwork("LOGINOK")
@@ -155,11 +160,11 @@ class Player extends Actor {
             waitForAck = false
           else {
             val msg = msgQueue.dequeue
-            connection ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.UTF_8.name()))
+            connection ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.ISO_8859_1.name()))
           }
         }
         case Received(msg) => {
-          val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name())
+          val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name())
           println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
