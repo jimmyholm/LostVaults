@@ -3,6 +3,7 @@ package lostvaults.client
 import akka.actor.{ Actor, ActorRef, Props }
 import lostvaults.Parser
 import java.net.InetSocketAddress
+import java.security.MessageDigest
 
 /**
  * The object playGame is responsible for creating an instance of playGame in a new actor.
@@ -41,13 +42,13 @@ class playGame extends Actor {
    * @param ip The IP that will be sent.
    */
   def sendIP(ip: String) {
-	  TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
+    TCPActorRef ! ConnectTo(new InetSocketAddress(ip, 51234))
   }
 
   /**
-   * This is where messages from the TCP Client are received. 
+   * This is where messages from the TCP Client are received.
    *
-   * In this method we receive different messages from the TCP Client which all have a specific action connected to them. 
+   * In this method we receive different messages from the TCP Client which all have a specific action connected to them.
    * All of the actions earlier mentioned will have some specific effect on the current game.
    */
   def receive = {
@@ -58,8 +59,24 @@ class playGame extends Actor {
     case "Connected" =>
       game.updateDynamicInfo("Connected")
       val name = game.getName()
-      //val passwd = game.getPassword()
-      TCPActorRef ! "LOGIN " + name;
+      var pass = game.getPass()
+      val md = MessageDigest.getInstance("SHA-256")
+      md.update(pass.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1))
+      //java.nio.charset.Charset
+      val passBytes = md.digest()
+      pass = ""
+      /*for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }*/
+      var hex = ""
+      for (i <- 0 until passBytes.length) {
+        hex = Integer.toHexString(0xff & passBytes(i))
+        pass += hex
+      }
+      //pass = new String(passBytes, java.nio.charset.StandardCharsets.ISO_8859_1)
+      TCPActorRef ! "LOGIN " + name + " " + pass;
     case c: String => {
       println(c)
       val firstWord = Parser.findWord(c, 0)
@@ -102,7 +119,7 @@ class playGame extends Actor {
           if (game.getName.equals(Parser.findWord(c, 1)))
             game.updateDynamicInfo("You say: " + Parser.findRest(c, 1))
           else
-            game.updateDynamicInfo(Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1) )
+            game.updateDynamicInfo(Parser.findWord(c, 1) + " says: " + Parser.findRest(c, 1))
         }
         case "BYE" =>
           game.updateDynamicInfo("Bye bye, have a good day")

@@ -21,6 +21,7 @@ bin/*
 *.lof
 .settings/
 log.txt
+*.log
 /bin
 
 #*#

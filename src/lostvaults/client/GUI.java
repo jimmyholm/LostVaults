@@ -10,7 +10,8 @@ public class GUI {
 	 * * Declarations * *
 	 *******************************************/
 	String name;
-
+	String passwordstr;
+	
 	int screenWidth;
 	int screenHeight;
 
@@ -190,7 +191,7 @@ public class GUI {
 		JLabel userNameLabel = new JLabel("User name: ");
 		JPanel userName = new JPanel(new BorderLayout());
 
-		JTextField passwordInput = new JTextField();
+		JPasswordField passwordInput = new JPasswordField();
 		JLabel passwordLabel = new JLabel("Password: ");
 		JPanel password = new JPanel(new BorderLayout());
 
@@ -243,8 +244,7 @@ public class GUI {
 					.createLineBorder(darkBackground, 1));
 			password.add(passwordInput, BorderLayout.CENTER);
 			password.add(passwordLabel, BorderLayout.WEST);
-			passwordInput.setText("pass");
-			passwordInput.setEditable(false);
+			passwordInput.setText("");
 
 			IPInput.setText("localhost"); // 127.0.0.1 Om man är på egen dator
 			IPLabel.setPreferredSize(new Dimension(150, 0));
@@ -303,7 +303,7 @@ public class GUI {
 
 		private void tryConnect() {
 			String user = userNameInput.getText();
-			String password = passwordInput.getText();
+			String pass = new String(passwordInput.getPassword());
 			String ip = IPInput.getText();
 			if (user.equals("")) {
 				message.setText("You must enter a username\n");
@@ -316,6 +316,7 @@ public class GUI {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
+				passwordstr = pass;
 				dynamicInfoLabel
 						.setText("The Lost Vaults - Uneasy Alliance --- "
 								+ name);
@@ -331,6 +332,10 @@ public class GUI {
 	 *******************************************/
 	public String getName() {
 		return name;
+	}
+	
+	public String getPass() {
+		return passwordstr;
 	}
 
 	public void updateDynamicInfo(String msg) {

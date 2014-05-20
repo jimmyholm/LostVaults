@@ -6,25 +6,31 @@ import lostvaults.Parser
 import scala.util.Random
 import scala.collection.mutable.Queue
 import scala.concurrent.duration._
+import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
+import scala.slick.jdbc.meta.MTable
+import scala.slick.jdbc.JdbcBackend
+import scala.slick.driver.SQLiteDriver.simple._
+import Q.interpolation
+
 sealed trait PlayerAction
 case object PAttack extends PlayerAction
 case object PDrinkPotion extends PlayerAction
 case object PDecide extends PlayerAction
 
 class Player extends Actor {
-  val random = new Random
+  import JdbcBackend.Database
   import Tcp._
   import context.{ system, become, unbecome, dispatcher }
+  val random = new Random
   var connection = self
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
+  var maxhp = 10
   var hp = 10
-  var maxhp = 20
-  var defense = 0 /// Will in the future be an item
-  var attack = 1 /// Will in the future be an item
-  var food = 0
-  var maxfood = 30
+  var defense = 2
+  var attack = 5
+  var food = 5
   var gold = 20
   var speed = 3 //3 + random.nextInt(3) ///defense.getSpeed + attack.getSpeed ????
   var currentRoom = 0
@@ -35,8 +41,12 @@ class Player extends Actor {
   var battle: Option[ActorRef] = None
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
+  var db: Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
+//  val driver = "org.sqlite.JDBC"
   case object Ack extends Event
   case object SendNext
+  case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
+  implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
 
   def costToMove(cell: Int): Int = {
     if (knownRooms.exists(a => a == cell))
@@ -59,7 +69,8 @@ class Player extends Actor {
   def receive = {
     case Received(msg) => {
       connection = sender
-      val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
+      db = Some(Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC"))
+      val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name)
       println("(Player) Received message: " + decodedMsg)
       if (Parser.findWord(decodedMsg, 0) == "LOGIN") {
         name = Parser.findWord(decodedMsg, 1)
@@ -68,18 +79,67 @@ class Player extends Actor {
     }
     case PMapIsOnlineResponse(response, purpose) =>
       {
+        println("PMap Response.")
         if (Parser.findWord(purpose, 0) == "LOGIN") {
+          println("Login detected!")
           if (response) {
+            println("Player already logged in.")
             pushToNetwork("LOGINFAIL")
             context stop self
           } else {
-            pushToNetwork("LOGINOK")
-            PMap ! PMapAddPlayer(name, self)
-            dungeon = Main.City.get
-            dungeon ! GameAddPlayer(name)
-            pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
-            pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
-            become(LoggedIn)
+            println("Checking for player exists...")
+            implicit val session = db.get.createSession()
+            // This guy's not online, check if the passwords match.
+            val pass = Parser.findRest(purpose, 1)
+            var sql = ""
+            println("Sending Select...")
+            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1)+"'"
+            println(sql)
+            var res = Q.queryNA[PlayerData](sql)
+            println("Select received: ")
+            //res.foreach(c => println(c))
+            println(res.list().length)
+            println(res.list().isEmpty)
+            if (res.list().isEmpty) { // Player not registered, so add to the database.
+              println("Player is not registered.")
+              sql = "INSERT INTO Players (name, pass, maxHP, attack, defense, speed, potions, food, weapon, armor, accessory) " +
+                "values ('" + name + "', '" + pass + "', " + hp + ", " + attack + ", " + defense + ", " + speed + ", 0, 0, 1, 2, 3) "
+              println(sql)
+              (Q.u + sql).execute
+              pushToNetwork("LOGINOK")
+              PMap ! PMapAddPlayer(name, self)
+              dungeon = Main.City.get
+              dungeon ! GameAddPlayer(name)
+              become(LoggedIn)
+            } else { // Player DOES exist, compare passwords.
+              println("Player IS registered.")
+              var player = res.list().head
+              if (player.pass == pass) { // Passwords match!
+                hp = player.maxHp;
+                attack = player.attack
+                defense = player.defense
+                speed = player.speed
+                //potions = player.potions
+                food = if (player.food > 5) player.food else 5
+                // weapon = GetWeapon (DB queries)
+                // armor = GetArmor (DB queries)
+                // accessory = GetAccessory (DB queries)
+                pushToNetwork("LOGINOK")
+                PMap ! PMapAddPlayer(name, self)
+                dungeon = Main.City.get
+                dungeon ! GameAddPlayer(name)
+                
+                pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
+                pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
+           
+                become(LoggedIn)
+              } else { // Passwords do NOT match.
+                pushToNetwork("LOGINFAIL")
+                pushToNetwork("SYSTEM Invalid Password!")
+                //context stop self
+              }
+              session.close()
+            }
           }
         }
       }
@@ -95,11 +155,11 @@ class Player extends Actor {
             waitForAck = false
           else {
             val msg = msgQueue.dequeue
-            connection ! Write(ByteString(msg))
+            connection ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.ISO_8859_1.name()))
           }
         }
         case Received(msg) => {
-          val decodedMsg = msg.decodeString(java.nio.charset.Charset.defaultCharset().name())
+          val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name())
           println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
@@ -225,13 +285,13 @@ class Player extends Actor {
           if (hp > maxhp) { hp = maxhp }
           state = PDecide
           pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
-          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
         }
         case GameDamage(from, strength) => {
           var damage = strength - defense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
-          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + "/" + maxfood + " Gold: " + gold)
+          pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
             dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
@@ -325,6 +385,7 @@ class Player extends Actor {
           }
         }
         case _: ConnectionClosed => {
+          println("Connection closed event.")
           dungeon ! GameRemovePlayer(name)
           PMap ! PMapRemovePlayer(name)
           context stop self
