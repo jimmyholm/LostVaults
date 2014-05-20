@@ -9,5 +9,9 @@
 	<classpathentry kind="lib" path="libs/scala-reflect.jar"/>
 	<classpathentry kind="lib" path="libs/scala-swing.jar"/>
 	<classpathentry kind="lib" path="libs/scalatest.jar"/>
+	<classpathentry kind="lib" path="libs/sqlite-jdbc-3.7.2.jar" />
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.7.jar" />
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.7.jar" />
+	<classpathentry kind="lib" path="libs/slick_2.10-2.0.2.jar" />
 	<classpathentry kind="output" path="bin"/>
 </classpath>

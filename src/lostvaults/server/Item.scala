@@ -1,4 +1,5 @@
 package lostvaults.server
+
 import scala.io.Source
 
 /**
@@ -35,39 +36,11 @@ class Item(_name: String, _value: Int) {
     var itemBase: Array[String] = Array()
     val it = readItemsFromFile()
 
-        for (line <- Source.fromFile("test.txt").getLines()){
-      //println(line)
-      
-      if (line == "[ITEM]") {
-      	
-      if (line == "Name: ") {
-       
-      	  var name = readChar()
-    		
-      	}
-      else if (line == "Attack: ") {
-    	acc += 1
-        	var attack = readInt()
-    		
-    	}
-      else if line == "Armor: "){
-    	acc += 1 
-    	  var armor = readInt()
-    		
-    	}
-      else if line == "Speed: "){
-    	acc += 1 
-    	  var armor = readInt()
-    		
-    	}
-      else if (line == "[/ITEM]" ){
-    	  
-    	}
-      }
-      else {
-         println ("The format of the file is wrong")
-      }    
-   }
+  }
+
+  def updateItems() {
+  }
+
 }
     // skriv en loop som tar varje rad, tills "\n" kommer, och gör ett item av givna rader:
 
@@ -76,10 +49,6 @@ class Item(_name: String, _value: Int) {
        * Denna funktion ska uppdatera platsen där alla items är lagrade med den nyaste versionen.
        * 
        */
-  def updateItems() {
-  }
-
-}
 
 
-
+   
