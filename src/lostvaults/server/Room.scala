@@ -1,4 +1,5 @@
 package lostvaults.server
+import akka.actor.{ Actor, ActorRef }
 
 /**
  * The class room is a constructor for the rooms that are to be represented in the game. A room is composed of four boolean values and
@@ -22,7 +23,7 @@ class Room() {
   var connected = false
   var playerList: List[String] = List()
   var itemList: List[Item] = List()
-  //  var NPCList: List[NPC]
+  var NPCList: List[(String, ActorRef)] = List()
 
   /**
    * This method returns true if the direction exists in this room
@@ -114,10 +115,10 @@ class Room() {
    */
   def takeItem(_name: String): Item = {
     val ret = itemList.find(i => i.name.compareToIgnoreCase(_name) == 0).get
-//    if (ret != None) {
-//      removeItem(ret)
-//      ret
-//    }
+    //    if (ret != None) {
+    //      removeItem(ret)
+    //      ret
+    //    }
     removeItem(ret)
     ret
   }
@@ -144,29 +145,26 @@ class Room() {
    * @param NPC the name of the NPC to be added.
    *
    */
-  //  def addNPC(NPC: NPC) = {
-  //    NPCList = NPC::NPCList
-  //  }
-  //
+  def addNPC(npc: (String, ActorRef)) = {
+    NPCList = npc :: NPCList
+  }
 
   /**
    * This method removes an NPC from the list of NPCs in the room.
    * @param NPC the name of the NPC to be removed.
    *
    */
-  //  def removeNPC(NPC: NPC) = {
-  //    NPCList = NPCList.filterNot((c => c == NPC))
-  //  }
-  //
+  def removeNPC(npc: String) = {
+    NPCList = NPCList.filterNot((c => c._1 == npc))
+  }
 
   /**
    * This method returns the list of NPCs in the room.
    * @return the NPC's in this room
    */
-  //  def getNPCList() : List[NPC] = {
-  //    NPCList
-  //  }
-  //
+  def getNPCList(): List[(String,ActorRef)] = {
+    NPCList
+  }
 
   /**
    * This method checks if a given NPC is in the room.
@@ -174,9 +172,9 @@ class Room() {
    * @return true if this room has this NPC, else false
    *
    */
-  //  def hasNPC(NPC: NPC) : Boolean = {
-  //    NPCList.contains(NPC) 
-  //  }
+  def hasNPC(npc: String): Boolean = {
+    NPCList.exists(c => c._1 == npc)
+  }
 
   /**
    * This method returns a string describing the

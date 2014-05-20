@@ -17,8 +17,8 @@ class CombatTest
     val fsm = TestFSMRef(new Combat)
     val mustBeTypedProperly: TestActorRef[Combat] = fsm
 
-    fsm ! AddPlayer("Anna", 5, "Jimmy")
-    fsm ! AddPlayer("Anna", 5, "Jimmy")
+    fsm ! AddPlayer(self, "Anna", 5, "Jimmy")
+    fsm ! AddPlayer(self, "Anna", 5, "Jimmy")
     var currentData = fsm.stateData
     var actionData: ActionData = ActionData(List(), List(), 0, List())
     if (currentData.isInstanceOf[RestData]) {
@@ -36,12 +36,12 @@ class CombatTest
 
     assert(fsm.stateName == Rest)
     assert(fsm.stateData == RestData(List(), 0, List()))
-    fsm ! AddPlayer("Anna", 5, "Jimmy")
-    fsm ! AddPlayer("Jimmy", 2, "Anna")
-    fsm ! AddPlayer("Fredrik", 7, "Anna")
-    fsm ! AddPlayer("Anna", 5, "Fredrik")
-    fsm ! AddPlayer("Felix", 8, "Philip")
-    fsm ! AddPlayer("Philip", 9, "Felix")
+    fsm ! AddPlayer(self, "Anna", 5, "Jimmy")
+    fsm ! AddPlayer(self, "Jimmy", 2, "Anna")
+    fsm ! AddPlayer(self, "Fredrik", 7, "Anna")
+    fsm ! AddPlayer(self, "Anna", 5, "Fredrik")
+    fsm ! AddPlayer(self, "Felix", 8, "Philip")
+    fsm ! AddPlayer(self, "Philip", 9, "Felix")
     /*** Takes out the data and changes it to actiondata ***/
     var currentData = fsm.stateData
     var actionData: ActionData = ActionData(List(), List(), 0, List())

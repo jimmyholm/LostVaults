@@ -87,16 +87,21 @@ case class GamePlayerHasDied(player: String) extends GameMsg
  */
 case class GameNotifyDungeon(msg: String) extends GameMsg
 /**
+ * Passed along to a dungeon, this will send a system message to room.
+ * @param room Index of the room to be notified. 
+ * @param msg The notification to be sent.
+ */
+case class GameNotifyRoom(room: Int, msg: String) extends GameMsg
+/**
  * Passed along to a dungeon, this will send a system message to the room the sender is in.
  * @param name The name of the player whose room is to be notified. 
  * @param msg The notification to be sent.
  */
-case class GameNotifyRoom(name: String, msg: String) extends GameMsg
+case class GameNotifyRoomByName(name: String, msg: String) extends GameMsg
 /**
  * Passed along to a dungeon, this will start a combat between two players, 
  * or continue a combat in action
  * @param attacker The player that is performing the attack
- * @param speed Speed of the attacker
  * @param attackee The player that is being attacked 
  */
 case class GameAttackPlayer(attacker: String, attackee: String) extends GameMsg

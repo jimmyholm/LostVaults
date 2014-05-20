@@ -42,7 +42,7 @@ class Player extends Actor {
   var msgQueue: Queue[String] = Queue()
   var waitForAck: Boolean = false
   var db: Option[Database] = None //Database.forURL("jdbc:sqlite:lostvaults.db;DB_CLOSE_DELAY=1", driver = "org.sqlite.JDBC")
-//  val driver = "org.sqlite.JDBC"
+  //  val driver = "org.sqlite.JDBC"
   case object Ack extends Event
   case object SendNext
   case class PlayerData(id: Int, name: String, pass: String, maxHp: Int, attack: Int, defense: Int, speed: Int, Potions: Int, food: Int, weapon: Int, armor: Int, accessory: Int)
@@ -93,7 +93,7 @@ class Player extends Actor {
             val pass = Parser.findRest(purpose, 1)
             var sql = ""
             println("Sending Select...")
-            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1)+"'"
+            sql = "SELECT * FROM Players WHERE name='" + Parser.findWord(purpose, 1) + "'"
             println(sql)
             var res = Q.queryNA[PlayerData](sql)
             println("Select received: ")
@@ -128,10 +128,10 @@ class Player extends Actor {
                 PMap ! PMapAddPlayer(name, self)
                 dungeon = Main.City.get
                 dungeon ! GameAddPlayer(name)
-                
+
                 pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
                 pushToNetwork("COMBATSTATS Attack: " + attack + " Defense: " + defense + " Speed: " + speed)
-           
+
                 become(LoggedIn)
               } else { // Passwords do NOT match.
                 pushToNetwork("LOGINFAIL")
@@ -172,7 +172,7 @@ class Player extends Actor {
             case "WHISPER" => {
               if (name.compareToIgnoreCase(Parser.findWord(decodedMsg, 1)) == 0) {
                 pushToNetwork("SYSTEM Stop talking to yourself, it makes you look crazy...")
-                dungeon ! GameNotifyRoom(name, name + " mumbles something under their breath.")
+                dungeon ! GameNotifyRoom(currentRoom, name + " mumbles something under their breath.")
               } else
                 PMap ! PMapGetPlayer(Parser.findWord(decodedMsg, 1), decodedMsg)
             }
@@ -184,7 +184,7 @@ class Player extends Actor {
               pushToNetwork(helpList.mkString)
             }
             case "EMOTE" => {
-              dungeon ! GameNotifyRoom(name, name + " " + Parser.findRest(decodedMsg, 0))
+              dungeon ! GameNotifyRoom(currentRoom, name + " " + Parser.findRest(decodedMsg, 0))
             }
             case "ATTACK" => {
               if (Parser.findWord(decodedMsg, 1).equalsIgnoreCase(name)) {
@@ -258,7 +258,7 @@ class Player extends Actor {
         }
         case GamePlayerJoinBattle(_battle, enemy) => {
           battle = Some(_battle)
-          _battle ! AddPlayer(name, speed, enemy)
+          _battle ! AddPlayer(self, name, speed, enemy)
         }
         case GameYourTurn => {
           println("It is " + name + "'s turn")
@@ -294,7 +294,7 @@ class Player extends Actor {
           pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
           if (hp <= 0) {
             dungeon ! GameRemovePlayer(name)
-            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
+            dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
             if (battle != None) {
               battle.get ! RemovePlayer(name)
               battle = None
@@ -327,7 +327,7 @@ class Player extends Actor {
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
 
           } else {
-            dungeon ! GameNotifyDungeon("Player " + name + " has received " + damage + " damage from " + from + ".")
+            dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ".")
             if (battle != None) {
               battle.get ! DamageAck
             }
