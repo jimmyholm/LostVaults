@@ -99,7 +99,7 @@ class Dungeon extends Actor {
           dir match {
             case 0 => (coord._1, coord._2 - 1)
             case 1 => (coord._1 + 1, coord._2)
-            case 2 => (coord._1, coord._2)
+            case 2 => (coord._1, coord._2 + 1)
             case 3 => (coord._1 - 1, coord._2)
           }
         val nextRoom = gen.coordToIndex(move)
