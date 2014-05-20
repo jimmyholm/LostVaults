@@ -3,6 +3,9 @@ package lostvaults.server
 import akka.actor.{ Actor, Props, ActorRef }
 import scala.collection.mutable.Set
 import lostvaults.Parser
+import scala.concurrent.Future
+import akka.pattern.ask
+
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
  * to a single dungeon actor instance at the start of the server's life.
@@ -147,7 +150,7 @@ class Dungeon extends Actor {
         context stop self
       }
     }
-    
+
     case GameAttackPlayer(attacker, attackee) => {
       println("PSet: " + PSet + " attackee: " + attackee)
       if (PSet.contains(attackee)) {
@@ -186,18 +189,28 @@ class Dungeon extends Actor {
     // Item messeges
     case GamePickUpItem(item, name, index) => {
       // försöka plocka upp item från det rum spelaren är i
-      if(rooms(index).hasItem(item)) {
+      if (rooms(index).hasItem(item)) {
         // plocka upp item
-        
+        // rooms(index).takeItem(name)
+        val returnItem = rooms(index).takeItem(name)
+//        if (returnItem.isWeapon || returnItem.isArmor) {
+//          val playerRef: Future[String] = ask(PMap, PMapGetPlayer(name, "purpose")).mapTo[String]
+//          if (returnItem.isWeapon) {
+//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("weapon"))
+//
+//          } else {
+//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("armor"))
+//          }
+//          val itemToDrop: Future[String] = ask(playerRef, GameReturnItem(""))()
+//          //rooms(index).addItem(rooms(index).
+//        }
+        PMap ! PMapSendGameMessage(name, GameItemTaken(returnItem))
       } else {
-        sender() ! GameMessage("No such item in room")
+        PMap ! PMapSendGameMessage(name, GameMessage("No such item in room"))
       }
-      
+
     }
-    case GameDropItem(item, name, index) => {
-      
-    }
-    
+
   }
 
   def CityReceive: Receive = {
@@ -235,7 +248,7 @@ class Dungeon extends Actor {
       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
     case GameNotifyRoom(name, msg) => {
-       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
+      PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
     case GameEnterDungeon(name) => {
       GMap ! GMapEnterDungeon(name)
