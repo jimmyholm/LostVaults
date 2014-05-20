@@ -61,7 +61,7 @@ class playGame extends Actor {
       val name = game.getName()
       var pass = game.getPass()
       val md = MessageDigest.getInstance("SHA-256")
-      md.update(pass.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1))
+      md.update(pass.getBytes(java.nio.charset.StandardCharsets.UTF_8))
       //java.nio.charset.Charset
       val passBytes = md.digest()
       pass = ""
@@ -75,7 +75,6 @@ class playGame extends Actor {
         hex = Integer.toHexString(0xff & passBytes(i))
         pass += hex
       }
-      //pass = new String(passBytes, java.nio.charset.StandardCharsets.ISO_8859_1)
       TCPActorRef ! "LOGIN " + name + " " + pass;
     case c: String => {
       println(c)
