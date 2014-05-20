@@ -27,7 +27,8 @@ class Player extends Actor {
   var maxfood = 30
   var gold = 20
   var speed = 3 //3 + random.nextInt(3) ///defense.getSpeed + attack.getSpeed ????
-  var knownRooms: List[(Int, Int)] = List()
+  var currentRoom = 0
+  var knownRooms: List[Int] = List()
   val helpList: List[String] = List("General: \n", "Say \n", "Whisper \n", "LogOut \n\n", "Combat help: \n", "Attack [PLAYER] \n", "drinkPotion\n", "Stop\n")
   var state: PlayerAction = PDecide
   var target = ""
@@ -37,7 +38,7 @@ class Player extends Actor {
   case object Ack extends Event
   case object SendNext
 
-  def costToMove(cell: (Int, Int)): Int = {
+  def costToMove(cell: Int): Int = {
     if (knownRooms.exists(a => a == cell))
       0
     else
@@ -163,7 +164,7 @@ class Player extends Actor {
               if (dir == -1)
                 pushToNetwork("SYSTEM That is not a valid direction. Try North, East, West or South.")
               else {
-                dungeon ! GamePlayerMove(name, dir)
+                dungeon ! GamePlayerMove(name, dir, currentRoom)
               }
             }
             case "ENTER" => {
@@ -180,6 +181,12 @@ class Player extends Actor {
             }
             case "LEAVE" => {
               dungeon ! GMapLeave(name)
+            }
+            case "PICKUPITEM" => {
+              dungeon ! GamePickUpItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
+            }
+            case "DROPITEM" => {
+              dungeon ! GameDropItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
             }
             case _ => {
               pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
@@ -297,6 +304,7 @@ class Player extends Actor {
           if (!start)
             food -= costToMove(room)
           knownRooms = room :: knownRooms
+          currentRoom = room
           println("Player " + name + " received dungeon move")
         }
         case GameSystem(msg) => {

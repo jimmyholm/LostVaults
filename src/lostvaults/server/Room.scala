@@ -53,16 +53,16 @@ class Room() {
 
   def getExitsString = {
     var s = ""
-      if(exits(0)) {
-        s = s + "North " 
-      }
-    if(exits(1)) {
+    if (exits(0)) {
+      s = s + "North "
+    }
+    if (exits(1)) {
       s = s + "East "
     }
-    if(exits(2)) {
-      s = s + "South " 
+    if (exits(2)) {
+      s = s + "South "
     }
-    if(exits(3)) {
+    if (exits(3)) {
       s = s + "West"
     }
   }
@@ -82,7 +82,7 @@ class Room() {
   def hasPlayer(player: String): Boolean = {
     playerList.find(f => f.compareToIgnoreCase(player) == 0) != None
   }
-  
+
   // TESTAT FRAM TILL DENNA PUNKT
 
   /**
@@ -110,6 +110,19 @@ class Room() {
   }
 
   /**
+   *
+   */
+  def takeItem(_name: String): Item = {
+    val ret = itemList.find(i => i.name.compareToIgnoreCase(_name) == 0).get
+//    if (ret != None) {
+//      removeItem(ret)
+//      ret
+//    }
+    removeItem(ret)
+    ret
+  }
+
+  /**
    * This method checks if a given item is in the room.
    * @param item The item to be examined
    * @return true if this room contains the item, else false
@@ -117,14 +130,14 @@ class Room() {
   def hasItem(item: Item): Boolean = {
     itemList.contains(item)
   }
-  
+
   /**
    * This method checks if an item with a given name is in the room.
    * @param item The name of the item to be examined
    * @return true if this room contains the item, else false
    */
   def hasItem(item: String): Boolean = {
-    itemList.find(i => i.name.compareToIgnoreCase(item) == 0) !=  None
+    itemList.find(i => i.name.compareToIgnoreCase(item) == 0) != None
   }
   /**
    * This method adds an NPC to the list of NPCs in the room.
@@ -166,7 +179,7 @@ class Room() {
   //  }
 
   /**
-   * This method returns a string describing the 
+   * This method returns a string describing the
    * players, items and possible exits in this room.
    * @param name the name of the player wanting the description
    * @return representation of the exits,items  and players in this room

@@ -139,13 +139,13 @@ case object GameCombatFinished extends GameMsg
  * @param room The room coordinates to move to
  * @param start True if the player is moved into the starting room.
  */
-case class GameDungeonMove(room:(Int, Int), start:Boolean) extends GameMsg
+case class GameDungeonMove(room: Int, start:Boolean) extends GameMsg
 /**
  * Passed along to a dungeon to request for a player to move into a new room.
  * @param direction The direction to move
  * @param name The player who wishes to move
  */
-case class GamePlayerMove(name: String, direction: Int) extends GameMsg
+case class GamePlayerMove(name: String, direction: Int, index: Int) extends GameMsg
 
 /**
  * Request from a player to exit the dungeon.
@@ -157,3 +157,11 @@ case class GameExitDungeon(name: String) extends GameMsg
  * @param group Name of a player in the group that wishes to enter.
  */
 case class GameEnterDungeon(group: String) extends GameMsg
+/**
+ * 
+ */
+case class GamePickUpItem(item: String, player: String, room: Int) extends GameMsg
+/**
+ *
+ */
+case class GameDropItem(item: String, player: String, room: Int) extends GameMsg
