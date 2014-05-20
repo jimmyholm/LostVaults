@@ -11,7 +11,8 @@ public class GUI {
 	 * * Declarations * *
 	 *******************************************/
 	String name;
-
+	String passwordstr;
+	
 	int screenWidth;
 	int screenHeight;
 
@@ -175,7 +176,7 @@ public class GUI {
 		JLabel userNameLabel = new JLabel("User name: ");
 		JPanel userName = new JPanel(new BorderLayout());
 
-		JTextField passwordInput = new JTextField();
+		JPasswordField passwordInput = new JPasswordField();
 		JLabel passwordLabel = new JLabel("Password: ");
 		JPanel password = new JPanel(new BorderLayout());
 
@@ -284,7 +285,7 @@ public class GUI {
 		
 		private void tryConnect() {
 			String user = userNameInput.getText();
-			String password = passwordInput.getText();
+			String pass = new String(passwordInput.getPassword());
 			String ip = IPInput.getText();
 			if (user.equals("")) {
 				message.setText("You must enter a username\n");
@@ -297,6 +298,7 @@ public class GUI {
 				IPInput.getText();
 				user = user.replace(" ", "");
 				name = user;
+				passwordstr = pass;
 				stats.setText("The Lost Vaults - " + name);
 				playGameCommunication.sendIP(ip);
 				window.setVisible(true);
@@ -310,6 +312,10 @@ public class GUI {
 	 *******************************************/
 	public String getName() {
 		return name;
+	}
+	
+	public String getPass() {
+		return passwordstr;
 	}
 
 	public void updateDynamicInfo(String msg) {

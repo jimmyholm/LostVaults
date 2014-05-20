@@ -3,6 +3,7 @@ package lostvaults.client
 import akka.actor.{ Actor, ActorRef, Props }
 import lostvaults.Parser
 import java.net.InetSocketAddress
+import java.security.MessageDigest
 
 /**
  * The object playGame is responsible for creating an instance of playGame in a new actor.
@@ -58,8 +59,13 @@ class playGame extends Actor {
     case "Connected" =>
       game.updateDynamicInfo("Connected")
       val name = game.getName()
-      //val passwd = game.getPassword()
-      TCPActorRef ! "LOGIN " + name;
+      var pass = game.getPass()
+      val md = MessageDigest.getInstance("SHA-256")
+      md.update(pass.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1))
+      //java.nio.charset.Charset
+      val passBytes = md.digest()
+      pass = new String(passBytes, java.nio.charset.StandardCharsets.ISO_8859_1)
+      TCPActorRef ! "LOGIN " + name + " test" //+ pass;
     case c: String => {
       println(c)
       val firstWord = Parser.findWord(c, 0)

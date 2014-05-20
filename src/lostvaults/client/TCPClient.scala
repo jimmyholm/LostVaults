@@ -74,14 +74,14 @@ class TCPClient(listener: ActorRef) extends Actor {
           sender ! Register(self)
         }
         case Received(c) => {
-          connection.get ! Write(ByteString("ACK"))
-          val msg = c.decodeString(java.nio.charset.Charset.defaultCharset().name())
+          connection.get ! Write(ByteString.apply("ACK", java.nio.charset.StandardCharsets.UTF_8.name()))
+          val msg = c.decodeString(java.nio.charset.StandardCharsets.UTF_8.name())
           println("Received message from server: " + msg)
           listener ! msg
         }
         case msg: String =>{ 
           println("Sending: " + msg)
-          connection.get ! Write(ByteString(msg))
+          connection.get ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.UTF_8.name()))
         }
           
         case x: ConnectionClosed => {

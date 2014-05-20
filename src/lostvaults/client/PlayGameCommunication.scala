@@ -154,4 +154,11 @@ object playGameCommunication {
   def getName(): String = {
     gui.getName()
   }
+  
+  /**
+   * This method returns the entered password.
+   */
+  def getPass(): String = {
+    gui.getPass()
+  }
 }

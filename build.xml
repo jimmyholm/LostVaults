@@ -14,11 +14,21 @@
 	<path id="Scalatest Libraries">
 		<pathelement location="libs/scalatest.jar" />
 	</path>
-	<path id="LostVaults.classpath">
-		<pathelement location="bin" />
+	<path id="Akka Libs">
 		<pathelement location="libs/akka-actor_2.10-2.3.2.jar" />
 		<pathelement location="libs/config-1.2.0.jar" />
 		<pathelement location="libs/akka-testkit_2.10-2.3.2.jar" />
+	</path>
+	<path id="Slick Libs">
+		<pathelement location="libs/sqlite-jdbc-3.7.2.jar" />
+		<pathelement location="libs/slf4j-api-1.7.7.jar" />
+		<pathelement location="libs/slf4j-simple-1.7.7.jar" />
+		<pathelement location="libs/slick_2.10-2.0.2.jar" />
+	</path>
+	<path id="LostVaults.classpath">
+		<pathelement location="bin" />
+		<path refid="Akka Libs" />
+		<path refid="Slick Libs" />
 		<path refid="Scalatest Libraries" />
 		<path refid="Scala Libraries [2.10.4].userclasspath" />
 	</path>
@@ -38,7 +48,6 @@
 			</classpath>
 		</taskdef>
 		<mkdir dir="bin" />
-		<copy file="src/application.conf" tofile="bin/application.conf" />
 	</target>
 	<target name="clean">
 		<delete dir="bin" />
@@ -57,17 +66,19 @@
 		</javac>
 	</target>
 	<target depends="init" name="build_client">
-			<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
-				<src path="src/" />
-				<exclude name="**/client/*.java" />
-				<exclude name="**/server/*" />
-			</scalac>
-			<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-				<exclude name="**/client/*.scala" />
-				<exclude name="**/server/*" />
-				<classpath refid="LostVaults.classpath" />
-			</javac>
-		</target>
+		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+			<src path="src/" />
+			<exclude name="**/client/*.java" />
+			<exclude name="**/server/*" />
+			<exclude name="**/test/*" />
+		</scalac>
+		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+			<exclude name="**/client/*.scala" />
+			<exclude name="**/server/*" />
+			<exclude name="**/test/*" />
+			<classpath refid="LostVaults.classpath" />
+		</javac>
+	</target>
 	<target depends="init" name="doc">
 		<fileset dir="src">
 		</fileset>
@@ -80,6 +91,7 @@
 		</scaladoc>
 	</target>
 	<target depends="build_client" name="client" description="Build runnable client Jar File">
+		<copy file="src/client_application.conf" tofile="bin/application.conf" />
 		<jar destfile="client.jar" basedir="bin/">
 			<include name="application.conf" />
 			<include name="lostvaults/*.class" />
@@ -93,6 +105,7 @@
 		</jar>
 	</target>
 	<target depends="build_server" name="server" description="Build runnable server Jar File">
+		<copy file="src/server_application.conf" tofile="bin/application.conf" />
 		<jar destfile="server.jar" basedir="bin/">
 			<include name="application.conf" />
 			<include name="lostvaults/*.class" />
@@ -100,7 +113,7 @@
 			<include name="*.jar" />
 			<exclude name="lostvaults/test/*" />
 			<manifest>
-				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
+				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar /libs/sqlite-jdbc-3.7.2.jar" />
 				<attribute name="Main-Class" value="lostvaults.server.Main" />
 			</manifest>
 		</jar>
@@ -113,6 +126,7 @@
 	</target>
 	<target name="build_jars" depends="client,server" />
 	<target name="run_tests" depends="build" description="Build and run scala tests.">
+		<copy file="src/server_application.conf" tofile="bin/application.conf" />
 		<scalatest wildcard="lostvaults.tests">
 			<runpath>
 				<pathelement location="bin/" />
