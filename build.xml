@@ -58,10 +58,12 @@
 			<src path="src/" />
 			<exclude name="**/server/*.java" />
 			<exclude name="**/client/*" />
+			<exclude name="**/util/*" />
 		</scalac>
 		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
 			<exclude name="**/server/*.scala" />
 			<exclude name="**/client/*" />
+			<exclude name="**/util/*" />
 			<classpath refid="LostVaults.classpath" />
 		</javac>
 	</target>
@@ -71,11 +73,13 @@
 			<exclude name="**/client/*.java" />
 			<exclude name="**/server/*" />
 			<exclude name="**/test/*" />
+			<exclude name="**/util/*" />
 		</scalac>
 		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
 			<exclude name="**/client/*.scala" />
 			<exclude name="**/server/*" />
 			<exclude name="**/test/*" />
+			<exclude name="**/util/*" />
 			<classpath refid="LostVaults.classpath" />
 		</javac>
 	</target>
@@ -111,10 +115,28 @@
 			<include name="lostvaults/*.class" />
 			<include name="lostvaults/server/*.class" />
 			<include name="*.jar" />
-			<exclude name="lostvaults/test/*" />
+			<exclude name="lostvaults/tests/*" />
 			<manifest>
 				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
 				<attribute name="Main-Class" value="lostvaults.server.Main" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="build_tools" depends="init" description="Builds the database tools.">
+		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+			<src path="src/" />
+			<exclude name="**/client/*" />
+			<exclude name="**/server/*" />
+			<exclude name="**/tests/*" />
+		</scalac>
+		<jar destfile="ItemAdder.jar" basedir="bin/">
+			<include name="application.conf" />
+			<include name="lostvaults/util/*.class" />
+			<include name="*.jar" />
+			<exclude name="lostvaults/tests/*" />
+			<manifest>
+				<attribute name="Class-Path" value="libs/scala-library.jar libs/scala-reflect.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
+				<attribute name="Main-Class" value="lostvaults.util.ItemAdder" />
 			</manifest>
 		</jar>
 	</target>
