@@ -1,0 +1,51 @@
+;SQL Setup.
+
+
+CREATE TABLE Players (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+pass VARCHAR NOT_NULL,
+maxHP INTEGER NOT_NULL,
+weapon INTEGER NOT_NULL,
+armor INTEGER NOT_NULL,
+potions INTEGER NOT_NULL,
+food INTEGER NOT_NULL);
+
+CREATE TABLE Items (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+attack INTEGER,
+defense INTEGER,
+speed INTEGER,
+price INTEGER,
+rating INTEGER NOT_NULL,
+itemType VARCHAR NOT_NULL
+);
+
+INSERT INTO Items (name, attack, defense,
+speed, rating, price, itemType) VALUES
+('Wooden Sword', 2, 0, 2, 9999, 0, 'Weapon');
+INSERT INTO Items (name, attack, defense,
+speed, rating, price, itemType) VALUES
+('Normal Clothes', 0, 0, 0, 9999, 0, 'Armor');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Shortsword', 3, 0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Shortsword', 4, 0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Shortsword', 5,  0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Shortsword', 6, 0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Leather Armor', 0, 1, 0, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Leather Armor', 0, 2, 0, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, 
+speed, rating, price, itemType) VALUES 
+('Leather Armor', 0, 3, 0, 1, 10, 'Armor');
