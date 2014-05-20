@@ -8,6 +8,7 @@ object Main {
   val system = ActorSystem("LostVaultsServer")
   var City: Option[ActorRef] = None
   def main(args: Array[String]) {
+    ItemRepo.populateArray()
     val pmap = system.actorOf(Props[PlayerMap])
     PMap = Some(pmap) // Start up our player hashmap actor
     val gmap = system.actorOf(Props[GroupMap])

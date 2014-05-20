@@ -7,51 +7,106 @@ import scala.io.Source
  * composed of the name of the item, and the value of it.
  */
 
-class Item(_name: String, _value: Int) {
-  val name = _name
-  var value = _value
+class Item(ID: Int, Name: String, Attack: Int, Defense: Int, Speed: Int, Price: Int, ItemType: String) {
+  val id = ID
+  val name = Name
+  val attack = Attack
+  val defense = Defense
+  val speed = Speed
+  val price = Price
+  val itemType = ItemType
 
-  /*
- * Ska läsa in alla textrader från en fil
- * 
- */
-  def readItemsFromFile() {
-    println("Following is the content read:")
-
-
-
-    //      Source.fromFile("test.txt" ).foreach { 
-    //         print 
-    //      }
-
-    for (line <- Source.fromFile("test.txt").getLines())
-      println(line)
+  def compareTo(_Item: Item): String = {
+    compareTo(_Item.id)
   }
-  /*
-   *   Denna funktion ska skapa items från det datat som läses in från den givna filen.
-   */
-
-  def createItems() {
-    val name = ""
-    var attack = 0
-    var armor = 0
-    var itemBase: Array[String] = Array()
-    val it = readItemsFromFile()
-
+  
+  def compareTo(ID: Int): String = {
+    val item = ItemRepo.getById(ID)
+    var ret = "The " + name +  " is "
+    if(item.itemType.compareToIgnoreCase(itemType) != 0) {
+      ret + "not comparable with the " + item.name + "."
+    } else {
+      if(isWeapon()) {
+        if(attack == item.attack) {
+          ret + "no stronger " +
+          (if(speed == item.speed) {
+            "and no faster "
+          } else if(speed > item.speed) {
+            "and slower "
+          } else {
+            "but faster "
+          }) + "than the " + item.name + "."
+        } else if (attack < item.attack) {
+          ret + "weaker " +
+          (if(speed == item.speed) {
+            "and no faster "
+          } else if(speed > item.speed) {
+            "and slower "
+          } else {
+            "but faster "
+          }) + "than the " + item.name + "."
+        } else {
+          ret + "stronger " +
+            (if(speed == item.speed) {
+              "but no faster " 
+            }else if(speed > item.speed){
+              "but slower "
+            }else {
+              "and faster "
+            }) + "than the " + item.name + "."
+        }
+      } else if(isArmor){
+        if(defense == item.defense) {
+          ret + "no stronger " +
+          (if(speed == item.speed) {
+            "and offers no better movement "
+          } else if(speed > item.speed) {
+            "and offer less movement"
+          } else {
+            "but offers better movement"
+          }) + "than the " + item.name + "."
+        } else if (defense < item.defense) {
+          ret + "weaker " +
+          (if(speed == item.speed) {
+            "and offers no better movement "
+          } else if(speed > item.speed) {
+            "and offers less movement "
+          } else {
+            "but offers better movement "
+          }) + "than the " + item.name + "."
+        } else {
+          ret + "stronger " +
+            (if(speed == item.speed) {
+              "but offers no better movement " 
+            }else if(speed > item.speed){
+              "but offers less movement "
+            }else {
+              "and offers better movement "
+            }) + "than the " + item.name + "."
+        }
+      } else {
+        ret + "not comparable to the " + item.name
+      }
+    }
   }
 
-  def updateItems() {
+  def isWeapon(): Boolean = {
+    itemType.compareToIgnoreCase("weapon") == 0
   }
 
+  def isArmor(): Boolean = {
+    itemType.compareToIgnoreCase("armor") == 0
+  }
+
+  def isTreasure(): Boolean = {
+    itemType.compareToIgnoreCase("treasure") == 0
+  }
+  def isFood(): Boolean = {
+    itemType.compareToIgnoreCase("food") == 0
+  }
+
+  def isPotion(): Boolean = {
+    itemType.compareToIgnoreCase("potion") == 0
+  }
 
 }
-    // skriv en loop som tar varje rad, tills "\n" kommer, och gör ett item av givna rader:
-
-
-  /*
-       * Denna funktion ska uppdatera platsen där alla items är lagrade med den nyaste versionen.
-       * 
-       */
-
-
-   
