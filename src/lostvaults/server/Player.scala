@@ -52,7 +52,13 @@ class Player extends Actor {
       pushToNetwork("SYSTEM: You cannot equip that item.")
     } else {
       if(item.isWeapon) {
-        
+        weapon = item
+      }
+      else if (item.isArmor) {
+        armor = item
+      }
+      else {
+        pushToNetwork("SYSTEM: You cannot equip that item.")
       }
     }
   }
@@ -104,7 +110,7 @@ class Player extends Actor {
     case Received(msg) => {
       connection = sender
       db = Some(Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC"))
-      val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name)
+      val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name)
       println("(Player) Received message: " + decodedMsg)
       if (Parser.findWord(decodedMsg, 0) == "LOGIN") {
         name = Parser.findWord(decodedMsg, 1)
@@ -175,11 +181,11 @@ class Player extends Actor {
             waitForAck = false
           else {
             val msg = msgQueue.dequeue
-            connection ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.ISO_8859_1.name()))
+            connection ! Write(ByteString.apply(msg, java.nio.charset.StandardCharsets.UTF_8.name()))
           }
         }
         case Received(msg) => {
-          val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.ISO_8859_1.name())
+          val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name())
           println("(Player[" + name + "]) Received message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
