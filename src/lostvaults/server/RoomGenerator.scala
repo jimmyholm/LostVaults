@@ -3,8 +3,7 @@ import scala.util.Random
 import java.util.Calendar
 
 class RoomGenerator {
-  val seed = 10 //System.currentTimeMillis
-  val Rnd = new Random(seed)
+  val Rnd = new Random(System.currentTimeMillis)
   val Width = 10
   val Height = 10
   var rooms = new Array[Room](Width * Height)
@@ -37,6 +36,16 @@ class RoomGenerator {
     (x, y)
   }
 
+  def addItemsToRoom(X: Int, Y: Int) {
+    var howMany = rand(0,3)
+    val range = ((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double] / 16.0 * 10.0).ceil.asInstanceOf[Int]
+    var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
+    items foreach(i => rooms(coordToIndex(X,Y)).addItem(i))
+    howMany = rand(0,3)
+    items = ItemRepo.getManyRandom(howMany, "Treasure", range)
+    items foreach(i => rooms(coordToIndex(X,Y)).addItem(i))
+  }
+  
   def pickDirection(from: (Int, Int)): (Int, Int) = {
     val dirX = if (from._1 - startRoom._1 < 0) -1 else if (from._1 - startRoom._1 > 0) 1 else 0 // if 1 we are to the right. If -1 we are to the left. If 0 we are in the same column.
     val dirY = if (from._2 - startRoom._2 < 0) -1 else if (from._2 - startRoom._2 > 0) 1 else 0 // if 1 we are below. If -1 we are to the left if 0 we are in the same row.
@@ -213,7 +222,7 @@ class RoomGenerator {
             nextCoord = dir
           }
         } while (!success)
-        created.foreach(c => { rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true })
+        created.foreach(c => { rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true; if(rand(0,100) <= 25) addItemsToRoom(c._1, c._2)})
         var head = (0, 0)
         var lastCoord = (-1, -1)
         while (!(created isEmpty)) {

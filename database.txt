@@ -1,0 +1,164 @@
+CREATE TABLE IF NOT EXISTS Players (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+pass VARCHAR NOT_NULL,
+maxHP INTEGER NOT_NULL,
+weapon INTEGER NOT_NULL,
+armor INTEGER NOT_NULL,
+gold INTEGER NOT_NULL);
+
+CREATE TABLE IF NOT EXISTS Items (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+attack INTEGER,
+defense INTEGER,
+speed INTEGER,
+price INTEGER,
+rating INTEGER NOT_NULL,
+itemType VARCHAR NOT_NULL
+);
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Wooden Sword', 2, 0, 2, 9999, 9999, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Normal Clothing', 0, 0, 0, 999, 9999, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (3)', 3, 0, 2, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (3)', 3, 0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (3)', 3, 0, 4, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (4)', 4, 0, 2, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (4)', 4, 0, 3, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (4)', 4, 0, 4, 1, 10, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (1)', 0, 1, 0, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (1)', 0, 1, 1, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (1)', 0, 1, 2, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (2)', 0, 2, 0, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (2)', 0, 2, 1, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (2)', 0, 2, 2, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (3)', 0, 3, 0, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (3)', 0, 3, 1, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Leather Armor (3)', 0, 3, 2, 1, 10, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (4)', 4, 2, 4, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (4)', 4, 2, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (4)', 4, 2, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (5)', 5, 2, 4, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (5)', 5, 2, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (5)', 5, 2, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (6)', 6, 2, 4, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (6)', 6, 2, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Spear (6)', 6, 2, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (2)', 2, 0, 3, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (2)', 2, 0, 4, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (3)', 3, 0, 3, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (3)', 3, 0, 4, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (4)', 4, 0, 3, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (4)', 4, 0, 4, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (5)', 5, 0, 3, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Club (5)', 5, 0, 4, 1, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Longsword (4)', 4, 0, 3, 2, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Longsword (4)', 4, 0, 4, 2, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Longsword (5)', 5, 0, 3, 2, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Longsword (5)', 5, 0, 4, 2, 20, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (5)', 5, 0, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (5)', 5, 0, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (6)', 6, 0, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (6)', 6, 0, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (7)', 7, 0, 5, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Broadsword (7)', 7, 0, 6, 4, 40, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (2)', 0, 2, 2, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (2)', 0, 2, 3, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (2)', 0, 2, 4, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (3)', 0, 3, 2, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (3)', 0, 3, 3, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (3)', 0, 3, 4, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (4)', 0, 4, 2, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (4)', 0, 4, 3, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (4)', 0, 4, 4, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (5)', 0, 5, 2, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (5)', 0, 5, 3, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Chainmail Armor (5)', 0, 5, 4, 2, 25, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (4)', 0, 4, 5, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (4)', 0, 4, 6, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (4)', 0, 4, 7, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (5)', 0, 5, 5, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (5)', 0, 5, 6, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (5)', 0, 5, 7, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (6)', 0, 6, 5, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (6)', 0, 6, 6, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (6)', 0, 6, 7, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (7)', 0, 7, 5, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (7)', 0, 7, 6, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Platemail Armor (7)', 0, 7, 7, 3, 45, 'Armor');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (6)', 6, 2, 5, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (6)', 6, 2, 6, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (6)', 6, 2, 7, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (7)', 7, 2, 5, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (7)', 7, 2, 6, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (7)', 7, 2, 7, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (8)', 8, 2, 5, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (8)', 8, 2, 6, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Halberd (8)', 8, 2, 7, 4, 65, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Gold Coin (1)', 1, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (2)', 2, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (3)', 3, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (4)', 4, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (5)', 5, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (6)', 6, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (7)', 7, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (8)', 8, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (9)', 9, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (10)', 10, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (11)', 11, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (12)', 12, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (13)', 13, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (14)', 14, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (15)', 15, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (16)', 16, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (17)', 17, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (18)', 18, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (19)', 19, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Pile (20)', 20, 0, 0,1, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (20)', 20, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (25)', 25, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (30)', 30, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (35)', 35, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (40)', 40, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (45)', 45, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (50)', 50, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (55)', 55, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (60)', 60, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (65)', 65, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (70)', 70, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (75)', 75, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (80)', 80, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (85)', 85, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (90)', 90, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (95)', 95, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Medium Gold Pile (100)', 100, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (100)', 100, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (120)', 120, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (140)', 140, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (160)', 160, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (180)', 180, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (200)', 200, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (220)', 220, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Large Gold Pile (240)', 240, 0, 0,5, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Statue (10)', 10, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Statue (15)', 15, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Statue (20)', 20, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Statue (25)', 25, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Small Gold Statue (30)', 30, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (40)', 40, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (45)', 45, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (50)', 50, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (55)', 55, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (60)', 60, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (65)', 65, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (70)', 70, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (75)', 75, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Ruby (80)', 80, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (100)', 100, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (125)', 125, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (150)', 150, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (175)', 175, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (200)', 200, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (225)', 225, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (250)', 250, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (275)', 275, 0, 0,3, 0, 'Treasure');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (300)', 300, 0, 0,3, 0, 'Treasure');
