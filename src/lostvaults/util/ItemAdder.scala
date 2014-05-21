@@ -22,6 +22,7 @@ object ItemAdder {
         var rating = 0
         var price = 0
         var itemCount = 0
+        var treasureIncrease = 0
         val ItemDBFile = new FileOutputStream("database.txt", true)
         val Printer = new PrintWriter(ItemDBFile)
         do {
@@ -41,7 +42,7 @@ object ItemAdder {
               for (a <- minAttack to maxAttack) {
                 for (s <- minSpeed to maxSpeed) {
                   var sql = "INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES " +
-                    "('" + name + "', " + a + ", " + minDefense + ", " + s + ", " + rating + ", " + price + ", 'Weapon');"
+                    "('" + name + " (" + a + ")', " + a + ", " + minDefense + ", " + s + ", " + rating + ", " + price + ", 'Weapon');"
                   Printer.write(sql + "\n"); Printer.flush()
                   (Q.u + sql).execute
                   itemCount += 1
@@ -61,7 +62,7 @@ object ItemAdder {
               for (d <- minDefense to maxDefense) {
                 for (s <- minSpeed to maxSpeed) {
                   var sql = "INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES " +
-                    "('" + name + "', " + minAttack + ", " + d + ", " + s + ", " + rating + ", " + price + ", 'Armor');"
+                    "('" + name + " ("+d+")', " + minAttack + ", " + d + ", " + s + ", " + rating + ", " + price + ", 'Armor');"
                   Printer.write(sql + "\n"); Printer.flush()
                   (Q.u + sql).execute
                   itemCount += 1
@@ -72,10 +73,12 @@ object ItemAdder {
               name = Console.readLine("Enter the name of the new treasure > ")
               minAttack = Console.readLine("Enter the minimum gold value of the new treasure > ").toInt
               maxAttack = Console.readLine("Enter the maximum gold value of the new treasure > ").toInt
+              treasureIncrease = Console.readLine("Enter the steps to increase value by > ").toInt
+              treasureIncrease = if(treasureIncrease < 1) 1 else treasureIncrease
               rating = Console.readLine("Enter the rating of the new treasure > ").toInt
-              for (v <- minAttack to maxAttack by 10) {
+              for (v <- minAttack to maxAttack by treasureIncrease) {
                 var sql = "INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES " +
-                  "('" + name + "', " + v + ", 0, 0," + rating + ", 0, 'Treasure');"
+                  "('" + name + " (" + v + ")', " + v + ", 0, 0," + rating + ", 0, 'Treasure');"
                 Printer.write(sql + "\n"); Printer.flush()
                 (Q.u + sql).execute
                 itemCount += 1
@@ -86,7 +89,8 @@ object ItemAdder {
                 println("Not a valid item type!")
             }
           }
-          println("Wrote " + itemCount + " item variations to the database.")
+          if(input.compareToIgnoreCase("Quit") != 0)
+            println("Wrote " + itemCount + " item variations to the database.")
         } while (input.compareToIgnoreCase("Quit") != 0)
         Printer.close()
         ItemDBFile.close()
