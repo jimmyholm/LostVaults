@@ -66,6 +66,7 @@ class Room() {
     if (exits(3)) {
       s = s + "West"
     }
+    s
   }
   /**
    * This method returns the list of players in a room.
@@ -162,7 +163,7 @@ class Room() {
    * This method returns the list of NPCs in the room.
    * @return the NPC's in this room
    */
-  def getNPCList(): List[(String,ActorRef)] = {
+  def getNPCList(): List[(String, ActorRef)] = {
     NPCList
   }
 
@@ -170,10 +171,17 @@ class Room() {
    * This method checks if a given NPC is in the room.
    * @param NPC the name of the NPC to be searched for
    * @return true if this room has this NPC, else false
-   *
    */
   def hasNPC(npc: String): Boolean = {
     NPCList.exists(c => c._1 == npc)
+  }
+  def getNPCActorRef(npc: String): Option[ActorRef] = {
+    var NPCTupleOption = NPCList.find(c => c._1.equalsIgnoreCase(npc))
+    if (NPCTupleOption != None) {
+      Some(NPCTupleOption.get._2)
+    } else {
+      None
+    }
   }
 
   /**

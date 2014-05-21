@@ -92,6 +92,7 @@ class Dungeon extends Actor {
     case GamePlayerMove(name, dir, index) => {
       println("Moving player " + name)
       //val room = findRoom(name)
+      rooms(index).getPlayerList.foreach(c => if (c != name) {PMap ! PMapSendGameMessage(c, GameMessage("ROOMLEFT " + name))})
       val coord = indexToCoords(index)
       if (rooms(index).canMove(dir)) {
         println("Can move player.")
@@ -99,7 +100,7 @@ class Dungeon extends Actor {
           dir match {
             case 0 => (coord._1, coord._2 - 1)
             case 1 => (coord._1 + 1, coord._2)
-            case 2 => (coord._1, coord._2)
+            case 2 => (coord._1, coord._2 + 1)
             case 3 => (coord._1 - 1, coord._2)
           }
         val nextRoom = gen.coordToIndex(move)
@@ -126,6 +127,8 @@ class Dungeon extends Actor {
         PMap ! PMapSendGameMessage(name, GameDungeonMove(nextRoom, false))
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(nextRoom).getExitsString))
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
+        rooms(nextRoom).getPlayerList.foreach(c => if (c != name) {PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name))})
+        PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) =>  if(pName != name) {pName + "\n" + s} else {"" + s})))
       } else {
         println("Cannot move player.")
         PMap ! PMapSendGameMessage(name, GameSystem("You cannot move in that direction."))
@@ -168,7 +171,20 @@ class Dungeon extends Actor {
         PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
         PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
       } else if (rooms(currentRoom).hasNPC(attackee)) {
-
+        println(attacker + " attacks player " + attackee)
+        if (activeCombat == None) {
+          println("New combat actor created.")
+          activeCombat = Some(context.actorOf(Props[Combat]))
+          activeCombat.get ! self
+        }
+        println("Adding " + attacker + " to combat")
+        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+        PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
+        println("Adding " + attackee + " to combat")
+        var npc = rooms(currentRoom).getNPCActorRef(attackee)
+        if (npc != None) {
+          npc.get ! GamePlayerJoinBattle(activeCombat.get, attackee)
+        }
       } else {
         PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
       }
@@ -190,9 +206,7 @@ class Dungeon extends Actor {
         rooms(room).getPlayerList().foreach(n => PMap ! PMapSendGameMessage(n, GameSystem(msg)))
     }
     case GameNotifyRoom(room, msg) => {
-      println("-------------------------------------------------------------- GameNotifyRoom Received")
       if (rooms(room) != -1)
-        println("Sending message to: " + rooms(room).getPlayerList() + " msg: " + msg)
       rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
     }
     // Item messeges
@@ -203,22 +217,21 @@ class Dungeon extends Actor {
 
         // rooms(index).takeItem(name)
         val returnItem = rooms(index).takeItem(name)
-//        if (returnItem.isWeapon || returnItem.isArmor) {
-//          val playerRef: Future[String] = ask(PMap, PMapGetPlayer(name, "purpose")).mapTo[String]
-//          if (returnItem.isWeapon) {
-//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("weapon"))
-//
-//          } else {
-//            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("armor"))
-//          }
-//          val itemToDrop: Future[String] = ask(playerRef, GameReturnItem(""))()
-//          //rooms(index).addItem(rooms(index).
-//        }
+        //        if (returnItem.isWeapon || returnItem.isArmor) {
+        //          val playerRef: Future[String] = ask(PMap, PMapGetPlayer(name, "purpose")).mapTo[String]
+        //          if (returnItem.isWeapon) {
+        //            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("weapon"))
+        //
+        //          } else {
+        //            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("armor"))
+        //          }
+        //          val itemToDrop: Future[String] = ask(playerRef, GameReturnItem(""))()
+        //          //rooms(index).addItem(rooms(index).
+        //        }
         PMap ! PMapSendGameMessage(name, GameItemTaken(returnItem))
       } else {
         PMap ! PMapSendGameMessage(name, GameMessage("No such item in room"))
       }
-
 
     }
     case GameDropItem(item, name, index) => {
