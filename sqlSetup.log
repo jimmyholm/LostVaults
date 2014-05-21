@@ -49,3 +49,16 @@ speed, rating, price, itemType) VALUES
 INSERT INTO Items (name, attack, defense, 
 speed, rating, price, itemType) VALUES 
 ('Leather Armor', 0, 3, 0, 1, 10, 'Armor');
+
+
+
+
+CREATE TABLE NPC {
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+hp VARCHAR NOT_NULL,
+weapon INTEGER NOT_NULL,
+armor INTEGER NOT_NULL;
+};
+
+
