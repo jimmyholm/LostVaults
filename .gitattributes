@@ -1,3 +1,2 @@
 lostvaults.db merge=keepTheir
 *.jar merge=keepTheir
-database.txt merge=keepTheir
