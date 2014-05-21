@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS Players (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+pass VARCHAR NOT_NULL,
+maxHP INTEGER NOT_NULL,
+weapon INTEGER NOT_NULL,
+armor INTEGER NOT_NULL,
+gold INTEGER NOT_NULL);
+
+CREATE TABLE IF NOT EXISTS Items (
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+attack INTEGER,
+defense INTEGER,
+speed INTEGER,
+price INTEGER,
+rating INTEGER NOT_NULL,
+itemType VARCHAR NOT_NULL
+);
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Wooden Sword', 2, 0, 2, 9999, 9999, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Normal Clothing', 0, 0, 0, 999, 9999, 'Armor');

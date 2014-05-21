@@ -1,7 +1,4 @@
 package lostvaults.server
-import scala.util.Random
-import scala.collection.mutable.Queue
-import scala.concurrent.duration._
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
 import scala.slick.jdbc.JdbcBackend
