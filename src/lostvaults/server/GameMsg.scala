@@ -165,26 +165,23 @@ case class GameEnterDungeon(group: String) extends GameMsg
 /**
  * Passed along to Dungeon to inform the Dungeon that a player
  * wishes to pick up an item.
- * @param item The name of the item to pick up
+ * @param item The integer representation of the item to pick up
+ * @param currentWep The player's current weapon
+ * @param currentArmor The player's current armor
  * @param player The player who wishes to pick up item
  * @param room The player's current room
  */
-case class GamePickUpItem(item: String, player: String, room: Int) extends GameMsg
+case class GamePickUpItem(item: String, currentWep: Int, currentArmor: Int, player: String, room: Int) extends GameMsg
 /**
  * Passed along to a Dungeon to inform the Dungeon that a player
  * wishes to drop an item.
- * @param item The name of the item to pick up
- * @param player The player who wishes to pick up item
+ * @param item The item to drop
  * @param room The player's current room
  */
-case class GameDropItem(item: String, player: String, room: Int) extends GameMsg
+case class GameDropItem(item: Item, room: Int) extends GameMsg
 /**
- * Message to tell the player to tell to dungeon wich item the player is 
- * currently carrying.
- * @param itemType The type of item to return, armor or weapon
+ * TODO
  */
-case class GameReturnItem(itemType: String) extends GameMsg
-/**
- * TODO kanske inte ska vara kvar
- */
-case class GameItemTaken(item: Item) extends GameMsg
+case class GameUpdateItem(item: Item) extends GameMsg
+
+case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
