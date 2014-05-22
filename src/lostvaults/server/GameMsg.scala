@@ -185,3 +185,10 @@ case class GameDropItem(item: Item, room: Int) extends GameMsg
  * @param item The player's new item.
  */
 case class GameUpdateItem(item: Item) extends GameMsg
+
+case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
+
+case object GameHeal extends GameMsg
+
+case class GameHarm(amnt: Int) extends GameMsg
+

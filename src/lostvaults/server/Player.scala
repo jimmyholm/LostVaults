@@ -1,11 +1,10 @@
 package lostvaults.server
+import lostvaults.Parser
 import akka.actor.{ Actor, ActorRef }
 import akka.util.ByteString
 import akka.io.{ Tcp }
-import lostvaults.Parser
 import scala.util.Random
 import scala.collection.mutable.Queue
-import scala.concurrent.duration._
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
 import scala.slick.jdbc.JdbcBackend
@@ -152,8 +151,9 @@ class Player extends Actor {
                 hp = player.maxHp;
                 food = 5
                 potions = 5
-                weapon = ItemRepo.getById(3)
-                armor = ItemRepo.getById(6)
+                weapon = ItemRepo.getById(player.weapon)
+                armor = ItemRepo.getById(player.weapon)
+                name = player.name
                 savePlayer
                 pushToNetwork("LOGINOK")
                 PMap ! PMapAddPlayer(name, self)
@@ -364,7 +364,8 @@ class Player extends Actor {
           } else if (item.isPotion) {
             potions = potions + 1
           }
-          pushToNetwork("SYTEM You picked up " + item.name)
+          pushToNetwork("SYSTEM You picked up " + item.name)
+          sendStats
         }
         case GameDamage(from, strength) => {
           var damage = strength - getDefense
@@ -454,6 +455,18 @@ class Player extends Actor {
         case GameSystem(msg) => {
           pushToNetwork("SYSTEM " + msg)
         }
+        
+        case GameHeal => {
+          hp = maxhp
+          sendStats
+        }
+        
+        case GameHarm(amnt) => {
+          hp -= amnt
+          if (hp <= 0) hp = 1
+          sendStats
+        }
+        
         case PMapGetPlayerResponse(player, purpose) => {
           val action = Parser.findWord(purpose, 0).toUpperCase
           action match {
