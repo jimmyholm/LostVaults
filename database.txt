@@ -29,7 +29,10 @@ rating INTEGER NOT_NULL,
 itemType VARCHAR NOT_NULL
 );
 
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Sword (1)', 1, 0, 2, 99, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Normal Clothing (0)', 0, 0, 0, 99, 'Armor');
+
+
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Leather Armor (1)', 0, 1, 1, 1, 'Armor');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Leather Armor (1)', 0, 1, 2, 1, 'Armor');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Chainmail Armor (1)', 0, 1, 2, 3, 'Armor');
@@ -53,7 +56,6 @@ INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Drag
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Dragonscale Armor (6)', 1, 6, 5, 7, 'Armor');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Dragonscale Armor (6)', 1, 6, 6, 7, 'Armor');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Useless Rags (0)', 0, 0, 0, 0, 'Armor');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Sword (1)', 1, 0, 2, 99, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Shortsword (3)', 3, 0, 2, 2, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Shortsword (3)', 3, 0, 3, 2, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Longsword (5)', 5, 0, 3, 4, 'Weapon');

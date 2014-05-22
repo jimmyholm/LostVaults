@@ -28,7 +28,7 @@ object ItemRepo {
       val itemData = pool(r)
       new Item(itemData.id, itemData.name, itemData.attack, itemData.defense, itemData.speed, itemData.itemType)
     }
-    new Item(-4, "Invalid Item", 0, 0, 0, 0, "Invalid")
+    new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
   }
 
   def getManyRandom(Amnt: Int, Type: String, Rating: Int): Array[Item] = {
@@ -67,7 +67,7 @@ object ItemRepo {
   def getById(ID: Int): Item = {
     val itemOp = itemArray.find(item => item.id == ID)
     if (itemOp == None)
-      new Item(-4, "Invalid Item", 0, 0, 0, 0, "Invalid")
+      new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
     else {
       val item = itemOp.get
       val ret: Item = new Item(item.id, item.name, item.attack, item.defense, item.speed, item.itemType)
@@ -77,7 +77,7 @@ object ItemRepo {
   def getItem(Index: Int): Item = {
     var item = itemArray(0)
     if (Index < 0 || Index >= itemArray.length)
-      new Item(-4, "Invalid Item", 0, 0, 0, 0, "Invalid")
+      new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
     item = itemArray(Index)
     val ret: Item = new Item(item.id, item.name, item.attack, item.defense, item.speed, item.itemType)
     ret
