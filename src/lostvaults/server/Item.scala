@@ -7,13 +7,12 @@ import scala.io.Source
  * composed of the name of the item, and the value of it.
  */
 
-class Item(ID: Int, Name: String, Attack: Int, Defense: Int, Speed: Int, Price: Int, ItemType: String) {
+class Item(ID: Int, Name: String, Attack: Int, Defense: Int, Speed: Int, ItemType: String) {
   val id = ID
   val name = Name
   val attack = Attack
   val defense = Defense
   val speed = Speed
-  val price = Price
   val itemType = ItemType
 
   def compareTo(_Item: Item): String = {
