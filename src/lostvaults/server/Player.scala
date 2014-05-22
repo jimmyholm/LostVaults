@@ -286,7 +286,7 @@ class Player extends Actor {
                   pushToNetwork("SYSTEM You don't have any potions to drop!")
                 } else {
                   potions = potions - 1
-                  dungeon ! GameDropItem(new Item(-2, "Potion", 1, 0, 0, 0, "Potion"), currentRoom)
+                  dungeon ! GameDropItem(new Item(-2, "Potion", 1, 0, 0, "Potion"), currentRoom)
                 }
               } else if (rest.compareToIgnoreCase("food") == 0) {
                 if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {
@@ -300,7 +300,7 @@ class Player extends Actor {
                   pushToNetwork("SYSTEM You can't drop that much food!")
                 } else {
                   food = food - value
-                  dungeon ! GameDropItem(new Item(-2, "Food", value, 0, 0, 0, "Food"), currentRoom)
+                  dungeon ! GameDropItem(new Item(-2, "Food", value, 0, 0, "Food"), currentRoom)
                 }
               } else {
                 pushToNetwork("SYSTEM You can only drop potions and food!")
@@ -379,7 +379,7 @@ class Player extends Actor {
               battle = None
             }
             treasures.foreach(n => (dungeon ! GameDropItem(n, currentRoom)))
-            dungeon ! GameDropItem(new Item(-2, "Food", food, 0, 0, 0, "Food"), currentRoom)
+            dungeon ! GameDropItem(new Item(-2, "Food", food, 0, 0, "Food"), currentRoom)
             treasures = List()
             food = 0
             self ! GameMoveToDungeon(Main.City.get)

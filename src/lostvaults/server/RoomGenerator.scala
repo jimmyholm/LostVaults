@@ -3,6 +3,8 @@ import scala.util.Random
 import java.util.Calendar
 
 class RoomGenerator {
+  var itemcnt = 0
+  var itemrooms = 0
   val Rnd = new Random(System.currentTimeMillis)
   val Width = 10
   val Height = 10
@@ -37,15 +39,20 @@ class RoomGenerator {
   }
 
   def addItemsToRoom(X: Int, Y: Int) {
-    var howMany = rand(0,3)
-    val range = ((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double] / 16.0 * 10.0).ceil.asInstanceOf[Int]
-    var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
-    items foreach(i => rooms(coordToIndex(X,Y)).addItem(i))
-    howMany = rand(0,3)
-    items = ItemRepo.getManyRandom(howMany, "Treasure", range)
-    items foreach(i => rooms(coordToIndex(X,Y)).addItem(i))
+    if (X != startRoom._1 || Y != startRoom._2) {
+      var howMany = rand(0, 3)
+      val range = ( ( ( ( (startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double]) ) / 16.0).ceil * 10.0).asInstanceOf[Int]
+      var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
+      items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
+      itemcnt += items.length
+      howMany = rand(0, 3)
+      items = ItemRepo.getManyRandom(howMany, "Treasure", range)
+      items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
+      itemcnt += items.length
+      itemrooms += 1
+    }
   }
-  
+
   def pickDirection(from: (Int, Int)): (Int, Int) = {
     val dirX = if (from._1 - startRoom._1 < 0) -1 else if (from._1 - startRoom._1 > 0) 1 else 0 // if 1 we are to the right. If -1 we are to the left. If 0 we are in the same column.
     val dirY = if (from._2 - startRoom._2 < 0) -1 else if (from._2 - startRoom._2 > 0) 1 else 0 // if 1 we are below. If -1 we are to the left if 0 we are in the same row.
@@ -150,8 +157,10 @@ class RoomGenerator {
       2
     else if (fx < tx && fy == ty)
       1
-    else // Should never happen!
+    else { // Should never happen!
+      println("Big error!")
       -1
+    }
   }
   def dirOpposite(from: Int) = {
     from match {
@@ -199,7 +208,7 @@ class RoomGenerator {
           dir = pickDirection(nextCoord)
           if (rooms(coordToIndex(dir)).created || outOfBounds(dir)) {
             if (!outOfBounds(dir) && rooms(coordToIndex(dir)).connected) {
-              created = dir::created
+              created = dir :: created
               success = true
             } else {
               tested(dirBetween(nextCoord, dir)) = true
@@ -218,11 +227,11 @@ class RoomGenerator {
             }
           } else {
             rooms(coordToIndex(dir)).created = true
-            created = dir::created
+            created = dir :: created
             nextCoord = dir
           }
         } while (!success)
-        created.foreach(c => { rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true; if(rand(0,100) <= 25) addItemsToRoom(c._1, c._2)})
+        created.foreach(c => { rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true; if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2) })
         var head = (0, 0)
         var lastCoord = (-1, -1)
         while (!(created isEmpty)) {
@@ -241,6 +250,7 @@ class RoomGenerator {
       }
     } while (roomsCreated < 40)
     // Finally return the generated array of rooms.
+    println("Created " + itemcnt + " items in " + itemrooms + " rooms.")
     rooms
   }
 }
