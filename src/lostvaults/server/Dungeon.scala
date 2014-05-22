@@ -94,7 +94,7 @@ class Dungeon extends Actor {
     case GamePlayerMove(name, dir, index) => {
       println("Moving player " + name)
       //val room = findRoom(name)
-      rooms(index).getPlayerList.foreach(c => if (c != name) {PMap ! PMapSendGameMessage(c, GameMessage("ROOMLEFT " + name))})
+      rooms(index).getPlayerList.foreach(c => if (c != name) { PMap ! PMapSendGameMessage(c, GameMessage("ROOMLEFT " + name)) })
       val coord = indexToCoords(index)
       if (rooms(index).canMove(dir)) {
         println("Can move player.")
@@ -129,8 +129,8 @@ class Dungeon extends Actor {
         PMap ! PMapSendGameMessage(name, GameDungeonMove(nextRoom, false))
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(nextRoom).getExitsString))
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
-        rooms(nextRoom).getPlayerList.foreach(c => if (c != name) {PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name))})
-        PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) =>  if(pName != name) {pName + "\n" + s} else {"" + s})))
+        rooms(nextRoom).getPlayerList.foreach(c => if (c != name) { PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name)) })
+        PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) => if (pName != name) { pName + "\n" + s } else { "" + s })))
       } else {
         println("Cannot move player.")
         PMap ! PMapSendGameMessage(name, GameSystem("You cannot move in that direction."))
@@ -209,7 +209,7 @@ class Dungeon extends Actor {
     }
     case GameNotifyRoom(room, msg) => {
       if (rooms(room) != -1)
-      rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
+        rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
     }
 
     // Item messeges
@@ -222,13 +222,19 @@ class Dungeon extends Actor {
           rooms(index).addItem(ItemRepo.getById(currentArmor))
         }
         PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
+        var msg = "ITEMLEFT " + pItem.name
+        rooms(index).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameMessage(msg))))
       } else {
         PMap ! PMapSendGameMessage(name, GameMessage("No such item in the room."))
       }
     }
 
     case GameDropItem(item, roomIndex) => {
-    	rooms(roomIndex).addItem(item)
+      var msg = "ITEMJOIN " + item.name
+      rooms(roomIndex).addItem(item)
+      if (rooms(roomIndex) != -1) {
+        rooms(roomIndex).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameMessage(msg))))
+      }
     }
 
   }

@@ -272,7 +272,6 @@ class Player extends Actor {
               dungeon ! GamePickUpItem(Parser.findRest(decodedMsg, 0), weapon.id, armor.id, name, currentRoom)
             }
             case "DROP" => {
-              pushToNetwork("SYSTEM QWEQWEQWEQWEWQE QWE QWE!")
               var value = 0
               val rest = Parser.findRest(decodedMsg, 0)
               if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {

@@ -183,3 +183,5 @@ case class GameDropItem(item: Item, room: Int) extends GameMsg
  * TODO
  */
 case class GameUpdateItem(item: Item) extends GameMsg
+
+case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
