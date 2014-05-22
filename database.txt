@@ -17,6 +17,29 @@ price INTEGER,
 rating INTEGER NOT_NULL,
 itemType VARCHAR NOT_NULL
 );
+
+
+CREATE TABLE NPC {
+id INTEGER PRIMARY KEY,
+name VARCHAR NOT_NULL,
+minhp INTEGER NOT_NULL,
+maxhp INTEGER NOT_NULL,
+rating INTEGER NOT_NULL;
+};
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Giant Rat', 8, 10, 1);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Kobold', 12, 15, 1);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Giant Spider', 15, 17, 1);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Skeleton', 12, 15, 2);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Gnome', 16, 19, 2);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Lion', 15, 17, 3);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Gargoyle', 16, 19, 3);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Centaur', 15, 17, 4);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Golem', 20, 22, 4);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Troll', 199, 22, 5);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Minotaur', 20, 25, 6);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Wyvern', 15, 17, 7);
+INSERT INTO NPC (name, minhp, maxhp, rating) VALUES ('Dragon', 200, 200, 11);
+
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Wooden Sword', 2, 0, 2, 9999, 9999, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Normal Clothing', 0, 0, 0, 999, 9999, 'Armor');
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('shortsword (3)', 3, 0, 2, 1, 10, 'Weapon');
@@ -162,3 +185,4 @@ INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (250)', 250, 0, 0,3, 0, 'Treasure');
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (275)', 275, 0, 0,3, 0, 'Treasure');
 INSERT INTO Items (name, attack, defense, speed, rating, price, itemType) VALUES ('Bag of Gems (300)', 300, 0, 0,3, 0, 'Treasure');
+
