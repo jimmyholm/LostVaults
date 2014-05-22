@@ -180,7 +180,7 @@ class Dungeon extends Actor {
         println("Adding " + attackee + " to combat")
         var npc = rooms(currentRoom).getNPCActorRef(attackee)
         if (npc != None) {
-          npc.get ! GamePlayerJoinBattle(activeCombat.get, attackee)
+          npc.get ! GamePlayerJoinBattle(activeCombat.get, attacker)
         }
       } else {
         PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))

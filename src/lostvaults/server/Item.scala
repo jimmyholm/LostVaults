@@ -108,4 +108,7 @@ class Item(ID: Int, Name: String, Attack: Int, Defense: Int, Speed: Int, ItemTyp
     itemType.compareToIgnoreCase("potion") == 0
   }
 
+  override def toString = {
+    name
+  }
 }

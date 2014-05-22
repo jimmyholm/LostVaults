@@ -173,7 +173,7 @@ class Room() {
    * @return true if this room has this NPC, else false
    */
   def hasNPC(npc: String): Boolean = {
-    NPCList.exists(c => c._1 == npc)
+    NPCList.exists(c => c._1.equalsIgnoreCase(npc))
   }
   def getNPCActorRef(npc: String): Option[ActorRef] = {
     var NPCTupleOption = NPCList.find(c => c._1.equalsIgnoreCase(npc))
@@ -206,6 +206,10 @@ class Room() {
     if (!itemList.isEmpty) {
       ret += "On the floor you find: \n"
       itemList.foreach(item => ret += item.name + "\n")
+    }
+    if (!NPCList.isEmpty) {
+      ret += "You suddenly see: \n"
+        NPCList.foreach(npc => ret += npc._1 + "\n")
     }
     if (playerList.size > 1) {
       ret += "With you is: \n"

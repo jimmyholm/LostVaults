@@ -42,7 +42,7 @@ class RoomGenerator {
   def addItemsToRoom(X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
       var howMany = rand(0, 3)
-      val range = ( ( ( ( (startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double]) ) / 16.0).ceil * 10.0).asInstanceOf[Int]
+      val range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0).ceil * 10.0).asInstanceOf[Int]
       var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
       itemcnt += items.length
@@ -54,10 +54,15 @@ class RoomGenerator {
     }
   }
   def addNPCToRoom(system: ActorSystem, X: Int, Y: Int) {
-    if(X != startRoom._1 || Y != startRoom._2) {
-      var howMany = rand(0, 1)
-      val range = ( ( ( ( (startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double]) ) / 16.0).ceil * 10.0).asInstanceOf[Int]
+    println("Hello1")
+    if (X != startRoom._1 || Y != startRoom._2) {
+      println("Hello2")
+      var howMany = 1 //rand(0, 1)
+      println("Hello3")
+      val range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0).ceil * 10.0).asInstanceOf[Int]
+      println("Hello4")
       var npcs = NPCRepo.getManyRandom(howMany, system, range)
+      println("Hello5")
       npcs foreach (i => rooms(coordToIndex(X, Y)).addNPC(i))
     }
   }
@@ -240,8 +245,10 @@ class RoomGenerator {
             nextCoord = dir
           }
         } while (!success)
-        created.foreach(c => { rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true; 
-        if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2) ; if (rand(0, 100) <= 50) addNPCToRoom(system, c._1, c._2)})
+        created.foreach(c => {
+          rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true;
+          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, c._1, c._2)
+        })
         var head = (0, 0)
         var lastCoord = (-1, -1)
         while (!(created isEmpty)) {
