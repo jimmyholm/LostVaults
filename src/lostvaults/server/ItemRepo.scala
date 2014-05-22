@@ -9,7 +9,7 @@ import scala.util.Random
 object ItemRepo {
   import JdbcBackend.Database
   case class ItemData(id: Int, name: String, attack: Int, defense: Int, speed: Int, rating: Int, itemType: String)
-  implicit val getItemDataResult = GetResult(r => ItemData(r.nextInt, r.nextString, r.nextInt,  r.nextInt, r.nextInt, r.nextInt, r.nextString))
+  implicit val getItemDataResult = GetResult(r => ItemData(r.nextInt, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextString))
   val Rnd = new Random(System.currentTimeMillis)
   var itemArray: Array[ItemData] = Array()
   def clearArray() {
@@ -31,7 +31,7 @@ object ItemRepo {
       val itemData = pool(r)
       new Item(itemData.id, itemData.name, itemData.attack, itemData.defense, itemData.speed, itemData.itemType)
     } else
-    	new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
+      new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
   }
 
   def getManyRandom(Amnt: Int, Type: String, Rating: Int): List[Item] = {
