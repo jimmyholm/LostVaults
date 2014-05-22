@@ -57,7 +57,7 @@ class Dungeon extends Actor {
     }
     case NewDungeon => {
       entrance = gen.coordToIndex(gen.startRoom)
-      rooms = gen.generateDungeon()
+      rooms = gen.generateDungeon(context.system)
       println("New dungeon generated!")
     }
     case GameSay(name, msg) => {
