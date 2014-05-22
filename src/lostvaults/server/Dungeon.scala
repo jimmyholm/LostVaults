@@ -3,11 +3,6 @@ package lostvaults.server
 import akka.actor.{ Actor, Props, ActorRef }
 import scala.collection.mutable.Set
 import lostvaults.Parser
-//import scala.concurrent.Future
-//import akka.pattern.ask
-//import akka.util.Timeout
-//import akka.util.duration._
-
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
  * to a single dungeon actor instance at the start of the server's life.
@@ -56,8 +51,11 @@ class Dungeon extends Actor {
       become(CityReceive)
     }
     case NewDungeon => {
+      println("ent NewDung")
       entrance = gen.coordToIndex(gen.startRoom)
+      println("1")
       rooms = gen.generateDungeon()
+      println("2")
       println("New dungeon generated!")
     }
     case GameSay(name, msg) => {
@@ -212,7 +210,6 @@ class Dungeon extends Actor {
         rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
     }
 
-    // Item messeges
     case GamePickUpItem(item, currentWep, currentArmor, name, index) => {
       if (rooms(index).hasItem(item)) {
         val pItem = rooms(index).takeItem(item)
