@@ -29,9 +29,10 @@ class Player extends Actor {
   var dungeon = self
   var maxhp = 10
   var hp = 10
-  var potions = 0
+  var potions = 10
   var food = 5
   var gold = 10
+  var treasures: List[Item] = List()
   var weapon: Item = ItemRepo.getById(1)
   var armor: Item = ItemRepo.getById(2)
   var knownRooms: List[Int] = List()
@@ -49,43 +50,41 @@ class Player extends Actor {
   implicit val getPlayerResult = GetResult(r => PlayerData(r.nextInt, r.nextString, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt))
   def equipItem(ID: Int) {
     val item = ItemRepo.getById(ID)
-    if(item.id <= 0) {
+    if (item.id <= 0) {
       pushToNetwork("SYSTEM: You cannot equip that item.")
     } else {
-      if(item.isWeapon) {
+      if (item.isWeapon) {
         weapon = item
-      }
-      else if (item.isArmor) {
+      } else if (item.isArmor) {
         armor = item
-      }
-      else {
+      } else {
         pushToNetwork("SYSTEM: You cannot equip that item.")
       }
     }
   }
-  def sendStats() {
+  def sendStats {
     pushToNetwork("HEALTHSTATS HP: " + hp + "/" + maxhp + " Food: " + food + " Gold: " + gold)
     pushToNetwork("COMBATSTATS Attack: " + getAttack + " Defense: " + getDefense + " Speed: " + getSpeed)
   }
-  def savePlayer() {
+  def savePlayer {
     implicit val session = db.get.createSession()
-    val sql = "UPDATE players " + 
-    		   "SET maxHP="+maxhp+", weapon="+weapon.id+", armor="+armor.id+", gold="+gold + " " +
-    		   "WHERE name='"+name+"'"
-            
+    val sql = "UPDATE players " +
+      "SET maxHP=" + maxhp + ", weapon=" + weapon.id + ", armor=" + armor.id + ", gold=" + gold + " " +
+      "WHERE name='" + name + "'"
+
     Q.updateNA(sql).execute
     session.close()
   }
 
-  def getAttack(): Integer = {
+  def getAttack: Integer = {
     weapon.attack + armor.attack
   }
 
-  def getDefense(): Integer = {
+  def getDefense: Integer = {
     weapon.defense + armor.defense
   }
 
-  def getSpeed(): Integer = {
+  def getSpeed: Integer = {
     weapon.speed + armor.speed
   }
 
@@ -95,7 +94,7 @@ class Player extends Actor {
     else
       1
   }
-  def clearKnownRooms() {
+  def clearKnownRooms {
     knownRooms = List()
   }
   def pushToNetwork(msg: String) {
@@ -269,11 +268,31 @@ class Player extends Actor {
             case "LEAVE" => {
               dungeon ! GMapLeave(name)
             }
-            case "PICKUPITEM" => {
-              dungeon ! GamePickUpItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
+            case "PICKUP" => {
+              dungeon ! GamePickUpItem(Parser.findRest(decodedMsg, 0), weapon.id, armor.id, name, currentRoom)
             }
-            case "DROPITEM" => {
-              dungeon ! GameDropItem(Parser.findRest(decodedMsg, 1), name, currentRoom)
+            case "DROP" => {
+              pushToNetwork("SYSTEM QWEQWEQWEQWEWQE QWE QWE!")
+              var value = 0
+              val rest = Parser.findRest(decodedMsg, 0)
+              if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {
+                value = Parser.findWord(decodedMsg, 2).toInt
+              }
+              if (rest.compareToIgnoreCase("potion") == 0) {
+                if (potions < 1) {
+                  pushToNetwork("SYSTEM You don't have any potions to drop!")
+                } else {
+                  potions = potions - 1
+                  dungeon ! GameDropItem(new Item(-2, "Potion", 1, 0, 0, 0, "Potion"), currentRoom)
+                }
+              } else if (rest.compareToIgnoreCase("food") == 0) {
+                if (food < value) {
+                  pushToNetwork("SYSTEM You can't drop that much food!")
+                } else {
+                  food = food - value
+                  dungeon ! GameDropItem(new Item(-2, "Food", value, 0, 0, 0, "Food"), currentRoom)
+                }
+              }
             }
             case _ => {
               pushToNetwork("SYSTEM I have no idea what you're wanting to do.")
@@ -308,11 +327,31 @@ class Player extends Actor {
           }
         }
         case GameDrinkPotion => {
-          hp = hp + 10
-          if (hp > maxhp) { hp = maxhp }
-          state = PDecide
-          pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
-          sendStats
+          if (potions < 1) {
+            pushToNetwork("SYSTEM You don't have a potion!")
+          } else {
+            hp = hp + random.nextInt(6) + 5
+            if (hp > maxhp) {
+              hp = maxhp
+              state = PDecide
+              pushToNetwork("SYSTEM Your drank a potion, you now have HP: " + hp)
+            }
+          }
+        }
+        case GameUpdateItem(item) => {
+          if (item.isWeapon) {
+            weapon = item
+          } else if (item.isArmor) {
+            armor = item
+          } else if (item.isFood) {
+            food = food + item.attack
+            sendStats
+          } else if (item.isTreasure) {
+            item::treasures
+          } else if (item.isPotion) {
+            potions = potions + 1
+          }
+          pushToNetwork("SYTEM You picked up " + item.name)
         }
         case GameDamage(from, strength) => {
           var damage = strength - getDefense
@@ -326,6 +365,11 @@ class Player extends Actor {
               battle.get ! RemovePlayer(name)
               battle = None
             }
+            treasures.foreach(n => (dungeon ! GameDropItem(n, currentRoom)))
+            dungeon ! GameDropItem(new Item(-2, "Food", food, 0, 0, 0, "Food"), currentRoom)
+            treasures = List()
+            food = 0
+            self ! GameMoveToDungeon(Main.City.get)
             pushToNetwork("SYSTEM \n " +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
               "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
@@ -411,6 +455,7 @@ class Player extends Actor {
             }
           }
         }
+
         case _: ConnectionClosed => {
           println("Connection closed event.")
           dungeon ! GameRemovePlayer(name)

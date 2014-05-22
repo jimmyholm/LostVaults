@@ -3,8 +3,10 @@ package lostvaults.server
 import akka.actor.{ Actor, Props, ActorRef }
 import scala.collection.mutable.Set
 import lostvaults.Parser
-import scala.concurrent.Future
-import akka.pattern.ask
+//import scala.concurrent.Future
+//import akka.pattern.ask
+//import akka.util.Timeout
+//import akka.util.duration._
 
 /**
  * Special case message which tells a dungeon to act as the city process. Only sent
@@ -209,32 +211,24 @@ class Dungeon extends Actor {
       if (rooms(room) != -1)
       rooms(room).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameSystem(msg))))
     }
+
     // Item messeges
-    case GamePickUpItem(item, name, index) => {
-      // försöka plocka upp item från det rum spelaren är i
+    case GamePickUpItem(item, currentWep, currentArmor, name, index) => {
       if (rooms(index).hasItem(item)) {
-        // plocka upp item
-
-        // rooms(index).takeItem(name)
-        val returnItem = rooms(index).takeItem(name)
-        //        if (returnItem.isWeapon || returnItem.isArmor) {
-        //          val playerRef: Future[String] = ask(PMap, PMapGetPlayer(name, "purpose")).mapTo[String]
-        //          if (returnItem.isWeapon) {
-        //            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("weapon"))
-        //
-        //          } else {
-        //            val itemToDrop: Future[String] = ask(playerRef, GameReturnItem("armor"))
-        //          }
-        //          val itemToDrop: Future[String] = ask(playerRef, GameReturnItem(""))()
-        //          //rooms(index).addItem(rooms(index).
-        //        }
-        PMap ! PMapSendGameMessage(name, GameItemTaken(returnItem))
+        val pItem = rooms(index).takeItem(item)
+        if (pItem.isWeapon) {
+          rooms(index).addItem(ItemRepo.getById(currentWep))
+        } else if (pItem.isArmor) {
+          rooms(index).addItem(ItemRepo.getById(currentArmor))
+        }
+        PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
       } else {
-        PMap ! PMapSendGameMessage(name, GameMessage("No such item in room"))
+        PMap ! PMapSendGameMessage(name, GameMessage("No such item in the room."))
       }
-
     }
-    case GameDropItem(item, name, index) => {
+
+    case GameDropItem(item, roomIndex) => {
+    	rooms(roomIndex).addItem(item)
     }
 
   }
