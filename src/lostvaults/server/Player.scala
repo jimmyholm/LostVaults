@@ -220,7 +220,7 @@ class Player extends Actor {
                   battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), getAttack)
                 } else {
                   dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-                  dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
+                  //dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
                 }
                 target = Parser.findWord(decodedMsg, 1)
                 state = PAttack
