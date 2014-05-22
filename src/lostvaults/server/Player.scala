@@ -274,10 +274,14 @@ class Player extends Actor {
             case "DROP" => {
               var value = 0
               val rest = Parser.findRest(decodedMsg, 0)
-              if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {
-                value = Parser.findWord(decodedMsg, 2).toInt
-              }
               if (rest.compareToIgnoreCase("potion") == 0) {
+                if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {
+                  try {
+                    value = Parser.findWord(decodedMsg, 2).toInt
+                  } catch {
+                    case e: Exception => println("DropException caught: " + Parser.findWord(decodedMsg, 2))
+                  }
+                }
                 if (potions < 1) {
                   pushToNetwork("SYSTEM You don't have any potions to drop!")
                 } else {
@@ -285,12 +289,22 @@ class Player extends Actor {
                   dungeon ! GameDropItem(new Item(-2, "Potion", 1, 0, 0, "Potion"), currentRoom)
                 }
               } else if (rest.compareToIgnoreCase("food") == 0) {
+                if (!Parser.findWord(decodedMsg, 2).equals(Parser.findWord(decodedMsg, 1))) {
+                  try {
+                    value = Parser.findWord(decodedMsg, 2).toInt
+                  } catch {
+                    case e: Exception => println("DropException caught: " + Parser.findWord(decodedMsg, 2))
+                  }
+                }
                 if (food < value) {
                   pushToNetwork("SYSTEM You can't drop that much food!")
                 } else {
                   food = food - value
                   dungeon ! GameDropItem(new Item(-2, "Food", value, 0, 0, "Food"), currentRoom)
                 }
+              } else {
+                pushToNetwork("SYSTEM You can only drop potions and food!")
+
               }
             }
             case _ => {
@@ -346,7 +360,7 @@ class Player extends Actor {
             food = food + item.attack
             sendStats
           } else if (item.isTreasure) {
-            item::treasures
+            item :: treasures
           } else if (item.isPotion) {
             potions = potions + 1
           }

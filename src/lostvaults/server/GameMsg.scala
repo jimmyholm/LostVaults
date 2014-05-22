@@ -165,9 +165,9 @@ case class GameEnterDungeon(group: String) extends GameMsg
 /**
  * Passed along to Dungeon to inform the Dungeon that a player
  * wishes to pick up an item.
- * @param item The integer representation of the item to pick up
- * @param currentWep The player's current weapon
- * @param currentArmor The player's current armor
+ * @param item The name of the item to pick up
+ * @param currentWep The ID of the player's current weapon
+ * @param currentArmor The ID of the player's current armor
  * @param player The player who wishes to pick up item
  * @param room The player's current room
  */
@@ -180,7 +180,9 @@ case class GamePickUpItem(item: String, currentWep: Int, currentArmor: Int, play
  */
 case class GameDropItem(item: Item, room: Int) extends GameMsg
 /**
- * TODO
+ * Passed along to a Player to inform the player that some item 
+ * needs to be updated.
+ * @param item The player's new item.
  */
 case class GameUpdateItem(item: Item) extends GameMsg
 
@@ -189,3 +191,4 @@ case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
 case object GameHeal extends GameMsg
 
 case class GameHarm(amnt: Int) extends GameMsg
+
