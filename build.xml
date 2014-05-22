@@ -58,11 +58,13 @@
 			<src path="src/" />
 			<exclude name="**/server/*.java" />
 			<exclude name="**/client/*" />
+			<exclude name="**/tests/*" />
 			<exclude name="**/util/*" />
 		</scalac>
 		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
 			<exclude name="**/server/*.scala" />
 			<exclude name="**/client/*" />
+			<exclude name="**/tests/*" />
 			<exclude name="**/util/*" />
 			<classpath refid="LostVaults.classpath" />
 		</javac>

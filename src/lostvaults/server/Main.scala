@@ -1,25 +1,42 @@
 package lostvaults.server
-import akka.actor.{ActorSystem, ActorRef, Props, Inbox}
+import akka.actor.{ ActorSystem, ActorRef, Props, Inbox }
 import scala.concurrent.duration._
 import akka.util.Timeout
 object Main {
+  var system: Option[ActorSystem] = None
   var PMap: Option[ActorRef] = None
   var GMap: Option[ActorRef] = None
-  val system = ActorSystem("LostVaultsServer")
   var City: Option[ActorRef] = None
-  def main(args: Array[String]) {
+  var CheatActor: Option[ActorRef] = None
+
+  def startUp() {
+    system = Some(ActorSystem("LostVaultsServer"))
     ItemRepo.populateArray()
-    val pmap = system.actorOf(Props[PlayerMap])
+    val pmap = system.get.actorOf(Props[PlayerMap])
     PMap = Some(pmap) // Start up our player hashmap actor
-    val gmap = system.actorOf(Props[GroupMap])
+    val gmap = system.get.actorOf(Props[GroupMap])
     GMap = Some(gmap)
-    val conMan = system.actorOf(Props[ConMan])
-    City = Some(system.actorOf(Props[Dungeon]))
-    var input = ""
+    val conMan = system.get.actorOf(Props[ConMan])
+    City = Some(system.get.actorOf(Props[Dungeon]))
     City.get ! DungeonMakeCity
+    CheatActor = Some(system.get.actorOf(Props[CheatActor]))
+  }
+
+  def restart() {
+    system.get.shutdown()
+    ItemRepo.clearArray()
+    startUp
+  }
+
+  def main(args: Array[String]) {
+    startUp
+    var input = ""
     do {
       input = Console.readLine("Enter \"Quit\" to exit> ")
+      if (input.compareToIgnoreCase("Quit") != 0) {
+        CheatActor.get ! input
+      }
     } while (input.toLowerCase() != "quit")
-    system.shutdown()
+    system.get.shutdown()
   }
 }

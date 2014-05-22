@@ -12,6 +12,9 @@ object ItemRepo {
   implicit val getItemDataResult = GetResult(r => ItemData(r.nextInt, r.nextString, r.nextInt,  r.nextInt, r.nextInt, r.nextInt, r.nextString))
   val Rnd = new Random(System.currentTimeMillis)
   var itemArray: Array[ItemData] = Array()
+  def clearArray() {
+    itemArray = Array()
+  }
   def populateArray() {
     Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC") withSession {
       implicit session =>
