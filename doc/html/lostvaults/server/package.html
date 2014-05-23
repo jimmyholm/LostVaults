@@ -1,0 +1,1355 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>server - lostvaults.server</title>
+          <meta name="description" content="server - lostvaults.server" />
+          <meta name="keywords" content="server lostvaults.server" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../index.html';
+            var hash = 'lostvaults.server.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../lib/package_big.png" />
+        <p id="owner"><a href="../package.html" class="extype" name="lostvaults">lostvaults</a></p>
+        <h1>server</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">server</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="lostvaults.server.ActionData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ActionDataextendsCombatDatawithProductwithSerializable"></a>
+      <a id="ActionData:ActionData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ActionData.html"><span class="name">ActionData</span></a><span class="params">(<span name="PlayerList">PlayerList: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>, <span class="extype" name="akka.actor.ActorRef">ActorRef</span>)]</span>, <span name="TurnList">TurnList: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="Duration">Duration: <span class="extype" name="scala.Int">Int</span></span>, <span name="CombatsPerPlayer">CombatsPerPlayer: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>])]</span>)</span><span class="result"> extends <a href="CombatData.html" class="extype" name="lostvaults.server.CombatData">CombatData</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Data within Action.</p>
+    </li><li name="lostvaults.server.AddPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AddPlayerextendsCombatEventwithProductwithSerializable"></a>
+      <a id="AddPlayer:AddPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AddPlayer.html"><span class="name">AddPlayer</span></a><span class="params">(<span name="self">self: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="speed">speed: <span class="extype" name="scala.Int">Int</span></span>, <span name="enemy">enemy: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CombatEvent.html" class="extype" name="lostvaults.server.CombatEvent">CombatEvent</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, notifying that a player should be added to that combat</p>
+    </li><li name="lostvaults.server.AttackPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AttackPlayerextendsCombatEventwithProductwithSerializable"></a>
+      <a id="AttackPlayer:AttackPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AttackPlayer.html"><span class="name">AttackPlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="target">target: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strength">strength: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="CombatEvent.html" class="extype" name="lostvaults.server.CombatEvent">CombatEvent</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, notifying that name wants to attach target with strength strength</p>
+    </li><li name="lostvaults.server.CheatActor" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CheatActorextendsActor"></a>
+      <a id="CheatActor:CheatActor"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CheatActor.html"><span class="name">CheatActor</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.Combat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CombatextendsActorwithFSM[lostvaults.server.CombatState,lostvaults.server.CombatData]"></a>
+      <a id="Combat:Combat"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Combat.html"><span class="name">Combat</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span> with <span class="extype" name="akka.actor.FSM">FSM</span>[<a href="CombatState.html" class="extype" name="lostvaults.server.CombatState">CombatState</a>, <a href="CombatData.html" class="extype" name="lostvaults.server.CombatData">CombatData</a>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.CombatData" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CombatDataextendsAnyRef"></a>
+      <a id="CombatData:CombatData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CombatData.html"><span class="name">CombatData</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The data that the states keep track of.</p>
+    </li><li name="lostvaults.server.CombatEvent" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CombatEventextendsAnyRef"></a>
+      <a id="CombatEvent:CombatEvent"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CombatEvent.html"><span class="name">CombatEvent</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Internal messages passed along to a combat
+</p>
+    </li><li name="lostvaults.server.CombatState" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CombatStateextendsAnyRef"></a>
+      <a id="CombatState:CombatState"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CombatState.html"><span class="name">CombatState</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The states in combat
+</p>
+    </li><li name="lostvaults.server.ConMan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConManextendsActor"></a>
+      <a id="ConMan:ConMan"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ConMan.html"><span class="name">ConMan</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Connection Manager class is used to monitor incoming connections
+ which are then matched up with newly-spawned player actors.</p>
+    </li><li name="lostvaults.server.ConManMsg" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ConManMsgextendsAnyRef"></a>
+      <a id="ConManMsg:ConManMsg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ConManMsg.html"><span class="name">ConManMsg</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.DrinkPotion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DrinkPotionextendsCombatEventwithProductwithSerializable"></a>
+      <a id="DrinkPotion:DrinkPotion"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DrinkPotion.html"><span class="name">DrinkPotion</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CombatEvent.html" class="extype" name="lostvaults.server.CombatEvent">CombatEvent</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, notifying that name wants to drink a potion</p>
+    </li><li name="lostvaults.server.Dungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DungeonextendsActor"></a>
+      <a id="Dungeon:Dungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Dungeon.html"><span class="name">Dungeon</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Dungeon is an actor class in charge of carrying the Main logic of the game,
+ either as a dungeon or as the special-case City actor.</p>
+    </li><li name="lostvaults.server.GMapEnterDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapEnterDungeonextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapEnterDungeon:GMapEnterDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapEnterDungeon.html"><span class="name">GMapEnterDungeon</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapEnterDungeon is sent by the dungeon to the group manager to set a player as ready to enter the dungeon.</p>
+    </li><li name="lostvaults.server.GMapExitDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapExitDungeonextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapExitDungeon:GMapExitDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapExitDungeon.html"><span class="name">GMapExitDungeon</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapExitDungeon is sent by a dungeon when a player decides to exit the dungeon they are in.</p>
+    </li><li name="lostvaults.server.GMapGetPlayerCount" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapGetPlayerCountextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapGetPlayerCount:GMapGetPlayerCount"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapGetPlayerCount.html"><span class="name">GMapGetPlayerCount</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapGetPlayerCount is a request to retreive the number of players currently in a group.</p>
+    </li><li name="lostvaults.server.GMapGetPlayerCountResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapGetPlayerCountResponseextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapGetPlayerCountResponse:GMapGetPlayerCountResponse"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapGetPlayerCountResponse.html"><span class="name">GMapGetPlayerCountResponse</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapGetPlayerCountResponse is a response to a GetPlayerCount request.</p>
+    </li><li name="lostvaults.server.GMapGetPlayerList" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapGetPlayerListextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapGetPlayerList:GMapGetPlayerList"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapGetPlayerList.html"><span class="name">GMapGetPlayerList</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapGetPlayerList is a request to retrieve a list of players in a given player's group.</p>
+    </li><li name="lostvaults.server.GMapGetPlayerListResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapGetPlayerListResponseextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapGetPlayerListResponse:GMapGetPlayerListResponse"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapGetPlayerListResponse.html"><span class="name">GMapGetPlayerListResponse</span></a><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapGetPlayerListResponse is a response to a GetPlayerList request.</p>
+    </li><li name="lostvaults.server.GMapJoin" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapJoinextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapJoin:GMapJoin"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapJoin.html"><span class="name">GMapJoin</span></a><span class="params">(<span name="joinee">joinee: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="group">group: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapJoin is a request to add one player to the group of another.</p>
+    </li><li name="lostvaults.server.GMapLeave" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapLeaveextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapLeave:GMapLeave"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapLeave.html"><span class="name">GMapLeave</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapLeave is a request to remove a player from his current group.</p>
+    </li><li name="lostvaults.server.GMapMsg" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="GMapMsgextendsAnyRef"></a>
+      <a id="GMapMsg:GMapMsg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapMsg.html"><span class="name">GMapMsg</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapMsg serves as the base trait for all GroupMap related messages.</p>
+    </li><li name="lostvaults.server.GMapSendGameMessage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GMapSendGameMessageextendsGMapMsgwithProductwithSerializable"></a>
+      <a id="GMapSendGameMessage:GMapSendGameMessage"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GMapSendGameMessage.html"><span class="name">GMapSendGameMessage</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a></span>)</span><span class="result"> extends <a href="GMapMsg.html" class="extype" name="lostvaults.server.GMapMsg">GMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">GMapSendGameMessage is a request to send a game message to the group of a named player.</p>
+    </li><li name="lostvaults.server.GameAddPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameAddPlayerextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameAddPlayer:GameAddPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameAddPlayer.html"><span class="name">GameAddPlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, the player named name will be added to the internal
+player set and will cause a GamePlayerEnter message to be sent to all other
+players in the dungeons.</p>
+    </li><li name="lostvaults.server.GameAttackNotInRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameAttackNotInRoomextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameAttackNotInRoom:GameAttackNotInRoom"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameAttackNotInRoom.html"><span class="name">GameAttackNotInRoom</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, when that player is trying to attack someone that is not in room</p>
+    </li><li name="lostvaults.server.GameAttackPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameAttackPlayerextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameAttackPlayer:GameAttackPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameAttackPlayer.html"><span class="name">GameAttackPlayer</span></a><span class="params">(<span name="attacker">attacker: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="attackee">attackee: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, this will start a combat between two players,
+or continue a combat in action</p>
+    </li><li name="lostvaults.server.GameAttackPlayerInCombat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameAttackPlayerInCombatextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameAttackPlayerInCombat:GameAttackPlayerInCombat"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameAttackPlayerInCombat.html"><span class="name">GameAttackPlayerInCombat</span></a><span class="params">(<span name="attackee">attackee: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a room, when the message sender is trying to attack attackee</p>
+    </li><li name="lostvaults.server.GameDamage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameDamageextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameDamage:GameDamage"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameDamage.html"><span class="name">GameDamage</span></a><span class="params">(<span name="from">from: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="damage">damage: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, tells how much damage that player has suffered</p>
+    </li><li name="lostvaults.server.GameDropItem" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameDropItemextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameDropItem:GameDropItem"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameDropItem.html"><span class="name">GameDropItem</span></a><span class="params">(<span name="item">item: <a href="Item.html" class="extype" name="lostvaults.server.Item">Item</a></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a Dungeon to inform the Dungeon that a player
+wishes to drop an item.</p>
+    </li><li name="lostvaults.server.GameDungeonMove" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameDungeonMoveextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameDungeonMove:GameDungeonMove"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameDungeonMove.html"><span class="name">GameDungeonMove</span></a><span class="params">(<span name="room">room: <span class="extype" name="scala.Int">Int</span></span>, <span name="start">start: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player to tell the player to move to a room.</p>
+    </li><li name="lostvaults.server.GameEnterDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameEnterDungeonextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameEnterDungeon:GameEnterDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameEnterDungeon.html"><span class="name">GameEnterDungeon</span></a><span class="params">(<span name="group">group: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Request from a player to enter a dungeon</p>
+    </li><li name="lostvaults.server.GameExitDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameExitDungeonextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameExitDungeon:GameExitDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameExitDungeon.html"><span class="name">GameExitDungeon</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Request from a player to exit the dungeon.</p>
+    </li><li name="lostvaults.server.GameHarm" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameHarmextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameHarm:GameHarm"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameHarm.html"><span class="name">GameHarm</span></a><span class="params">(<span name="amnt">amnt: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.GameMessage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameMessageextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameMessage:GameMessage"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameMessage.html"><span class="name">GameMessage</span></a><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, general message that has to follow the form of the client receive
+</p>
+    </li><li name="lostvaults.server.GameMoveToDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameMoveToDungeonextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameMoveToDungeon:GameMoveToDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameMoveToDungeon.html"><span class="name">GameMoveToDungeon</span></a><span class="params">(<span name="dungeon">dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, this will update the player's dungeon actor.</p>
+    </li><li name="lostvaults.server.GameMsg" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="GameMsgextendsAnyRef"></a>
+      <a id="GameMsg:GameMsg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="GameMsg.html"><span class="name">GameMsg</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Internal messages passed between Player and Dungeon actors
+</p>
+    </li><li name="lostvaults.server.GameNotifyDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameNotifyDungeonextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameNotifyDungeon:GameNotifyDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameNotifyDungeon.html"><span class="name">GameNotifyDungeon</span></a><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, this will send a system message to all players in the dungeon passed along to it.</p>
+    </li><li name="lostvaults.server.GameNotifyGUI" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameNotifyGUIextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameNotifyGUI:GameNotifyGUI"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameNotifyGUI.html"><span class="name">GameNotifyGUI</span></a><span class="params">(<span name="room">room: <span class="extype" name="scala.Int">Int</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.GameNotifyRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameNotifyRoomextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameNotifyRoom:GameNotifyRoom"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameNotifyRoom.html"><span class="name">GameNotifyRoom</span></a><span class="params">(<span name="room">room: <span class="extype" name="scala.Int">Int</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, this will send a system message to room.</p>
+    </li><li name="lostvaults.server.GameNotifyRoomByName" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameNotifyRoomByNameextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameNotifyRoomByName:GameNotifyRoomByName"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameNotifyRoomByName.html"><span class="name">GameNotifyRoomByName</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, this will send a system message to the room the sender is in.</p>
+    </li><li name="lostvaults.server.GamePickUpItem" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePickUpItemextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePickUpItem:GamePickUpItem"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePickUpItem.html"><span class="name">GamePickUpItem</span></a><span class="params">(<span name="item">item: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="currentWep">currentWep: <span class="extype" name="scala.Int">Int</span></span>, <span name="currentArmor">currentArmor: <span class="extype" name="scala.Int">Int</span></span>, <span name="player">player: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to Dungeon to inform the Dungeon that a player
+wishes to pick up an item.</p>
+    </li><li name="lostvaults.server.GamePlayerEnter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerEnterextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerEnter:GamePlayerEnter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerEnter.html"><span class="name">GamePlayerEnter</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, the message &quot;System name has entered the dungeon&quot; to
+the remote client.</p>
+    </li><li name="lostvaults.server.GamePlayerHasDied" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerHasDiedextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerHasDied:GamePlayerHasDied"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerHasDied.html"><span class="name">GamePlayerHasDied</span></a><span class="params">(<span name="player">player: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, when a player has died</p>
+    </li><li name="lostvaults.server.GamePlayerJoinBattle" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerJoinBattleextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerJoinBattle:GamePlayerJoinBattle"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerJoinBattle.html"><span class="name">GamePlayerJoinBattle</span></a><span class="params">(<span name="battle">battle: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="enemy">enemy: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, when that player is being attacked and will
+lead to that player being added to a combat</p>
+    </li><li name="lostvaults.server.GamePlayerLeft" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerLeftextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerLeft:GamePlayerLeft"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerLeft.html"><span class="name">GamePlayerLeft</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, the message &quot;System name has left the dungeon&quot; to the
+remote client.</p>
+    </li><li name="lostvaults.server.GamePlayerMove" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerMoveextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerMove:GamePlayerMove"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerMove.html"><span class="name">GamePlayerMove</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="direction">direction: <span class="extype" name="scala.Int">Int</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon to request for a player to move into a new room.</p>
+    </li><li name="lostvaults.server.GameRemovePlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameRemovePlayerextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameRemovePlayer:GameRemovePlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameRemovePlayer.html"><span class="name">GameRemovePlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, the player named name will be removed from the internal
+player set and will cause a GamePlayerLeft message to be sent to all remaining
+players in the dungeon.</p>
+    </li><li name="lostvaults.server.GameSay" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameSayextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameSay:GameSay"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameSay.html"><span class="name">GameSay</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, it will cause msg to be sent to every player in the
+same room as the player named name.</p>
+    </li><li name="lostvaults.server.GameSystem" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameSystemextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameSystem:GameSystem"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameSystem.html"><span class="name">GameSystem</span></a><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, this will send the message &quot;SYSTEM msg&quot; to the
+remote connection.</p>
+    </li><li name="lostvaults.server.GameUpdateItem" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameUpdateItemextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameUpdateItem:GameUpdateItem"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameUpdateItem.html"><span class="name">GameUpdateItem</span></a><span class="params">(<span name="item">item: <a href="Item.html" class="extype" name="lostvaults.server.Item">Item</a></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a Player to inform the player that some item
+needs to be updated.</p>
+    </li><li name="lostvaults.server.GameWhisper" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameWhisperextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameWhisper:GameWhisper"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameWhisper.html"><span class="name">GameWhisper</span></a><span class="params">(<span name="from">from: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="to">to: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Unused
+</p>
+    </li><li name="lostvaults.server.GameYell" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameYellextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameYell:GameYell"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameYell.html"><span class="name">GameYell</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, it will cause msg to be sent to every player in the
+same dungeon as the player named name.</p>
+    </li><li name="lostvaults.server.GroupMap" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GroupMapextendsActor"></a>
+      <a id="GroupMap:GroupMap"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="GroupMap.html"><span class="name">GroupMap</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.Item" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ItemextendsAnyRef"></a>
+      <a id="Item:Item"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Item.html"><span class="name">Item</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The class item is a constructor for items in the game.</p>
+    </li><li name="lostvaults.server.Logger" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LoggerextendsActor"></a>
+      <a id="Logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Logger.html"><span class="name">Logger</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.NPC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NPCextendsActor"></a>
+      <a id="NPC:NPC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="NPC.html"><span class="name">NPC</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PMapAddPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapAddPlayerextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapAddPlayer:PMapAddPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapAddPlayer.html"><span class="name">PMapAddPlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ref">ref: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapAddPlayer adds a name-&gt;PlayerActor connection to the PlayerMap.</p>
+    </li><li name="lostvaults.server.PMapGetPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapGetPlayerextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapGetPlayer:PMapGetPlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapGetPlayer.html"><span class="name">PMapGetPlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="purpose">purpose: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapGetPlayer is a request to retreive the actor reference of a player given their name.</p>
+    </li><li name="lostvaults.server.PMapGetPlayerResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapGetPlayerResponseextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapGetPlayerResponse:PMapGetPlayerResponse"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapGetPlayerResponse.html"><span class="name">PMapGetPlayerResponse</span></a><span class="params">(<span name="player">player: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="akka.actor.ActorRef">ActorRef</span>]</span>, <span name="purpose">purpose: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapGetPlayerResponse is sent as a response to a GetPlayer request.</p>
+    </li><li name="lostvaults.server.PMapIsOnline" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapIsOnlineextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapIsOnline:PMapIsOnline"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapIsOnline.html"><span class="name">PMapIsOnline</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="purpose">purpose: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapIsOnline is a request to see if a player with a particular name is currently logged into the server, i.</p>
+    </li><li name="lostvaults.server.PMapIsOnlineResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapIsOnlineResponseextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapIsOnlineResponse:PMapIsOnlineResponse"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapIsOnlineResponse.html"><span class="name">PMapIsOnlineResponse</span></a><span class="params">(<span name="online">online: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="purpose">purpose: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapIsOnlineResponse is a response sent to a IsOnline request.</p>
+    </li><li name="lostvaults.server.PMapMsg" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PMapMsgextendsAnyRef"></a>
+      <a id="PMapMsg:PMapMsg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapMsg.html"><span class="name">PMapMsg</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapMsg acts as the base-trait for all PlayerMap related messages
+</p>
+    </li><li name="lostvaults.server.PMapRemovePlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapRemovePlayerextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapRemovePlayer:PMapRemovePlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapRemovePlayer.html"><span class="name">PMapRemovePlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapRemove player removes a player-&gt;PlayerActor connection from the PlayerMap.</p>
+    </li><li name="lostvaults.server.PMapSendGameMessage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapSendGameMessageextendsPMapMsgwithProductwithSerializable"></a>
+      <a id="PMapSendGameMessage:PMapSendGameMessage"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapSendGameMessage.html"><span class="name">PMapSendGameMessage</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="msg">msg: <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a></span>)</span><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapSendGameMessage is a request to relay a Game Message to a named character.</p>
+    </li><li name="lostvaults.server.Player" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PlayerextendsActor"></a>
+      <a id="Player:Player"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Player.html"><span class="name">Player</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PlayerAction" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PlayerActionextendsAnyRef"></a>
+      <a id="PlayerAction:PlayerAction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PlayerAction.html"><span class="name">PlayerAction</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PlayerGroup" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PlayerGroupextendsAnyRef"></a>
+      <a id="PlayerGroup:PlayerGroup"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="PlayerGroup.html"><span class="name">PlayerGroup</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PlayerGroup signifies a party of player characters.</p>
+    </li><li name="lostvaults.server.PlayerMap" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PlayerMapextendsActor"></a>
+      <a id="PlayerMap:PlayerMap"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="PlayerMap.html"><span class="name">PlayerMap</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"></p>
+    </li><li name="lostvaults.server.RemovePlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RemovePlayerextendsCombatEventwithProductwithSerializable"></a>
+      <a id="RemovePlayer:RemovePlayer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="RemovePlayer.html"><span class="name">RemovePlayer</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CombatEvent.html" class="extype" name="lostvaults.server.CombatEvent">CombatEvent</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, notifying that name should be removed from the combat</p>
+    </li><li name="lostvaults.server.RestData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RestDataextendsCombatDatawithProductwithSerializable"></a>
+      <a id="RestData:RestData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="RestData.html"><span class="name">RestData</span></a><span class="params">(<span name="PlayerList">PlayerList: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>, <span class="extype" name="akka.actor.ActorRef">ActorRef</span>)]</span>, <span name="Duration">Duration: <span class="extype" name="scala.Int">Int</span></span>, <span name="CombatsPerPlayer">CombatsPerPlayer: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>])]</span>)</span><span class="result"> extends <a href="CombatData.html" class="extype" name="lostvaults.server.CombatData">CombatData</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Data within Rest.</p>
+    </li><li name="lostvaults.server.Room" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RoomextendsAnyRef"></a>
+      <a id="Room:Room"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Room.html"><span class="name">Room</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The class room is a constructor for the rooms that are to be represented in the game.</p>
+    </li><li name="lostvaults.server.RoomGenerator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RoomGeneratorextendsAnyRef"></a>
+      <a id="RoomGenerator:RoomGenerator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RoomGenerator.html"><span class="name">RoomGenerator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="lostvaults.server.Action" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Action"></a>
+      <a id="Action:Action"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Action$.html"><span class="name">Action</span></a><span class="result"> extends <a href="CombatState.html" class="extype" name="lostvaults.server.CombatState">CombatState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The Action state: Can arrive to this state from Action, WaitForAck and Rest
+This state waits for a message from the player who's turn it is
+From this state you can go to Action, WaitForAck or Rest
+Before going from this state to Action next player will be informed that it is her turn
+</p>
+    </li><li name="lostvaults.server.ConManShutDown" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConManShutDown"></a>
+      <a id="ConManShutDown:ConManShutDown"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ConManShutDown$.html"><span class="name">ConManShutDown</span></a><span class="result"> extends <a href="ConManMsg.html" class="extype" name="lostvaults.server.ConManMsg">ConManMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.DamageAck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DamageAck"></a>
+      <a id="DamageAck:DamageAck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DamageAck$.html"><span class="name">DamageAck</span></a><span class="result"> extends <a href="CombatEvent.html" class="extype" name="lostvaults.server.CombatEvent">CombatEvent</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a combat, notifying that a player has received it's damage
+</p>
+    </li><li name="lostvaults.server.DungeonMakeCity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DungeonMakeCity"></a>
+      <a id="DungeonMakeCity:DungeonMakeCity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DungeonMakeCity$.html"><span class="name">DungeonMakeCity</span></a><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Special case message which tells a dungeon to act as the city process.</p>
+    </li><li name="lostvaults.server.GameCombatFinished" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameCombatFinished"></a>
+      <a id="GameCombatFinished:GameCombatFinished"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameCombatFinished$.html"><span class="name">GameCombatFinished</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to the room, notifying that room that the battle has ended
+</p>
+    </li><li name="lostvaults.server.GameCombatOver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameCombatOver"></a>
+      <a id="GameCombatOver:GameCombatOver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameCombatOver$.html"><span class="name">GameCombatOver</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a dungeon, notifying that a battle has ended
+</p>
+    </li><li name="lostvaults.server.GameCombatWin" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameCombatWin"></a>
+      <a id="GameCombatWin:GameCombatWin"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameCombatWin$.html"><span class="name">GameCombatWin</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player when that player has won a battle
+</p>
+    </li><li name="lostvaults.server.GameDrinkPotion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameDrinkPotion"></a>
+      <a id="GameDrinkPotion:GameDrinkPotion"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameDrinkPotion$.html"><span class="name">GameDrinkPotion</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, telling that player that it can drink its potion
+</p>
+    </li><li name="lostvaults.server.GameHeal" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameHeal"></a>
+      <a id="GameHeal:GameHeal"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameHeal$.html"><span class="name">GameHeal</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.GameYourTurn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameYourTurn"></a>
+      <a id="GameYourTurn:GameYourTurn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="GameYourTurn$.html"><span class="name">GameYourTurn</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player when it is that player's turn in combat
+</p>
+    </li><li name="lostvaults.server.ItemRepo" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ItemRepo"></a>
+      <a id="ItemRepo:ItemRepo"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ItemRepo$.html"><span class="name">ItemRepo</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Main"></a>
+      <a id="Main:Main"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Main$.html"><span class="name">Main</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.NPC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NPC"></a>
+      <a id="NPC:NPC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NPC$.html"><span class="name">NPC</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.NPCRepo" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NPCRepo"></a>
+      <a id="NPCRepo:NPCRepo"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NPCRepo$.html"><span class="name">NPCRepo</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.NewDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NewDungeon"></a>
+      <a id="NewDungeon:NewDungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NewDungeon$.html"><span class="name">NewDungeon</span></a><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PAttack" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PAttack"></a>
+      <a id="PAttack:PAttack"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PAttack$.html"><span class="name">PAttack</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PDecide" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PDecide"></a>
+      <a id="PDecide:PDecide"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PDecide$.html"><span class="name">PDecide</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PDrinkPotion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PDrinkPotion"></a>
+      <a id="PDrinkPotion:PDrinkPotion"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PDrinkPotion$.html"><span class="name">PDrinkPotion</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.PMapFailure" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapFailure"></a>
+      <a id="PMapFailure:PMapFailure"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapFailure$.html"><span class="name">PMapFailure</span></a><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapFailure is a message denoting an unsuccessful request.</p>
+    </li><li name="lostvaults.server.PMapSuccess" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PMapSuccess"></a>
+      <a id="PMapSuccess:PMapSuccess"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PMapSuccess$.html"><span class="name">PMapSuccess</span></a><span class="result"> extends <a href="PMapMsg.html" class="extype" name="lostvaults.server.PMapMsg">PMapMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">PMapSuccess is a message denoting a successful request.</p>
+    </li><li name="lostvaults.server.Rest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Rest"></a>
+      <a id="Rest:Rest"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Rest$.html"><span class="name">Rest</span></a><span class="result"> extends <a href="CombatState.html" class="extype" name="lostvaults.server.CombatState">CombatState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The Rest state: Can arrive to this state from Rest, Action and WaitForAck
+This state keeps track of the turns, and create a list of all players that is up for their turn
+From this state you can go Action or back to Rest
+Before going from Rest to Action next player will be informed that it is her turn
+</p>
+    </li><li name="lostvaults.server.RoomDescGen" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RoomDescGen"></a>
+      <a id="RoomDescGen:RoomDescGen"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RoomDescGen$.html"><span class="name">RoomDescGen</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="lostvaults.server.WaitForAck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="WaitForAck"></a>
+      <a id="WaitForAck:WaitForAck"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="WaitForAck$.html"><span class="name">WaitForAck</span></a><span class="result"> extends <a href="CombatState.html" class="extype" name="lostvaults.server.CombatState">CombatState</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The WaitForAck state: Can arrive to this state from Action
+This state wait for a message from the player who was attacked, acknowledging that the player
+has received damage and calculated it's new HP.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../lib/template.js"></script>
+    </body>
+      </html>
