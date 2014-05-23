@@ -101,7 +101,7 @@ class CheatActor extends Actor {
               implicit session =>
                 val sql = "SELECT * FROM ITEMS WHERE name LIKE '%" + name + "%'"
                 println("Listing all items containing \"" + name + "\":")
-                Q.queryNA[ItemData](sql) foreach (i => println("ID: " + i.id + "\tName: " + i.name + (if(i.name.length < 15)"\t" else if(i.name.length < 20)"\t\t"else"\t") + "Atk: " + i.attack + "\tDef: " + i.attack + "\tSpd: " + i.attack))
+                Q.queryNA[ItemData](sql) foreach (i => println("ID: " + i.id + "\tName: " + i.name + (if(i.name.length < 15)"\t" else if(i.name.length < 20)"\t\t"else"\t") + "Atk: " + i.attack + "\tDef: " + i.defense+ "\tSpd: " + i.speed))
                 println("Finished.")
             }
           } else if (Parser.findWord(m, 1).compareTo("npc") == 0) { // Find npcs

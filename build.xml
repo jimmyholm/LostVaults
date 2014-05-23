@@ -1,164 +1,185 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build_jars" name="LostVaults">
-	<!-- Define scala compiler, scaladoc, etc command -->
-	<property environment="env" />
-	<property name="debuglevel" value="source,lines,vars" />
-	<property name="target" value="1.7" />
-	<property name="source" value="1.7" />
-	<path id="Scala Libraries [2.10.4].userclasspath">
-		<pathelement location="libs/scala-actors.jar" />
-		<pathelement location="libs/scala-library.jar" />
-		<pathelement location="libs/scala-reflect.jar" />
-		<pathelement location="libs/scala-swing.jar" />
-	</path>
-	<path id="Scalatest Libraries">
-		<pathelement location="libs/scalatest.jar" />
-	</path>
-	<path id="Akka Libs">
-		<pathelement location="libs/akka-actor_2.10-2.3.2.jar" />
-		<pathelement location="libs/config-1.2.0.jar" />
-		<pathelement location="libs/akka-testkit_2.10-2.3.2.jar" />
-	</path>
-	<path id="Slick Libs">
-		<pathelement location="libs/sqlite-jdbc-3.7.2.jar" />
-		<pathelement location="libs/slf4j-api-1.7.7.jar" />
-		<pathelement location="libs/slf4j-simple-1.7.7.jar" />
-		<pathelement location="libs/slick_2.10-2.0.2.jar" />
-	</path>
-	<path id="LostVaults.classpath">
-		<pathelement location="bin" />
-		<path refid="Akka Libs" />
-		<path refid="Slick Libs" />
-		<path refid="Scalatest Libraries" />
-		<path refid="Scala Libraries [2.10.4].userclasspath" />
-	</path>
-	<target name="init">
-		<echo message="${ant.project.name}: ${ant.file}" />
-		<taskdef resource="scala/tools/ant/antlib.xml">
-			<classpath>
-				<pathelement location="libs/scala-compiler.jar" />
-				<pathelement location="libs/scala-reflect.jar" />
-				<pathelement location="libs/scala-library.jar" />
-			</classpath>
-		</taskdef>
-		<taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestAntTask">
-			<classpath>
-				<pathelement location="libs/scalatest.jar" />
-				<pathelement location="libs/scala-library.jar" />
-			</classpath>
-		</taskdef>
-		<mkdir dir="bin" />
-	</target>
-	<target name="clean">
-		<delete dir="bin" />
-	</target>
-	<target depends="init,build_client,build_server" name="build" />
-	<target depends="init" name="build_server">
-		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
-			<src path="src/" />
-			<exclude name="**/server/*.java" />
-			<exclude name="**/client/*" />
-			<exclude name="**/tests/*" />
-			<exclude name="**/util/*" />
-		</scalac>
-		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-			<exclude name="**/server/*.scala" />
-			<exclude name="**/client/*" />
-			<exclude name="**/tests/*" />
-			<exclude name="**/util/*" />
-			<classpath refid="LostVaults.classpath" />
-		</javac>
-	</target>
-	<target depends="init" name="build_client">
-		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
-			<src path="src/" />
-			<exclude name="**/client/*.java" />
-			<exclude name="**/server/*" />
-			<exclude name="**/test/*" />
-			<exclude name="**/util/*" />
-		</scalac>
-		<javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-			<exclude name="**/client/*.scala" />
-			<exclude name="**/server/*" />
-			<exclude name="**/test/*" />
-			<exclude name="**/util/*" />
-			<classpath refid="LostVaults.classpath" />
-		</javac>
-	</target>
-	<target depends="init" name="doc">
-		<fileset dir="src">
-		</fileset>
-		<delete dir="doc/LostVaults" />
-		<mkdir dir="doc/LostVaults" />
-		<scaladoc destdir="doc/LostVaults">
-			<src path="src" />
-			<exclude name="*.conf" />
-			<classpath refid="LostVaults.classpath" />
-		</scaladoc>
-	</target>
-	<target depends="build_client" name="client" description="Build runnable client Jar File">
-		<copy file="src/client_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
-		<jar destfile="client.jar" basedir="bin/">
-			<include name="application.conf" />
-			<include name="lostvaults/*.class" />
-			<include name="lostvaults/Logger.class" />
-			<include name="lostvaults/client/*.class" />
-			<include name="*.jar" />
-			<manifest>
-				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
-				<attribute name="Main-Class" value="lostvaults.client.Main" />
-			</manifest>
-		</jar>
-	</target>
-	<target depends="build_server" name="server" description="Build runnable server Jar File">
-		<copy file="src/server_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
-		<jar destfile="server.jar" basedir="bin/">
-			<include name="application.conf" />
-			<include name="lostvaults/*.class" />
-			<include name="lostvaults/server/*.class" />
-			<include name="*.jar" />
-			<exclude name="lostvaults/tests/*" />
-			<manifest>
-				<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
-				<attribute name="Main-Class" value="lostvaults.server.Main" />
-			</manifest>
-		</jar>
-	</target>
-	<target name="build_tools" depends="init" description="Builds the database tools.">
-		<scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
-			<src path="src/" />
-			<exclude name="**/client/*" />
-			<exclude name="**/server/*" />
-			<exclude name="**/tests/*" />
-		</scalac>
-		<jar destfile="ItemAdder.jar" basedir="bin/">
-			<include name="application.conf" />
-			<include name="lostvaults/util/*.class" />
-			<include name="*.jar" />
-			<exclude name="lostvaults/tests/*" />
-			<manifest>
-				<attribute name="Class-Path" value="libs/scala-library.jar libs/scala-reflect.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
-				<attribute name="Main-Class" value="lostvaults.util.ItemAdder" />
-			</manifest>
-		</jar>
-	</target>
-	<target name="run_client" depends="client" description="Build and run the client jar file.">
-		<java jar="client.jar" fork="true" />
-	</target>
-	<target name="run_server" depends="server" description="Build and run the server jar file.">
-		<java jar="server.jar" fork="true" />
-	</target>
-	<target name="build_jars" depends="client,server" />
-	<target name="run_tests" depends="build" description="Build and run scala tests.">
-		<copy file="src/server_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
-		<scalatest wildcard="lostvaults.tests">
-			<runpath>
-				<pathelement location="bin/" />
-				<path refid="LostVaults.classpath" />
-			</runpath>
-			<reporter type="stdout" />
-			<!--<wildcard package="lostvaults.tests" /> -->
-		</scalatest>
-	</target>
-	<target name="rebuild_all" depends="clean,client,server" />
+  <!-- Define scala compiler, scaladoc, etc command -->
+  <property environment="env" />
+  <property name="debuglevel" value="source,lines,vars" />
+  <property name="target" value="1.7" />
+  <property name="source" value="1.7" />
+  <path id="Scala Libraries [2.10.4].userclasspath">
+    <pathelement location="libs/scala-actors.jar" />
+    <pathelement location="libs/scala-library.jar" />
+    <pathelement location="libs/scala-reflect.jar" />
+    <pathelement location="libs/scala-swing.jar" />
+  </path>
+  <path id="Scalatest Libraries">
+    <pathelement location="libs/scalatest.jar" />
+  </path>
+  <path id="Akka Libs">
+    <pathelement location="libs/akka-actor_2.10-2.3.2.jar" />
+    <pathelement location="libs/config-1.2.0.jar" />
+    <pathelement location="libs/akka-testkit_2.10-2.3.2.jar" />
+  </path>
+  <path id="Slick Libs">
+    <pathelement location="libs/sqlite-jdbc-3.7.2.jar" />
+    <pathelement location="libs/slf4j-api-1.7.7.jar" />
+    <pathelement location="libs/slf4j-simple-1.7.7.jar" />
+    <pathelement location="libs/slick_2.10-2.0.2.jar" />
+  </path>
+  <path id="LostVaults.classpath">
+    <pathelement location="bin" />
+    <path refid="Akka Libs" />
+    <path refid="Slick Libs" />
+   <path refid="Scalatest Libraries" />
+    <path refid="Scala Libraries [2.10.4].userclasspath" />
+  </path>
+  <target name="init">
+    <echo message="${ant.project.name}: ${ant.file}" />
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+	<pathelement location="libs/scala-compiler.jar" />
+	<pathelement location="libs/scala-reflect.jar" />
+	<pathelement location="libs/scala-library.jar" />
+      </classpath>
+    </taskdef>
+    <taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestAntTask">
+      <classpath>
+	<pathelement location="libs/scalatest.jar" />
+	<pathelement location="libs/scala-library.jar" />
+      </classpath>
+    </taskdef>
+    <mkdir dir="bin" />
+  </target>
+  <target name="clean">
+    <delete dir="bin" />
+  </target>
+  <target depends="init,build_client,build_server" name="build" />
+  <target depends="init" name="build_server">
+    <scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+      <src path="src/" />
+      <exclude name="**/server/*.java" />
+      <exclude name="**/client/*" />
+      <exclude name="**/tests/*" />
+      <exclude name="**/util/*" />
+    </scalac>
+    <javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+      <exclude name="**/server/*.scala" />
+      <exclude name="**/client/*" />
+      <exclude name="**/tests/*" />
+      <exclude name="**/util/*" />
+      <classpath refid="LostVaults.classpath" />
+    </javac>
+  </target>
+  <target depends="init" name="build_client">
+    <scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+      <src path="src/" />
+      <exclude name="**/client/*.java" />
+      <exclude name="**/server/*" />
+      <exclude name="**/test/*" />
+      <exclude name="**/util/*" />
+    </scalac>
+    <javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+      <exclude name="**/client/*.scala" />
+      <exclude name="**/server/*" />
+      <exclude name="**/test/*" />
+      <exclude name="**/util/*" />
+      <classpath refid="LostVaults.classpath" />
+    </javac>
+  </target>
+  <target depends="init" name="doc">
+    <fileset dir="src">
+    </fileset>
+    <delete dir="doc/html" />
+    <mkdir dir="doc/html" />
+    <scaladoc destdir="doc/html">
+      <src path="src" />
+      <exclude name="*.conf" />
+      <classpath refid="LostVaults.classpath" />
+    </scaladoc>
+  </target>
+  <target depends="build_client" name="client" description="Build runnable client Jar File">
+    <copy file="src/client_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
+    <jar destfile="client.jar" basedir="bin/">
+      <include name="application.conf" />
+      <include name="lostvaults/*.class" />
+      <include name="lostvaults/Logger.class" />
+      <include name="lostvaults/client/*.class" />
+      <include name="*.jar" />
+      <manifest>
+	<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar" />
+	<attribute name="Main-Class" value="lostvaults.client.Main" />
+      </manifest>
+    </jar>
+  </target>
+  <target depends="build_server" name="server" description="Build runnable server Jar File">
+    <copy file="src/server_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
+    <jar destfile="server.jar" basedir="bin/">
+      <include name="application.conf" />
+      <include name="lostvaults/*.class" />
+      <include name="lostvaults/server/*.class" />
+      <include name="*.jar" />
+      <exclude name="lostvaults/tests/*" />
+      <manifest>
+	<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
+	<attribute name="Main-Class" value="lostvaults.server.Main" />
+      </manifest>
+    </jar>
+  </target>
+  <target name="build_tools" depends="init" description="Builds the database tools.">
+    <scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+      <src path="src/" />
+      <exclude name="**/client/*" />
+      <exclude name="**/server/*" />
+      <exclude name="**/tests/*" />
+    </scalac>
+    <jar destfile="ItemAdder.jar" basedir="bin/">
+      <include name="application.conf" />
+      <include name="lostvaults/util/*.class" />
+      <include name="*.jar" />
+      <exclude name="lostvaults/tests/*" />
+      <manifest>
+	<attribute name="Class-Path" value="libs/scala-library.jar libs/scala-reflect.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
+	<attribute name="Main-Class" value="lostvaults.util.ItemAdder" />
+      </manifest>
+    </jar>
+  </target>
+  <target name="run_client" depends="client" description="Build and run the client jar file.">
+    <java jar="client.jar" fork="true" />
+  </target>
+  <target name="run_server" depends="server" description="Build and run the server jar file.">
+    <java jar="server.jar" fork="true" />
+  </target>
+  <target name="build_jars" depends="client,server" />
+  <target name="run_tests" depends="build" description="Build and run scala tests.">
+    <copy file="src/server_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
+    <scalatest wildcard="lostvaults.tests">
+      <runpath>
+	<pathelement location="bin/" />
+	<path refid="LostVaults.classpath" />
+      </runpath>
+      <reporter type="stdout" />
+      <!--<wildcard package="lostvaults.tests" /> -->
+    </scalatest>
+  </target>
+  <target name="rebuild_all" depends="clean,client,server" />
+  <target depends="clean" name="archive" >
+    <tstamp>
+      <format property="TIME" pattern="yyyy-MM-dd__HH:mm:ss__" />
+    </tstamp>
+    <delete>
+      <fileset dir="./" includes="OSM_2014_group_04_final_deliverable_*.tar.gz" />
+    </delete>
+    <mkdir dir="pop_2014_project_group_04" />
+    <copy todir="pop_2014_project_group_04">
+      <fileset dir="./">
+	<exclude name="pop_2014_project_group_04/" />
+      </fileset>
+    </copy>
+    <exec executable="tar">
+      <arg value="cvf" />
+      <arg value="OSM_2014_group_04_final_deliverable_${TIME}.tar.gz" />
+      <arg value="pop_2014_project_group_04/" />
+      <arg value="--force-local" />
+    </exec>
+    <delete dir="pop_2014_project_group_04" /> 
+  </target>
 </project>
