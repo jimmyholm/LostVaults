@@ -191,4 +191,10 @@ case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
 case object GameHeal extends GameMsg
 
 case class GameHarm(amnt: Int) extends GameMsg
+/**
+ * Passed along to a Dungeon, when the NPC has died
+ * @param name The name of the NPC
+ * @param room The room the NPC is in
+ */
+case class GameRemoveNPCFromRoom(name: String, room: Int)
 

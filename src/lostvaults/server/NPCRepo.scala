@@ -20,31 +20,21 @@ object NPCRepo {
     }
   }
   populateArray
-    def rand(min: Int, max: Int) = {
+  def rand(min: Int, max: Int) = {
     (min + (random.nextFloat() * (max - min))).asInstanceOf[Int]
   }
-  def getRandomNPC(system: ActorSystem, rating: Int): (String, ActorRef) = {
-    println("GetRand HEllo1")
-
+  def getRandomNPC(system: ActorSystem, dungeon: ActorRef, rating: Int, room: Int): (String, ActorRef) = {
     val ratingList = npcList.filter(c => c.rating <= rating)
-    println("GetRand HEllo2")
     val n = random.nextInt(ratingList.length)
-    println("GetRand HEllo3")
     val newNPCData = ratingList.apply(n)
-    println("GetRand HEllo4")
     var hp = rand(newNPCData.minhp, newNPCData.maxhp)
-    println("GetRand HEllo5")
-    (newNPCData.name, system.actorOf(NPC.props(newNPCData.name, hp, newNPCData.rating)))
+    (newNPCData.name, system.actorOf(NPC.props(newNPCData.name, hp, newNPCData.rating, dungeon, room)))
   }
-  def getManyRandom(num: Int, system: ActorSystem, rating: Int): List[(String, ActorRef)] = {
-    println("GetMany Hello1")
+  def getManyRandom(num: Int, system: ActorSystem, dungeon: ActorRef, rating: Int, room: Int): List[(String, ActorRef)] = {
     var list: List[(String, ActorRef)] = List()
-    println("GetMany Hello2")
     for (x <- 0 until num) {
-      println("GetMany Hello3")
-      list = getRandomNPC(system, rating) :: list
+      list = getRandomNPC(system, dungeon, rating, room) :: list
     }
-    println("GetMany Hello4")
     list
   }
 }

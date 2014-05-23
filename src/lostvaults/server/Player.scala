@@ -316,16 +316,18 @@ class Player extends Actor {
           pushToNetwork("SYSTEM " + _name + " is not in room, so you cannot attack her/him")
         }
         case GamePlayerJoinBattle(_battle, enemy) => {
+          println("PLAYER: GamePlayerJoinBattle received")
           battle = Some(_battle)
           _battle ! AddPlayer(self, name, getSpeed, enemy)
         }
         case GameYourTurn => {
-          println("It is " + name + "'s turn")
+          println("PLAYER: It is " + name + "'s turn")
+          println("PLAYER: Current State is " + state)
           state match {
             case PAttack => {
               if (battle != None) {
+                println("PLAYER: sending attack message to combat")
                 battle.get ! AttackPlayer(name, target, getAttack)
-                state
               }
             }
             case PDrinkPotion => {
@@ -335,7 +337,6 @@ class Player extends Actor {
             }
             case PDecide => {
               pushToNetwork("SYSTEM It's your turn")
-              state
             }
           }
         }
@@ -368,6 +369,7 @@ class Player extends Actor {
           sendStats
         }
         case GameDamage(from, strength) => {
+          println("PLAYER: GameDamage received")
           var damage = strength - getDefense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
