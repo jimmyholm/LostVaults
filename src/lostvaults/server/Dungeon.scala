@@ -31,6 +31,32 @@ class Dungeon extends Actor {
     (index % gen.Width, index / gen.Width)
   }
 
+  def compareStrings(str1: String, str2: String) = {
+    var matches = 0
+    var leng = 0
+    if (str1.length > str2.length) {
+      leng = str1.length
+      for (i <- 0 until str2.length) {
+        if (str1(i).toString().compareToIgnoreCase(str2(i).toString()) == 0 || (str1(str1.length-1-i).toString().compareToIgnoreCase(str2(str2.length-1-i).toString()) == 0)) {
+          matches += 1
+        }
+      }
+    } else {
+      leng = str2.length
+      for (i <- 0 until str1.length) {
+        if (str1(i).toString().compareToIgnoreCase(str2(i).toString()) == 0 || (str1(str1.length-1-i).toString().compareToIgnoreCase(str2(str2.length-1-i).toString()) == 0)) {
+          matches += 1
+        }
+      }
+      if (matches == 0) // Check the reverse as well.
+        for(i <- str2.length until 0 by -1)
+          if (str1(i).toString().compareToIgnoreCase(str2(i).toString()) == 0) {
+          matches += 1
+        }
+    }
+    matches.asInstanceOf[Float] / leng.asInstanceOf[Float]
+  }
+
   def findRoom(name: String): Int = {
     if (PSet.find(n => n.compareToIgnoreCase(name) == 0) == None)
       -1
@@ -155,39 +181,65 @@ class Dungeon extends Actor {
     }
 
     case GameAttackPlayer(attacker, attackee) => {
-      println("PSet: " + PSet + " attackee: " + attackee)
-      var currentRoom = findRoom(attacker)
-      if (rooms(currentRoom).hasPlayer(attackee)) {
-        println(attacker + " attacks player " + attackee)
-        if (activeCombat == None) {
-          println("New combat actor created.")
-          activeCombat = Some(context.actorOf(Props[Combat]))
-          activeCombat.get ! self
+      var nameMatches: List[(Float, String)] = List()
+      var ind = ""
+      PSet foreach (name => {
+        if (name.compareToIgnoreCase(attacker) != 0) {
+          nameMatches = (compareStrings(attackee, name), name) :: nameMatches
         }
-        println("Adding " + attacker + " to combat")
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
-        PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
-        println("Adding " + attackee + " to combat")
-        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
-        PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
-      } else if (rooms(currentRoom).hasNPC(attackee)) {
-        println(attacker + " attacks player " + attackee)
-        if (activeCombat == None) {
-          println("New combat actor created.")
-          activeCombat = Some(context.actorOf(Props[Combat]))
-          activeCombat.get ! self
+        println(compareStrings(attackee, name))
+      })
+      if (nameMatches isEmpty) { // Not a player, check NPCs.
+        val npcs = rooms(findRoom(attacker)).getNPCList
+        npcs foreach (name => {
+          nameMatches = (compareStrings(attackee, name._1), name._1) :: nameMatches
+          println(compareStrings(attackee, name._1))
+        })
+        if (nameMatches isEmpty)
+          PMap ! PMapSendGameMessage(attacker, GameMessage("There is no one with that name to attack."))
+      }
+      if (!nameMatches.isEmpty) {
+        var highest = -1.0
+        nameMatches foreach (it => { if (it._1 > highest && it._1 >= 0.25) { highest = it._1; ind = it._2 } })
+        if (ind == "") {
+          PMap ! PMapSendGameMessage(attacker, GameMessage("There is no one with that name to attack."))
+        } else {
+          var attackee = ind
+          println("PSet: " + PSet + " attackee: " + attackee)
+          var currentRoom = findRoom(attacker)
+          if (rooms(currentRoom).hasPlayer(attackee)) {
+            println(attacker + " attacks player " + attackee)
+            if (activeCombat == None) {
+              println("New combat actor created.")
+              activeCombat = Some(context.actorOf(Props[Combat]))
+              activeCombat.get ! self
+            }
+            println("Adding " + attacker + " to combat")
+            PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+            PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
+            println("Adding " + attackee + " to combat")
+            PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
+            PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
+          } else if (rooms(currentRoom).hasNPC(attackee)) {
+            println(attacker + " attacks player " + attackee)
+            if (activeCombat == None) {
+              println("New combat actor created.")
+              activeCombat = Some(context.actorOf(Props[Combat]))
+              activeCombat.get ! self
+            }
+            println("Adding " + attacker + " to combat")
+            PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+
+            PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
+            println("Adding " + attackee + " to combat")
+            var npc = rooms(currentRoom).getNPCActorRef(attackee)
+            if (npc != None) {
+              npc.get ! GamePlayerJoinBattle(activeCombat.get, attacker)
+            }
+          } else {
+            PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
+          }
         }
-        println("Adding " + attacker + " to combat")
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
-     
-        PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
-        println("Adding " + attackee + " to combat")
-        var npc = rooms(currentRoom).getNPCActorRef(attackee)
-        if (npc != None) {
-          npc.get ! GamePlayerJoinBattle(activeCombat.get, attacker)
-        }
-      } else {
-        PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
       }
     }
     case GameAttackPlayerInCombat(attackee) => {
@@ -212,7 +264,35 @@ class Dungeon extends Actor {
     }
 
     case GamePickUpItem(item, currentWep, currentArmor, name, index) => {
-      if (rooms(index).hasItem(item)) {
+      // Grab all items in room.
+      val items = rooms(index).getItemList
+      var itemMatch: List[(Float, Int)] = List()
+      var i = 0
+      if (items.isEmpty) {
+        PMap ! PMapSendGameMessage(name, GameMessage("There are no items in this rooms to pick up."))
+      } else {
+        items foreach (it => { itemMatch = (compareStrings(item, it.name), i) :: itemMatch; i += 1 })
+        var highest = -1.0
+        var ind = -1
+        itemMatch foreach (it => { if (it._1 > highest && it._1 >= 0.5) { highest = it._1; ind = it._2 }; println(it._1) })
+        if (ind == -1) {
+          PMap ! PMapSendGameMessage(name, GameMessage("There's no item with that name in this room."))
+        } else {
+          val pItem = rooms(index).takeItem(items(ind).name)
+          if (pItem.isWeapon) {
+            rooms(index).addItem(ItemRepo.getById(currentWep))
+          } else if (pItem.isArmor) {
+            rooms(index).addItem(ItemRepo.getById(currentArmor))
+          }
+          PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
+          var msg = "ITEMLEFT " + pItem.name
+          rooms(index).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameMessage(msg))))
+        }
+      }
+
+      // Find nearest item string.
+
+      /*if (rooms(index).hasItem(item)) {
         val pItem = rooms(index).takeItem(item)
         if (pItem.isWeapon) {
           rooms(index).addItem(ItemRepo.getById(currentWep))
@@ -224,7 +304,7 @@ class Dungeon extends Actor {
         rooms(index).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameMessage(msg))))
       } else {
         PMap ! PMapSendGameMessage(name, GameMessage("No such item in the room."))
-      }
+      }*/
     }
 
     case GameDropItem(item, roomIndex) => {
