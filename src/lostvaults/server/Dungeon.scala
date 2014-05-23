@@ -149,6 +149,7 @@ class Dungeon extends Actor {
         rooms(nextRoom).addPlayer(name)
         PMap ! PMapSendGameMessage(name, GameDungeonMove(nextRoom, false))
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(nextRoom).getExitsString))
+        PMap ! PMapSendGameMessage(name, GameMessage("NPCLIST " + rooms(nextRoom).getNPCString))
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
         rooms(nextRoom).getPlayerList.foreach(c => if (c != name) { PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name)) })
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) => if (pName != name) { pName + "\n" + s } else { "" + s })))
@@ -176,8 +177,9 @@ class Dungeon extends Actor {
         context stop self
       }
     }
-    case GameRemoveNPCFromRoom(name, room) => {
-      rooms(room).removeNPC(name)
+    case GameRemoveNPCFromRoom(npc, room) => {
+      rooms(room).removeNPC(npc)
+      rooms(room).playerList foreach(c => PMap ! PMapSendGameMessage(c, GameMessage("NPCLEFT " + npc)))
     }
 
     case GameAttackPlayer(attacker, attackee) => {

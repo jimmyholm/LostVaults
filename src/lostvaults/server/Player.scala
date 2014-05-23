@@ -26,8 +26,8 @@ class Player extends Actor {
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
-  var maxhp = 10
-  var hp = 10
+  var maxhp = 20
+  var hp = 20
   var potions = 10
   var food = 5
   var gold = 10
@@ -152,7 +152,7 @@ class Player extends Actor {
                 food = 5
                 potions = 5
                 weapon = ItemRepo.getById(player.weapon)
-                armor = ItemRepo.getById(player.weapon)
+                armor = ItemRepo.getById(player.armor)
                 name = player.name
                 savePlayer
                 pushToNetwork("LOGINOK")
@@ -217,12 +217,12 @@ class Player extends Actor {
                 pushToNetwork("Don't hit yourself")
               } else {
                 if (battle != None) {
-                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), getAttack)
+                  battle.get ! AttackPlayer(name, Parser.findRest(decodedMsg, 0), getAttack)
                 } else {
-                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
+                  dungeon ! GameAttackPlayer(name, Parser.findRest(decodedMsg, 0))
                   //dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
                 }
-                target = Parser.findWord(decodedMsg, 1)
+                target = Parser.findRest(decodedMsg, 0)
                 state = PAttack
               }
             }

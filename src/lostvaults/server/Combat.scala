@@ -183,6 +183,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
           stay
         }
       } else {
+        println("COMBAT-Action-AttackPlayer: Tried to attack a player that is not in combat")
         if (dungeon != None) {
           dungeon.get ! GameAttackPlayer(name, target)
         }
