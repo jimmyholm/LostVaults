@@ -192,7 +192,7 @@ class Dungeon extends Actor {
         println(compareStrings(attackee, name))
       })
       if (nameMatches isEmpty) { // Not a player, check NPCs.
-        val npcs = rooms(findRoom(attacker)).getNPCList
+        val npcs = rooms(findRoom(attacker)).NPCList
         npcs foreach (name => {
           nameMatches = (compareStrings(attackee, name._1), name._1) :: nameMatches
           println(compareStrings(attackee, name._1))
