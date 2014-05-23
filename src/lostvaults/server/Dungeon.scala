@@ -52,7 +52,7 @@ class Dungeon extends Actor {
     }
     case NewDungeon => {
       entrance = gen.coordToIndex(gen.startRoom)
-      rooms = gen.generateDungeon(context.system)
+      rooms = gen.generateDungeon(context.system, self)
       println("New dungeon generated!")
     }
     case GameSay(name, msg) => {
@@ -150,6 +150,9 @@ class Dungeon extends Actor {
         context stop self
       }
     }
+    case GameRemoveNPCFromRoom(name, room) => {
+      rooms(room).removeNPC(name)
+    }
 
     case GameAttackPlayer(attacker, attackee) => {
       println("PSet: " + PSet + " attackee: " + attackee)
@@ -176,6 +179,7 @@ class Dungeon extends Actor {
         }
         println("Adding " + attacker + " to combat")
         PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+     
         PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
         println("Adding " + attackee + " to combat")
         var npc = rooms(currentRoom).getNPCActorRef(attackee)

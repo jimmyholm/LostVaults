@@ -1,7 +1,7 @@
 package lostvaults.server
 import scala.util.Random
 import java.util.Calendar
-import akka.actor.{ ActorSystem }
+import akka.actor.{ ActorSystem, ActorRef }
 
 class RoomGenerator {
   var itemcnt = 0
@@ -53,16 +53,11 @@ class RoomGenerator {
       itemrooms += 1
     }
   }
-  def addNPCToRoom(system: ActorSystem, X: Int, Y: Int) {
-    println("Hello1")
+  def addNPCToRoom(system: ActorSystem, dungeon: ActorRef, X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
-      println("Hello2")
       var howMany = 1 //rand(0, 1)
-      println("Hello3")
       val range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0).ceil * 10.0).asInstanceOf[Int]
-      println("Hello4")
-      var npcs = NPCRepo.getManyRandom(howMany, system, range)
-      println("Hello5")
+      var npcs = NPCRepo.getManyRandom(howMany, system, dungeon, range, coordToIndex(X, Y))
       npcs foreach (i => rooms(coordToIndex(X, Y)).addNPC(i))
     }
   }
@@ -184,7 +179,7 @@ class RoomGenerator {
       case 3 => 1
     }
   }
-  def generateDungeon(system: ActorSystem): Array[Room] = {
+  def generateDungeon(system: ActorSystem, dungeon: ActorRef): Array[Room] = {
     var created: List[(Int, Int)] = List()
     // Create a new array of Width * Height rooms
     var x = 0
@@ -247,7 +242,7 @@ class RoomGenerator {
         } while (!success)
         created.foreach(c => {
           rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true;
-          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, c._1, c._2)
+          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, dungeon, c._1, c._2)
         })
         var head = (0, 0)
         var lastCoord = (-1, -1)
