@@ -159,12 +159,8 @@ class Room() {
     NPCList = NPCList.filterNot((c => c._1 == npc))
   }
 
-  /**
-   * This method returns the list of NPCs in the room.
-   * @return the NPC's in this room
-   */
-  def getNPCList(): List[(String, ActorRef)] = {
-    NPCList
+  def getNPCString = {
+    NPCList.foldRight("")((npc, list) => npc._1 + "\n" + list)
   }
 
   /**
@@ -209,7 +205,7 @@ class Room() {
     }
     if (!NPCList.isEmpty) {
       ret += "You suddenly see: \n"
-        NPCList.foreach(npc => ret += npc._1 + "\n")
+      NPCList.foreach(npc => ret += npc._1 + "\n")
     }
     if (playerList.size > 1) {
       ret += "With you is: \n"

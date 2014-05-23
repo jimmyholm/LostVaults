@@ -278,6 +278,7 @@ public class GUI {
 
 			setLocationRelativeTo(null);
 			setVisible(true);
+			userNameInput.requestFocus();
 		}
 
 		/*******************************************
@@ -322,6 +323,7 @@ public class GUI {
 								+ name);
 				playGameCommunication.sendIP(ip);
 				window.setVisible(true);
+				commandInputField.requestFocus();
 				dispose();
 			}
 		}

@@ -10,6 +10,8 @@ class RoomGenerator {
   val Width = 10
   val Height = 10
   var rooms = new Array[Room](Width * Height)
+  val MAXDEPTH = 10
+  var startRoom: (Int, Int) = (rand(1, Width - 1), rand(1, Height - 1))
   def coordToIndex(x: Int, y: Int): Int = {
     if (x < 0 || y < 0 || x >= Width || y >= Height)
       0
@@ -31,8 +33,7 @@ class RoomGenerator {
   def rand(min: Int, max: Int) = {
     (min + (Rnd.nextFloat() * (max - min))).asInstanceOf[Int]
   }
-  val MAXDEPTH = 10
-  var startRoom: (Int, Int) = (rand(1, Width - 1), rand(1, Height - 1))
+
   def findEmptyRoom(depth: Int): (Int, Int) = {
     val x = rand(0, Width)
     val y = rand(0, Height)
@@ -42,13 +43,18 @@ class RoomGenerator {
   def addItemsToRoom(X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
       var howMany = rand(0, 3)
-      val range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0).ceil * 10.0).asInstanceOf[Int]
+      var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
+      if(range == 0) range = 1
+      println(startRoom._1 + " - " + X + " + " + startRoom._2 + " - " + Y + " / 16 *  10 = " + range)
+      println("ROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
       itemcnt += items.length
       howMany = rand(0, 3)
       items = ItemRepo.getManyRandom(howMany, "Treasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
+      items foreach (i => print(i.name))
+      println("\nROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       itemcnt += items.length
       itemrooms += 1
     }
@@ -56,8 +62,13 @@ class RoomGenerator {
   def addNPCToRoom(system: ActorSystem, dungeon: ActorRef, X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
       var howMany = 1 //rand(0, 1)
-      val range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0).ceil * 10.0).asInstanceOf[Int]
+      var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
+      if (range == 0) range = 1
+      println("ROOMGENERATOR-addNPCToRoom: This is the range: " + range)
+      println(startRoom._1 + " - " + X + " + " + startRoom._2 + " - " + Y + " / 16 *  10 = " + range)
       var npcs = NPCRepo.getManyRandom(howMany, system, dungeon, range, coordToIndex(X, Y))
+      npcs foreach (i => print(i._1))
+      println("\nROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       npcs foreach (i => rooms(coordToIndex(X, Y)).addNPC(i))
     }
   }
