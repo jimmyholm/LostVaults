@@ -22,7 +22,6 @@ class Dungeon extends Actor {
   var PSet: Set[String] = Set()
   val PMap = Main.PMap.get
   val GMap = Main.GMap.get
-  var activeCombat: Option[ActorRef] = None
   var rooms: Array[Room] = Array()
   var entrance: Int = 0
   val gen = new RoomGenerator
@@ -161,32 +160,31 @@ class Dungeon extends Actor {
       var currentRoom = findRoom(attacker)
       if (rooms(currentRoom).hasPlayer(attackee)) {
         println(attacker + " attacks player " + attackee)
-        if (activeCombat == None) {
-          println("New combat actor created.")
-          activeCombat = Some(context.actorOf(Props[Combat]))
-          activeCombat.get ! self
+        if (rooms(currentRoom).activeCombat == None) {
+          println("DUNGEON: Player New combat actor created.")
+          rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom)))
         }
         println("Adding " + attacker + " to combat")
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attackee))
         PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
         println("Adding " + attackee + " to combat")
-        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(activeCombat.get, attacker))
+        PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attacker))
         PMap ! PMapSendGameMessage(attackee, GameMessage("You have been attacked by " + attacker))
       } else if (rooms(currentRoom).hasNPC(attackee)) {
         println(attacker + " attacks player " + attackee)
-        if (activeCombat == None) {
-          println("New combat actor created.")
-          activeCombat = Some(context.actorOf(Props[Combat]))
-          activeCombat.get ! self
+        if (rooms(currentRoom).activeCombat == None) {
+          println("DUNGEON: NPC New combat actor created.")
+          rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom)))
+          rooms(currentRoom).activeCombat.get ! self
         }
         println("Adding " + attacker + " to combat")
-        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(activeCombat.get, attackee))
+        PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attackee))
      
         PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
         println("Adding " + attackee + " to combat")
         var npc = rooms(currentRoom).getNPCActorRef(attackee)
         if (npc != None) {
-          npc.get ! GamePlayerJoinBattle(activeCombat.get, attacker)
+          npc.get ! GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attacker)
         }
       } else {
         PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
@@ -199,7 +197,9 @@ class Dungeon extends Actor {
         sender() ! GameMessage("The player you are trying to attack is not in the game")
       }
     }
-
+    case GameCombatFinished (room: Int) => {
+      rooms(room).activeCombat = None
+    }
     case GameNotifyDungeon(msg) => {
       PSet foreach (c => (PMap ! PMapSendGameMessage(c, GameSystem(msg))))
     }
@@ -246,10 +246,6 @@ class Dungeon extends Actor {
     case GMapLeave(name) => {
       GMap ! GMapLeave(name)
     }
-    case GameCombatFinished => {
-      activeCombat = None
-    }
-
     case GameSay(name, msg) => {
       PSet foreach (c =>
         PMap ! PMapSendGameMessage(c, GameSay(name, msg)))
