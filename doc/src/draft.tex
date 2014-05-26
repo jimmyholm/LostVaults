@@ -68,24 +68,16 @@ Klientens GUI är implementerat i Javas Swing UI bibliotek och integrerat i Scal
 **Figur 2**
     
 \subsubsection{Class model}
-Klienten är strukturerad i fyra olika distinkta klasser som beskrivs i Figur 2. Klasserna PlayGame och PlayGameCommunication arbetar 
+Klienten är strukturerad i fyra distinkta klasser som beskrivs i Figur 2. Klasserna PlayGame och PlayGameCommunication arbetar 
 tillsammans för att skapa en brygga mellan TCP lagret och GUI:t, där PlayGame accepterar meddelanden från TCPClient och skickar dem 
 vidare till GUI via PlayGameCommunication. Samtidigt så skickas data från GUI över nätverket via metodanrop i PlayGameCommuncation till 
 PlayGame för att sedan hamna hos TCPClient.
 
 \subsection{Server}
-Systemarkitekturens serverdel är uppdelad i sektionerna Concurrency-modell, Actor-modell och Class-modell. Den första delen beskriver vårt 
+Systemarkitekturens serverdel är uppdelad i sektionerna  Actor-modell och Class-modell. Den första delen beskriver vårt 
 val av concurrencymodell samt anledningen till det specifika valet. Den andra delen, Actor-modell, beskriver funktionen hos de fem stora actor-typer i Lost Vaults servern och 
 den tredje, klass-modell, ger en ingående beskrivning hur klassförhållanden används i servern.
 
-\subsubsection{Concurrency model}
-Actor modellen har använts för projektet då vi under vår initiala diskussion gällande designen lyckades isolera beteenden i mindre och till stor del 
-fristående sektioner. Dessa sektioner kunde enkelt skapas för att dela data enbart genom meddelandesändning som i sin tur leder till att problem 
-såsom deadlock kunde undvikas. 
-
-För att implementera denna sortens system och bibehålla hög effektivitet valde vi Scala som programspråk till servern och detta passade otroligt bra då skalbarhet är ett av språkets fundamentala mål. Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi oss för 
-att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration 
-var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek även för klienten.                    
 
 **Figur 3**
 
@@ -147,16 +139,18 @@ bygga dokumentationen.
 \section{Implementation}
 
 \subsection{Programspråk}
+För att möjliggöra massiv concurrency med många individuella aktörer har vi gjort vårt projekt i Scala. Scala är bra för skalbarhet, vilket innebär att vårt program kommer fungera bra oavsätt om det är tio användare online eller om det är tio tusen. En annan anledning till att vi valde Scala är att Scala är ett objektorienterat språk, vilket passade nära med det tänket vi hade när vi skapade programmet. Vi fokuserade på att skapa objekt som interagereade på rätt sätt med varandra, snarare än att skriva kod som ska exekveras i en särskild ordning.
+
+Scala bygger på Java, och erbjuder därför liknande syntax. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig samtidigt som vi fick fördelarna med att kunna utveckla skalbart. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
+språket vilket kan ha motarbetat utvecklingen gämfört med om vi hade valt ett annat språk som vi var mer bekanta med.
+
+Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi oss för 
+att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek.
+
 Java var det språket vi valde att använda vid skapandet av det grafiska gränssnittet som spelaren agerar mot. Vårt val grundade sig i biblioteket Swing som Java tillhandahåller. 
 Med hjälp att detta bibliotek var skapandet av det grafiska gränssnittet en relativt enkel process. Likt många andra av Javas bibliotek var dokumentationen välskriven och enkel 
 att använda vilket underlättade processen. En annan aspekt som fick oss att välja Java för just denna del var att vi ville kunna kommunicera med resterande kod, skriven i Scala, 
 på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt utifrån Javas Virtuella Maskin. 
-
-Anledningen till att vi skrev inte skrev hela projektet i Java var på grund av den bristande skalbarheten som språket besitter. Scala däremot erbjöd båda en liknande syntax som 
-Java och hade samtidigt bättre skalbarhet. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig och systemet 
-kunde utvecklas med skalbarhet i åtanke. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
-språket vilket kan ha motarbetat utvecklingen mot om vi hade valt ett annat språk som vi var mer bekanta med. Det är viktigt att inte glömma att de nackdelar vi funnit under 
-projektets gång skuggas av fördelarna vi funnit med språket.
 
 \subsection{Algoritmer}
 
@@ -164,10 +158,15 @@ projektets gång skuggas av fördelarna vi funnit med språket.
 
 \subsection{Concurrency}
 Flera spelare samtidigt
-
+Skicka meddelanden - jobbigt när man bara vill ta reda på ett värde - skicka meddelanden fram och tillbaka. Men ingen risk för deadlock då all kommunikation sker via meddelanden. 
+Meddelanden är ej synkrona, vilket märks då en spelare ibland kan bli slagen efter att den har dött (det ser uut så i prompten eftersom meddelandena kommer så, men det är inte sant)
+För att skapa en slags synkronisering har vi använt FSM, vilket kräver att man är i en särskild state för att kunna ta emot ett särskilt meddelanden. 
 
 \section{Slutsatser}
-Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. 
+Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom whisper (personligt meddelande) eller say (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker som man hittar i grottan, börja slåss mot en spelare eller NPC som är i rummet och man kan gå till andra rum. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
+Vi har också skapat en \textit{god mode} som gör att man i terminalen kan ge spelare speciella items, samt hela den så att den får fullt hp. Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla salarna.     
+
+Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera massiva uppkopplingar mot dess server. 
 Då den delen av projektet var klart kunde vi utöka produkten med funktioner för att göra spelet roligare och mer interaktivt. 
 Implementation av föremål och monster att slåss mot i grottan. 
 Något vi lärt oss är att skriva nätverkskod. Vi har även fått kunskap i ett nytt programspråk.
@@ -175,6 +174,8 @@ Det vi tycker har varit svårt var bland annat att integrationstesta våra aktö
 information att ta del av om hur vi skulle gå till väga för att göra detta. En annan sak som också varit relativt svår var att 
 begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa utvecklingen till en rimlig nivå för spelet 
 och samtidigt ha det tillräckligt intressant för den som spelar.
+
+En stor sak som vi inte han med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa stek skulle vara, nu när det grundläggande fungerar som det ska. 
 
 \section{Appendix}
 
