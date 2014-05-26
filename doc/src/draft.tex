@@ -50,7 +50,6 @@ aktiva spelområden körandes samtidigt och oberoende av varandra.
 \section{Systemarkitektur}
 \subsection{Design}
 Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. Med tanke på att både klienten och servern är skrivna i Scala och körs via Java Virtual Maschine både servern och klienten kan köras på alla plattformar som stödjer Java VM 1.7.
-
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{client}
@@ -77,7 +76,7 @@ Klientens GUI är implementerat i Javas Swing UI bibliotek och integrerat i Scal
 \end{figure}
     
 \subsubsection{Klassmodell}
-Klienten är strukturerad i fyra olika distinkta klasser som beskrivs i Figur 2. Klasserna PlayGame och PlayGameCommunication arbetar 
+Klienten är strukturerad i fyra distinkta klasser som beskrivs i Figur \ref{fig:ClientArch}. Klasserna PlayGame och PlayGameCommunication arbetar 
 tillsammans för att skapa en brygga mellan TCP lagret och GUI:t, där PlayGame accepterar meddelanden från TCPClient och skickar dem 
 vidare till GUI via PlayGameCommunication. Samtidigt så skickas data från GUI över nätverket via metodanrop i PlayGameCommuncation till 
 PlayGame för att sedan hamna hos TCPClient.
@@ -87,15 +86,6 @@ Systemarkitekturens serverdel är uppdelad i sektionerna Concurrency-modell, Act
 val av concurrencymodell samt anledningen till det specifika valet. Den andra delen, Actor-modell, beskriver funktionen hos de fem stora actor-typer i Lost Vaults servern och 
 den tredje, klass-modell, ger en ingående beskrivning hur klassförhållanden används i servern.
 
-\subsubsection{Concurrencymodell}
-Actor modellen har använts för projektet då vi under vår initiala diskussion gällande designen lyckades isolera beteenden i mindre och till stor del 
-fristående sektioner. Dessa sektioner kunde enkelt skapas för att dela data enbart genom meddelandesändning som i sin tur leder till att problem 
-såsom deadlock kunde undvikas. 
-
-För att implementera denna sortens system och bibehålla hög effektivitet valde vi Scala som programspråk till servern och detta passade otroligt bra då skalbarhet är ett av språkets fundamentala mål. Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi oss för 
-att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration 
-var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek även för klienten.                    
-
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{serverActorModel2-1}
@@ -104,15 +94,15 @@ var en av punkterna som ledde till vårt beslut att använda Scala och Akka som 
 \subsection{Server-side}
 
 \subsubsection{Aktörmodell}
-Serverdelen är uppdelad i flera processer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency-modellen i enlighet med Figur 3. Endast två typer av aktörer kommmunicerar 
-direkt med nätverket via TCP/IP, Connection Manager-aktören och Player-aktörerna. Connection Manager-aktören har som syfte att hantera inkommande uppkopplingar samt ansvarar 
-för att skapa Player-aktörer som nya högnivå aktörer innan de registreras som den nyetablerade uppkopplingens lyssnare. Som lyssnare kommer Player-aktören mottaga och skicka data 
-över nätverket genom den etablerade uppkopplingen. Player-aktören styr över alla ting relaterat till klienten, som exempelvis spelarens attribut och för att verifiera 
-inloggningsförsök via kommunikation med PlayerMap. Det är även via Player-aktören andra aktörer kan skicka meddelanden över nätverket om det skulle behövas. 
+Serverdelen är uppdelad i flera processer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency-modellen i enlighet med Figur \ref{fig:ConManPlayer} och Figur \ref{fig:ServerActorModel}. 
+Endast två typer av aktörer kommmunicerar direkt med nätverket via TCP/IP, ConManaktören och Playeraktörerna. ConManaktören har som syfte att hantera inkommande anslutningar samt ansvarar 
+för att skapa Playeraktörer som nya högnivå aktörer innan de registreras som den nyetablerade anslutningens lyssnare. Som lyssnare kommer Playeraktören ta emot och skicka data 
+över nätverket. Playeraktören styr över alla attribut relaterade till sin klient, som exempelvis spelarens attribut och för att verifiera 
+inloggningsförsök via kommunikation med PlayerMap och en databas innehållande inloggningsinformation. Det är även via Playeraktören andra aktörer kan skicka meddelanden över nätverket vid behov. 
 
-PlayerMap-aktören och Groupmap-aktören fyller två specifika funktioner. PlayerMap mappar en sträng, namnet på den uppkopplade spelare, till aktören som kontrollerar 
-spelaren med det specifika namnet. Genom denna aktör kan en annan aktör snabbt och enkelt skicka meddelanden till en specifik spelare baserat på dess namn - 
-ett viktigt kommando som agerar på följande sätt är exempelvis “WHISPER”. PlayerMap möjliggör även ett snabbt och enkelt sätt för Player-aktören att försäkra 
+PlayerMapaktören och GroupMapaktören fyller två specifika och snarlika funktioner. PlayerMap mappar en sträng, namnet på en uppkopplad spelare, till den aktör som kontrollerar 
+spelaren med det eftersökta namnet. Genom denna aktör kan en annan aktör snabbt och enkelt skicka meddelanden till en specifik spelare baserat på dess namn - 
+ett viktigt kommando som agerar på följande sätt är exempelvis “WHISPER”. PlayerMap möjliggör även ett snabbt och enkelt sätt för Playeraktören att försäkra 
 sig om att det inte existerar flera spelare med samma namn på servern.
 
 \begin{figure}[hbt]
@@ -121,37 +111,44 @@ sig om att det inte existerar flera spelare med samma namn på servern.
 \caption{\label{fig:ServerActorModel}Modell över de olika aktörernas sammanhang.}
 \end{figure}
 
-GroupMap-aktören fyller en liknande funktion som PlayerMap, men länkar istället namnen på spelarna med spelargrupper istället för spelaraktörer. 
+GroupMapaktören fyller en liknande funktion som PlayerMap, men länkar istället namnen på spelarna med spelargrupper istället för spelaraktörer. 
 En spelargrupp är en samling av en eller fler spelare som tillsammans kan gå ner i en Dungeon, som är procedurellt genererad för just dem. Syftet med 
-denna aktör är att underlätta skapandet och att ansluta sig till andra spelargrupper. Genom att använda GroupMap räcker det att ansluta sig till en 
+denna aktör är att underlätta skapandet av spelargrupper samt anslutning till redan existerande spelargrupper. Genom att använda GroupMap räcker det att ansluta sig till en 
 spelare via dess namn för att inkluderas i denna spelares grupp, eller för att skapa en ny grupp med denna spelare.
 
-Den fjärde sortens aktör som servern använder är Dungeon-aktören och det denna som utför spelets logik. 
-Det existerar ett speciellt tillstånd av Dungeon-aktören, kallat City- aktören. City existerar ständigt 
+De två resterande lagren av aktörer som servern använder är Dungeonlagret och Stridslagret, och det är dessa som utför spelets logik. 
+Det existerar ett speciellt tillstånd av Dungeonaktören, kallat Cityaktören. City existerar ständigt 
 under serverns livstid och hanterar spelets sociala aspekt, såsom chattande och skapandet av grupper. 
-Det som Dungeon-aktören ansvarar för är genererandet och hanterandet av den procedurellt skapade 
+Det som Dungeonaktören ansvarar för är genererandet och hanterandet av den procedurellt skapade 
 grotta som består av multipla och sammanlänkade rum i ett tvådimensionellt rutnät. Det är i dessa rum som spelare kommer kunna göra uppdrag, 
-finna skatter, slåss mot monster eller spelare etc. Dungeon-aktören ansvarar även för koordinationen av alla spelare som finns i grottan. 
+finna skatter, slåss mot monster eller spelare etc. Dungeonaktören ansvarar även för koordinationen av alla spelare som finns i grottan. 
 Ett exempel på detta är kommandot “SAY”  som ska skickas till relevanta spelare. 
+Strider koordineras av sin egna aktör, en finit tillståndsmaskin kallad Combat, som sköter turordning av spelare och monster vid strid. Varje rum i en Dungeon kan innehålla en
+referens till en Combat, vilket leder till att det som max kan vara upp till en combat aktiv per rum. Combataktören skapas då spelare går i strid mot monster eller andra spelare
+och terminerar när det inte längre finns någon som anfaller någon annan.
 
-Efter att City-aktören har skapat Dungeon-aktören ansvarar den nya aktören för sin egen livslängd och avsutar sig själv endast när det inte längre finns några spelare i den.
+Efter att Cityaktören har skapat en Dungeonaktör ansvarar den nya aktören för sin egen livslängd och avsutar sig själv endast när det inte längre finns några spelare i den.
 
 \begin{figure}[hbt]
 \centering
-\includegraphics[width=1.0\textwidth]{serverActorModel2-2}
+\includegraphics[width=1.0\textwidth]{serverUml2}
 \caption{\label{fig:ServerKlassModell}Modell över serverns klassstruktur}
 \end{figure}
 
 \subsubsection{Klassmodell}
 Figur \ref{fig:ServerKlassModell} visar de olika klasserna i serverimplementationen.
 De är uppdelade i fyra lager; Verktygslagret, Anslutningslagret, Spelarlagret och Dungeonlagret. Indelningen i dessa lager följer till stor del
-den indelning som gjorts i vilka klasser är sina egna aktörer. Undantaget till detta är verktygslagret, där klasserna PlayerMap, GroupMap och CheatActor är sina egna aktörer.
-Med undantag av RoomGenerator och RoomDescGenerator är alla klasser i Verktygslagret Singletons. Lagret tillhandahåller  understödjande funktionalitet till de andra klasserna.
+den indelning som gjorts i vilka klasser är sina egna aktörer. Undantagen till detta är verktygslagret, där klasserna PlayerMap, GroupMap och CheatActor är sina egna aktörer samt 
+Combat klassen som i denna figur flyttats från sitt egna lager (se figur \ref{fig:ServerActorModel}) för att visa dess täta koppling med Room klassen.
+
+Bortsett från RoomGenerator och RoomDescGenerator är alla klasser i Verktygslagret Singletons. Lagret tillhandahåller  understödjande funktionalitet till de andra klasserna.
 Anslutningslagret är ingångspunkten till servern över nätverket genom Akkas TCP bibliotek. Vår anslutningshanterare, ConMan, agerar som en singleton och endast en 
 instans av denna ska existera vid en given tidpunkt. ConMan är den klass som lystnar efter och godtar anslutningar från klienter, samt skapar nya Player-instanser vid nyupprättad anslutning.
 
 Dungeonlagret innehåller de klasser som är viktiga för spelets logiska funktioner. Lagret innehåller dungeonklassen, som ansvarar över en mängd slumpmässigt genererade rum, som i sin tur
-ansvarar för aktiva strider samt icke-spelar karaktärer och objekt.
+ansvarar för aktiva strider samt icke-spelarkaraktärer och objekt. Tidigare design visar att Item klassen används som superklass till olika typer av objekt. Vi valde dock att platta till 
+vår klasshierarki och förenkla designen genom att låta alla typer av objekt vara instanser av Item klassen med olika attribut. På samma sätt valde vi att göra oss av med distinktionen mellan
+goda och onda icke-spelarkaraktärer, och har istället valt att implementera enbart monster.
 
 \section{Utvecklingsverktyg}
 
@@ -170,16 +167,18 @@ bygga dokumentationen.
 \section{Implementation}
 
 \subsection{Programspråk}
+För att möjliggöra massiv concurrency med många individuella aktörer har vi gjort vårt projekt i Scala. Scala är bra för skalbarhet, vilket innebär att vårt program kommer fungera bra oavsätt om det är tio användare online eller om det är tio tusen. En annan anledning till att vi valde Scala är att Scala är ett objektorienterat språk, vilket passade nära med det tänket vi hade när vi skapade programmet. Vi fokuserade på att skapa objekt som interagereade på rätt sätt med varandra, snarare än att skriva kod som ska exekveras i en särskild ordning.
+
+Scala bygger på Java, och erbjuder därför liknande syntax. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig samtidigt som vi fick fördelarna med att kunna utveckla skalbart. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
+språket vilket kan ha motarbetat utvecklingen gämfört med om vi hade valt ett annat språk som vi var mer bekanta med.
+
+Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi oss för 
+att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek.
+
 Java var det språket vi valde att använda vid skapandet av det grafiska gränssnittet som spelaren agerar mot. Vårt val grundade sig i biblioteket Swing som Java tillhandahåller. 
 Med hjälp att detta bibliotek var skapandet av det grafiska gränssnittet en relativt enkel process. Likt många andra av Javas bibliotek var dokumentationen välskriven och enkel 
 att använda vilket underlättade processen. En annan aspekt som fick oss att välja Java för just denna del var att vi ville kunna kommunicera med resterande kod, skriven i Scala, 
 på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt utifrån Javas Virtuella Maskin. 
-
-Anledningen till att vi skrev inte skrev hela projektet i Java var på grund av den bristande skalbarheten som språket besitter. Scala däremot erbjöd båda en liknande syntax som 
-Java och hade samtidigt bättre skalbarhet. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig och systemet 
-kunde utvecklas med skalbarhet i åtanke. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
-språket vilket kan ha motarbetat utvecklingen mot om vi hade valt ett annat språk som vi var mer bekanta med. Det är viktigt att inte glömma att de nackdelar vi funnit under 
-projektets gång skuggas av fördelarna vi funnit med språket.
 
 \subsection{Algoritmer}
 För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
@@ -231,10 +230,15 @@ Vår algoritm skall även säkerställa att inga rum skapas som inte går att n�
 
 \subsection{Concurrency}
 Flera spelare samtidigt
-
+Skicka meddelanden - jobbigt när man bara vill ta reda på ett värde - skicka meddelanden fram och tillbaka. Men ingen risk för deadlock då all kommunikation sker via meddelanden. 
+Meddelanden är ej synkrona, vilket märks då en spelare ibland kan bli slagen efter att den har dött (det ser uut så i prompten eftersom meddelandena kommer så, men det är inte sant)
+För att skapa en slags synkronisering har vi använt FSM, vilket kräver att man är i en särskild state för att kunna ta emot ett särskilt meddelanden. 
 
 \section{Slutsatser}
-Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. 
+Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom whisper (personligt meddelande) eller say (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker som man hittar i grottan, börja slåss mot en spelare eller NPC som är i rummet och man kan gå till andra rum. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
+Vi har också skapat en \textit{god mode} som gör att man i terminalen kan ge spelare speciella items, samt hela den så att den får fullt hp. Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla salarna.     
+
+Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera massiva uppkopplingar mot dess server. 
 Då den delen av projektet var klart kunde vi utöka produkten med funktioner för att göra spelet roligare och mer interaktivt. 
 Implementation av föremål och monster att slåss mot i grottan. 
 Något vi lärt oss är att skriva nätverkskod. Vi har även fått kunskap i ett nytt programspråk.
@@ -242,6 +246,8 @@ Det vi tycker har varit svårt var bland annat att integrationstesta våra aktö
 information att ta del av om hur vi skulle gå till väga för att göra detta. En annan sak som också varit relativt svår var att 
 begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa utvecklingen till en rimlig nivå för spelet 
 och samtidigt ha det tillräckligt intressant för den som spelar.
+
+En stor sak som vi inte han med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa stek skulle vara, nu när det grundläggande fungerar som det ska. 
 
 \section{Appendix}
 
