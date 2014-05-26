@@ -2,6 +2,8 @@
 \usepackage[swedish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{graphicx}
@@ -13,6 +15,9 @@
 
 \date{\today\\Version 1.0}
 
+%Döp om pseudokod.
+\floatname{algorithm}{Algoritm}
+\renewcommand{\algorithmicindent}{4 pt}
 \begin{document}
 \maketitle
 \newpage
@@ -20,81 +25,87 @@
 \listoffigures
 \newpage
 \section{Inledning}
-Concurrency är en aspekt inom mjukvaruutveckling som ökar i betydelse då datorer förlitar sig mer och mer på parallell bearbetning och till följd av detta måste vårt sätt att skriva 
-program justeras. Denna nya sort av arkitektur medför nya problem och om vi inte anpassar oss kommer denna utökning i kapacitet förbli outnyttjad. För att utforska dessa nya utmaningar 
-och dess lösningar, valde vi att arbeta fram ett server-client system över en TCP/IP nätverksuppkoppling. Problemen vi försökte lösa var att upprätthålla en mottaglig miljö för multipla, 
-simultana uppkopplingar och samtidigt ha flera aktiva samt oberoende sektioner av programlogik. Vi representerar detta problem genom ett multi-user dungeon eller MUD, 
-en sorts online multiplayerspel, där målet var att säkerställa att servern upprätthåller ett stabilt verkställande oavsett antal uppkopplade användare.
-    
-Vi beslutade att kalla spelet Lost Vaults, ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. Detta sker i grupper av flertal spelare som 
-tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast gagnar den enskilda invididen. Möjligheten finns att utforska som 
-enskild individ, men fokuset för spelet ligger i den dynamik som följer av interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon; där City är 
-staden där spelarna samlas efter tidigare utforskningar, kan fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. Dungeons är en procedurellt genererad uppsättning 
-rum fyllt med monster, fällor och skatter. Varje grupp spelare får alltså sin egen unikt genererade Dungeon när gruppen går ner i dessa magiska grottor under staden. Väl inne ges 
-gruppen en eller flera uppdrag som bör fullbordas under upptäcksfärden.
-  
-Som beskrivet nedan i delen om speldesign, finns det två typer av uppdrag: grupp- och spelaruppdrag. Gruppuppdrag gagnar alla spelare i gruppen medan spelaruppdragen gynnar den enskilde. 
-Vårt mål var att skapa en atmosfär där spelare behöver lita på varandra för att fullborda de svårare gruppuppdragen, fast samtidigt vara misstänksamma mot varandra då vem som helst kan 
-förråda gruppen för att färdigställa sina personliga uppdrag.
+Att spela spel över internet är en del av vår kultur som antagligen aldrig kommer försvinna. Det är ett sätt att umgås och samarbeta, ofta med människor man aldrig har mött. 
+På många platser i världen är gigantiska servrar igång dygnet runt för att hantera förfrågningar från miljontals användare, och tusentals programmerare gör sitt bästa för 
+att ge människor en så bra användarupplevelse som möjligt. 
+För att detta ska vara möjligt krävs mycket av serverprogrammen. 
+Servrarna ska kunna hantera många förfrågningar med låg fördröjning, samtidigt som de måste koordinera händelser så att det som en användare gör också ska påverka dem i anslutning till den. 
+Serverprogrammen ska också gärna vara finkornigt modulariserade för att möjliggöra parallellutveklingen av serverprogrammen på ett fungerande sätt.  
  
-Den slutgiltiga produkten för detta projekt är ett fullt funktionellt och interaktivt multiplayer online role playing game kallat Lost Vaults.
+Vi kände att komplexiteten av att göra ett multiplayer onlinespel var något som utmanade och intresserade oss, då det gav upphov till intressanta problem som kunde lösas med hjälp av concurrency. 
+Vi har skapat ett serverbaserat spel, som kommunicerar med användaren via en TCP/IP uppkoppling till användarens klient-program. Servern består av flera självständiga aktörer som interagerar
+genom att skicka meddelanden fram och tillbaka. Detta ger oss ett bekvämt sätt att skriva fungerande spellogik, utan att behöva bry oss om att låsa delad data.
+
+Spelet kallas \textit{The Lost Vaults - Uneasy Alliance} och är ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. 
+Detta sker i grupper av flertal spelare som tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast 
+gagnar den enskilda invididen. Möjligheten finns att utforska som enskild individ, men fokuset för spelet ligger i den dynamik som följer av 
+interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon; där City är staden där spelarna samlas efter tidigare utforskningar, 
+kan fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. Dungeons är en procedurellt genererad uppsättning rum fyllt med monster, fällor och skatter. 
+Varje grupp spelare får alltså sin egen unikt genererade Dungeon när gruppen går ner i dessa magiska grottor under staden. Väl inne ges 
+gruppen en eller flera uppdrag som bör fullbordas innan de kommer upp till ytan igen.
 
 Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha fler än en spelare aktiva i spelet samtidigt och se hur dessa interagerar med varandra, samt flertalet 
 aktiva spelområden körandes samtidigt och oberoende av varandra.
 
-\section{System architecture}
+\section{Systemarkitektur}
 \subsection{Design}
-Systemarkitekturen som återfinns i detta dokument är uppdelat i Client-side arkitektur och Server-side arkitektur. Applikation, skriven i Scala, körs i Java Virtual Machine och på 
-grund av detta kan både klient och server köras på alla plattformar som stödjer Java VM 1.7.
+Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. Med tanke på att både klienten och servern är skrivna i Scala och körs via Java Virtual Maschine både servern och klienten kan köras på alla plattformar som stödjer Java VM 1.7.
 
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=1.0\textwidth]{client}
+\caption{\label{fig:Client}Klientens användargränssnitt.}
+\end{figure}
 
-****** figur 1****
+\subsection{Klient}
+Designen för klienten till Lost Vaults är utvecklad för att efterlikna en indirekt terminal, där ingen logik används förutom att skicka förfrågningar och 
+ta emot samt tolka svaren på förfrågningar. Konceptet för en indirekt terminal valdes för att kunna åstadkomma en implementation hos klienten som lätt kan utökas när serverns implementation av spelets logik ökar. Detta betyder med andra ord ett system som kan utkökas enkelt endast genom att addera nya förfrågningar och svar.
 
-
-
-
-\subsection{Client side}
-Målet med designen för klienten till Lost Vaults var att ta fram något som kunde efterliknas med en indirekt terminal, där ingen logik används förutom att skicka förfrågningar och 
-motta samt tolka svaren på förfrågningar. I slutänden hoppas vi kunna åstadkomma en client-side implementation som lätt kan utökas när serverns implementation av spelets logik ökar, 
-alltså ett system som kan utkökas enkelt endast genom att addera nya förfrågningar och svar.
-
-Som synes i Figur 1 är klientfönstret uppdelat i flera textfält som visar relevant information för spelaren. Huvudområdet är för vanliga server-svar och kommer innehålla beskrivningar 
+Som Figur 1 illustrerar är klientfönstret uppdelat i flera textfält som visar relevant information för spelaren. Huvudområdet är för vanliga server-svar och kommer innehålla beskrivningar 
 av rummet, meddelanden i spelarchatten, meddelanden med systeminformation och liknande. Klientens högra sida är reserverat för ständig information som spelaren behöver ta del av snabbt. 
 Den övre delen innehåller information om spelarens egen karaktär, där spelarens liv och stridsegenskaper samt hur mycket mat gruppen har listas. 
 
 Den nedre delen av fönstret innehåller kommandoraden, där spelaren skriver in kommandon i enlighet med ett strikt syntax. När klienten startas välkomnas spelaren 
-av ett centrerat fönster för inloggning . Här kan spelaren skriva in sitt användarnamn och lösenord samt IP:n till den server som spelaren vill koppla upp sig mot. 
+av ett centrerat fönster för inloggning. Här kan spelaren skriva in sitt användarnamn och lösenord samt IP:n tillhörande den server som spelaren vill koppla upp sig mot. 
 
 Klientens GUI är implementerat i Javas Swing UI bibliotek och integrerat i Scala för att använda Akkas TCP funktionalitet.
 
-**Figur 2**
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=1.0\textwidth]{clientuml1}
+\caption{\label{fig:ClientArch}Klientens klassmodell.}
+\end{figure}
     
-\subsubsection{Class model}
+\subsubsection{Klassmodell}
 Klienten är strukturerad i fyra olika distinkta klasser som beskrivs i Figur 2. Klasserna PlayGame och PlayGameCommunication arbetar 
 tillsammans för att skapa en brygga mellan TCP lagret och GUI:t, där PlayGame accepterar meddelanden från TCPClient och skickar dem 
 vidare till GUI via PlayGameCommunication. Samtidigt så skickas data från GUI över nätverket via metodanrop i PlayGameCommuncation till 
 PlayGame för att sedan hamna hos TCPClient.
 
-\subsection{Server side}
-Systemarkitekturens serverdel är uppdelad i sektionerna Concurrency Model, Actor Model och Class Model. Den första delen beskriver vårt 
-val av concurrencymodell, och anledningen till valet. Den andra delen beskriver funktionen hos de fem stora actor-typer i Lost Vaults servern och 
-den tredje ger en ingående beskrivning hur klassförhållanden används av servern.
+\subsection{Server}
+Systemarkitekturens serverdel är uppdelad i sektionerna Concurrency-modell, Actor-modell och Class-modell. Den första delen beskriver vårt 
+val av concurrencymodell samt anledningen till det specifika valet. Den andra delen, Actor-modell, beskriver funktionen hos de fem stora actor-typer i Lost Vaults servern och 
+den tredje, klass-modell, ger en ingående beskrivning hur klassförhållanden används i servern.
 
-\subsubsection{Concurrency model}
+\subsubsection{Concurrencymodell}
 Actor modellen har använts för projektet då vi under vår initiala diskussion gällande designen lyckades isolera beteenden i mindre och till stor del 
 fristående sektioner. Dessa sektioner kunde enkelt skapas för att dela data enbart genom meddelandesändning som i sin tur leder till att problem 
 såsom deadlock kunde undvikas. 
 
-För att implementera denna sortens system och bibehålla hög effektivitet valde vi Scala som programspråk till servern av den enkla anledningen att 
-skalbarheten är ett av språkets fundamentala mål. Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi 
+För att implementera denna sortens system och bibehålla hög effektivitet valde vi Scala som programspråk till servern och detta passade otroligt bra då skalbarhet är ett av språkets fundamentala mål. Genom rekommendationer av skaparna bakom Scala och via språkets styrkor och enkelhet, beslöt vi oss för 
 att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration 
-ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek även för klienten, som tidigare nämnts.                    
+var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek även för klienten.                    
 
-**Figur 3**
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=1.0\textwidth]{serverActorModel2-1}
+\caption{\label{fig:ConManPlayer}Figur över förhållandet mellan ConMan och Player.}
+\end{figure}
+\subsection{Server-side}
 
-\subsubsection{Actor model}
-Serverdelen är uppdelad i flera processer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency Model i enlighet med Figur 3. Bara två typer av aktörer kommmunicerar 
-direkt med nätverket via TCP/IP, Connection Manager-aktören och Player-aktörerna. Connection Manager- aktören har som syfte att hantera inkommande uppkopplingar samt ansvarar 
+\subsubsection{Aktörmodell}
+Serverdelen är uppdelad i flera processer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency-modellen i enlighet med Figur 3. Endast två typer av aktörer kommmunicerar 
+direkt med nätverket via TCP/IP, Connection Manager-aktören och Player-aktörerna. Connection Manager-aktören har som syfte att hantera inkommande uppkopplingar samt ansvarar 
 för att skapa Player-aktörer som nya högnivå aktörer innan de registreras som den nyetablerade uppkopplingens lyssnare. Som lyssnare kommer Player-aktören mottaga och skicka data 
 över nätverket genom den etablerade uppkopplingen. Player-aktören styr över alla ting relaterat till klienten, som exempelvis spelarens attribut och för att verifiera 
 inloggningsförsök via kommunikation med PlayerMap. Det är även via Player-aktören andra aktörer kan skicka meddelanden över nätverket om det skulle behövas. 
@@ -104,40 +115,49 @@ spelaren med det specifika namnet. Genom denna aktör kan en annan aktör snabbt
 ett viktigt kommando som agerar på följande sätt är exempelvis “WHISPER”. PlayerMap möjliggör även ett snabbt och enkelt sätt för Player-aktören att försäkra 
 sig om att det inte existerar flera spelare med samma namn på servern.
 
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=1.0\textwidth]{serverActorModel2-2}
+\caption{\label{fig:ServerActorModel}Modell över de olika aktörernas sammanhang.}
+\end{figure}
+
 GroupMap-aktören fyller en liknande funktion som PlayerMap, men länkar istället namnen på spelarna med spelargrupper istället för spelaraktörer. 
-En spelargrupp är en samling av en eller fler spelare som tillsammans kan gå ner i en Dungeon som är procedurellt genererad för just dem. Syftet med 
+En spelargrupp är en samling av en eller fler spelare som tillsammans kan gå ner i en Dungeon, som är procedurellt genererad för just dem. Syftet med 
 denna aktör är att underlätta skapandet och att ansluta sig till andra spelargrupper. Genom att använda GroupMap räcker det att ansluta sig till en 
 spelare via dess namn för att inkluderas i denna spelares grupp, eller för att skapa en ny grupp med denna spelare.
 
-Den fjärde sortens aktör som servern använder är Dungeon-aktören, den som utför spelets logik. 
+Den fjärde sortens aktör som servern använder är Dungeon-aktören och det denna som utför spelets logik. 
 Det existerar ett speciellt tillstånd av Dungeon-aktören, kallat City- aktören. City existerar ständigt 
 under serverns livstid och hanterar spelets sociala aspekt, såsom chattande och skapandet av grupper. 
-Det ordinära fallet som Dungeon-aktören ansvarar för är genererandet och hanterandet av den procedurella 
-grottan av multipla, sammanlänkade rum i ett tvådimensionellt rutnät. Det är i dessa rum som spelare kommer kunna göra uppdrag, 
-finna skatter etc. Dungeon-aktören ansvarar för koordinerandet av alla spelare som finns i grottan. 
+Det som Dungeon-aktören ansvarar för är genererandet och hanterandet av den procedurellt skapade 
+grotta som består av multipla och sammanlänkade rum i ett tvådimensionellt rutnät. Det är i dessa rum som spelare kommer kunna göra uppdrag, 
+finna skatter, slåss mot monster eller spelare etc. Dungeon-aktören ansvarar även för koordinationen av alla spelare som finns i grottan. 
 Ett exempel på detta är kommandot “SAY”  som ska skickas till relevanta spelare. 
 
-Efter att City-aktören har skapat Dungeon-aktören ansvarar den för sin egen livslängd och avsutar sig själv endast när det inte längre finns några spelare i den.
+Efter att City-aktören har skapat Dungeon-aktören ansvarar den nya aktören för sin egen livslängd och avsutar sig själv endast när det inte längre finns några spelare i den.
 
-**Figur 4**
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=1.0\textwidth]{serverActorModel2-2}
+\caption{\label{fig:ServerKlassModell}Modell över serverns klassstruktur}
+\end{figure}
 
-\subsubsection{Class model}
-Figur 4 visar relationen mellan de olika klasserna i implementation av servern och dess multiplicitet av relevanta förhållanden. 
-De är uppdelade i tre kategorier; Utility Layer, Network Communicators och Game Logic. 
-Utility Layer tillhandahåller understödjande funktionalitet till de andra klasserna och exakt en av varje klass ska existera vid en given punkt. 
-Network Communicators är de som relaterar tillbaka till nätverket genom Akkas TCP bibliotek. Connection manager klassen, ConMan, hanteras som en singleton och endast en 
-instans av denna ska existera vid en given tidpunkt. Player-klassen har emellertid en instans för varje öppen uppkoppling.
+\subsubsection{Klassmodell}
+Figur \ref{fig:ServerKlassModell} visar de olika klasserna i serverimplementationen.
+De är uppdelade i fyra lager; Verktygslagret, Anslutningslagret, Spelarlagret och Dungeonlagret. Indelningen i dessa lager följer till stor del
+den indelning som gjorts i vilka klasser är sina egna aktörer. Undantaget till detta är verktygslagret, där klasserna PlayerMap, GroupMap och CheatActor är sina egna aktörer.
+Med undantag av RoomGenerator och RoomDescGenerator är alla klasser i Verktygslagret Singletons. Lagret tillhandahåller  understödjande funktionalitet till de andra klasserna.
+Anslutningslagret är ingångspunkten till servern över nätverket genom Akkas TCP bibliotek. Vår anslutningshanterare, ConMan, agerar som en singleton och endast en 
+instans av denna ska existera vid en given tidpunkt. ConMan är den klass som lystnar efter och godtar anslutningar från klienter, samt skapar nya Player-instanser vid nyupprättad anslutning.
 
-Game Logic delen innehåller alla interna klasser och där också Dungeon-klassen. Dungeon-klassen är bryggan mellan Network 
-Communicators och Game Logic och det är endast via en Dungeon-klass som en Player kan utföra någon handling förutom WHISPER kommandot, 
-då detta meddelande är över hela servern. Dungeon-klassen håller koll på utforskade och outforskade rum, uppdrag, grupper, object och NPCs. 
-Dungeon håller även koll på de Players som för tillfället är uppkopplade och associerade med en given Dungeon.
+Dungeonlagret innehåller de klasser som är viktiga för spelets logiska funktioner. Lagret innehåller dungeonklassen, som ansvarar över en mängd slumpmässigt genererade rum, som i sin tur
+ansvarar för aktiva strider samt icke-spelar karaktärer och objekt.
 
 \section{Utvecklingsverktyg}
 
 I detta projekt användes flera olika verktyg för att underlätta utvecklingen. Då vi använt Scala som vårt val av programspråk skrevs i princip all vår kod i Eclipse. 
 Detta då vi anser att det i särklass är det enklaste sättet att utveckla kod till Java eller Scala. Även fast all kod är skriven i Eclipse använder vi Ant Build System 
-för automatiserad kompilering samt byggandet av vår klient och server, klar att köras i Java Virtual Machine. 
+för automatiserad kompilering samt vid byggandet av vår klient och server; som efter kompilering är klar att köras i Java Virtual Machine. 
 
 För hanteringen av versionskontroll har vi använt det tillförlitliga och välkända verktyget Git. Vi satte upp ett nytt git repository på Github.com specifikt för detta 
 projekt och valet av Git gjordes på grund av dess styrkor samt att vi är vana användare av det.
@@ -145,7 +165,7 @@ projekt och valet av Git gjordes på grund av dess styrkor samt att vi är vana 
 Testandet av vår kod görs med ScalaTest ramverket samt ett Ant Build skript som ger oss möjligheten till automatiskt byggande och körning av tester.
 
 Sammansättningen av dokumentationen utförs med Scaladoc på grund av dess likhet med JavaDoc, ett verktyg vi är vana med att använda, och Ant har reviderats för att automatiskt 
-bygga vår dokumentation.
+bygga dokumentationen.
 
 \section{Implementation}
 
@@ -162,6 +182,50 @@ språket vilket kan ha motarbetat utvecklingen mot om vi hade valt ett annat spr
 projektets gång skuggas av fördelarna vi funnit med språket.
 
 \subsection{Algoritmer}
+För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
+bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
+Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda.
+\begin{algorithm}
+\caption{Procedurell Rumsgenerering.}
+\label{alg:RoomGen}
+\begin{algorithmic}[1]
+\Function{generateRooms}{Bredd, Höjd}
+\State  $Rooms$ = Array[Bredd * Höjd]
+\State  $StartRoom$ = slumpmässig cell i $Rooms$
+\State  $CreatedRooms$ = $0$
+\State  $GoalRooms$ = önskat antal skapade rum
+\Repeat
+\State $ToConnect$ = List()
+\State $NextRoom$  =  Slumpat rum $x$ ur $Rooms$ där $x.created = false$
+\State $NextRoom.created$ = $true$
+\State $ToConnect.Insert NextRoom$
+\While{$NextRoom.connected \neq true$}
+\State Välj en slumpmässig riktning, viktad mot $StartRoom$
+\State $NextRoom$ = den cell i $Rooms$ som är ett steg i vald riktning
+\If {$NextRoom.created = true$ och $NextRoom.connected \neq true$}
+\If {Andra riktningar har inte prövats}
+\State Välj ny riktning och börja om från $13$
+\ElsIf{Alla riktningar har misslyckats}
+\State Gå tillbaka ett rum ur $ToConnect$ och börja om från $12$
+\If{Alla möjliga riktningar prövats i alla rum ur $ToConnect$}
+\State Börja om från $7$
+\EndIf
+\EndIf
+\ElsIf{$NextRoom.created = false$}
+\State Lägg $NextRoom$ först i $ToConnect$
+\EndIf
+\EndWhile
+\While{$|ToConnect|$}
+\State Anslut $NextRoom$ med $ToConnect$
+\State Sätt $NextRoom.connected = true$
+\State Plocka ut $head$ från $ToConnect$ och tilldela den till $NextRoom$
+\State Öka $CreatedRooms$ med $1$
+\EndWhile
+\Until{$CreatedRooms \geq GoalRooms$}
+\EndFunction
+\end{algorithmic}
+
+\end{algorithm}
 
 \subsection{Datastrukturer}
 
