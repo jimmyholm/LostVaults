@@ -20,10 +20,15 @@
 \renewcommand{\algorithmicindent}{4 pt}
 \begin{document}
 \maketitle
+\thispagestyle{empty}
 \newpage
+\setcounter{page}{1}
+\pagenumbering{Roman}
 \tableofcontents
 \listoffigures
 \newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
 \section{Inledning}
 Att spela spel över internet är en del av vår kultur som antagligen aldrig kommer försvinna. Det är ett sätt att umgås och samarbeta, ofta med människor man aldrig har mött. 
 På många platser i världen är gigantiska servrar igång dygnet runt för att hantera förfrågningar från miljontals användare, och tusentals programmerare gör sitt bästa för 
@@ -82,9 +87,8 @@ vidare till GUI via PlayGameCommunication. Samtidigt så skickas data från GUI 
 PlayGame för att sedan hamna hos TCPClient.
 
 \subsection{Server}
-Systemarkitekturens serverdel är uppdelad i sektionerna Concurrency-modell, Actor-modell och Class-modell. Den första delen beskriver vårt 
-val av concurrencymodell samt anledningen till det specifika valet. Den andra delen, Actor-modell, beskriver funktionen hos de fem stora actor-typer i Lost Vaults servern och 
-den tredje, klass-modell, ger en ingående beskrivning hur klassförhållanden används i servern.
+Systemarkitekturens serverdel är uppdelad i sektionerna Aktörmodell och Klassmodell. Den första delen beskriver funktionen hos de olika aktörlagren i Lost Vaults servern och 
+den andra ger en  beskrivning av serverns klassförhållanden.
 
 \begin{figure}[hbt]
 \centering
