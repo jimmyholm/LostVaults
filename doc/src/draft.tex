@@ -20,24 +20,24 @@
 \listoffigures
 \newpage
 \section{Inledning}
-Concurrency är en aspekt inom mjukvaruutveckling som ökar i betydelse då datorer förlitar sig mer och mer på parallell bearbetning och till följd av detta måste vårt sätt att skriva 
-program justeras. Denna nya sort av arkitektur medför nya problem och om vi inte anpassar oss kommer denna utökning i kapacitet förbli outnyttjad. För att utforska dessa nya utmaningar 
-och dess lösningar, valde vi att arbeta fram ett server-client system över en TCP/IP nätverksuppkoppling. Problemen vi försökte lösa var att upprätthålla en mottaglig miljö för multipla, 
-simultana uppkopplingar och samtidigt ha flera aktiva samt oberoende sektioner av programlogik. Vi representerar detta problem genom ett multi-user dungeon eller MUD, 
-en sorts online multiplayerspel, där målet var att säkerställa att servern upprätthåller ett stabilt verkställande oavsett antal uppkopplade användare.
-    
-Vi beslutade att kalla spelet Lost Vaults, ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. Detta sker i grupper av flertal spelare som 
-tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast gagnar den enskilda invididen. Möjligheten finns att utforska som 
-enskild individ, men fokuset för spelet ligger i den dynamik som följer av interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon; där City är 
-staden där spelarna samlas efter tidigare utforskningar, kan fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. Dungeons är en procedurellt genererad uppsättning 
-rum fyllt med monster, fällor och skatter. Varje grupp spelare får alltså sin egen unikt genererade Dungeon när gruppen går ner i dessa magiska grottor under staden. Väl inne ges 
-gruppen en eller flera uppdrag som bör fullbordas under upptäcksfärden.
-  
-Som beskrivet nedan i delen om speldesign, finns det två typer av uppdrag: grupp- och spelaruppdrag. Gruppuppdrag gagnar alla spelare i gruppen medan spelaruppdragen gynnar den enskilde. 
-Vårt mål var att skapa en atmosfär där spelare behöver lita på varandra för att fullborda de svårare gruppuppdragen, fast samtidigt vara misstänksamma mot varandra då vem som helst kan 
-förråda gruppen för att färdigställa sina personliga uppdrag.
+Att spela spel över internet är en del av vår kultur som antagligen aldrig kommer försvinna. Det är ett sätt att umgås och samarbeta, ofta med människor man aldrig har mött. 
+På många platser i världen är gigantiska servrar igång dygnet runt för att hantera förfrågningar från miljontals användare, och tusentals programmerare gör sitt bästa för 
+att ge människor en så bra användarupplevelse som möjligt. 
+För att detta ska vara möjligt krävs mycket av serverprogrammen. 
+Servrarna ska kunna hantera många förfrågningar med låg fördröjning, samtidigt som de måste koordinera händelser så att det som en användare gör också ska påverka dem i anslutning till den. 
+Serverprogrammen ska också gärna vara finkornigt modulariserade för att möjliggöra parallellutveklingen av serverprogrammen på ett fungerande sätt.  
  
-Den slutgiltiga produkten för detta projekt är ett fullt funktionellt och interaktivt multiplayer online role playing game kallat Lost Vaults.
+Vi kände att komplexiteten av att göra ett multiplayer onlinespel var något som utmanade och intresserade oss, då det gav upphov till intressanta problem som kunde lösas med hjälp av concurrency. 
+Vi har skapat ett serverbaserat spel, som kommunicerar med användaren via en TCP/IP uppkoppling till användarens klient-program. Servern består av flera självständiga aktörer som interagerar
+genom att skicka meddelanden fram och tillbaka. Detta ger oss ett bekvämt sätt att skriva fungerande spellogik, utan att behöva bry oss om att låsa delad data.
+
+Spelet kallas \textit{The Lost Vaults - Uneasy Alliance} och är ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. 
+Detta sker i grupper av flertal spelare som tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast 
+gagnar den enskilda invididen. Möjligheten finns att utforska som enskild individ, men fokuset för spelet ligger i den dynamik som följer av 
+interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon; där City är staden där spelarna samlas efter tidigare utforskningar, 
+kan fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. Dungeons är en procedurellt genererad uppsättning rum fyllt med monster, fällor och skatter. 
+Varje grupp spelare får alltså sin egen unikt genererade Dungeon när gruppen går ner i dessa magiska grottor under staden. Väl inne ges 
+gruppen en eller flera uppdrag som bör fullbordas innan de kommer upp till ytan igen.
 
 Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha fler än en spelare aktiva i spelet samtidigt och se hur dessa interagerar med varandra, samt flertalet 
 aktiva spelområden körandes samtidigt och oberoende av varandra.
