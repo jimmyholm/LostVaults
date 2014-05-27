@@ -7,9 +7,12 @@ object RoomDescGen {
   //maybe change item listan till en itemlist istället för en stringlist
   def generateDescription(npc: List[String], items: List[String], exits: List[String]) = {
     if (npc.isEmpty && items.isEmpty) {
-      "The room you walk into is empty. "
+      var string = "\nThe room you walk into is empty. "
+      string += _GenerateExitDesc(exits)
+      string += _GenerateMystery
+      string
     } else {
-      var string = ""
+      var string = "\n"
       string += _GenerateStartingSentence
       string += _GenerateNPCDesc(npc)
       string += _GenerateItemDesc(items)
@@ -168,7 +171,7 @@ object RoomDescGen {
   }
   //Ranges for generateAdjective
   val COLOR = Tuple2(0, 12)
-  val ANYTHING = Tuple2(0, 22)
+  val ANYTHING = Tuple2(0, 16)
   val SIZE = Tuple2(13, 16)
   val SOUND = Tuple2(17, 22)
   def _GenerateAdjective(range: Tuple2[Int, Int]) = {

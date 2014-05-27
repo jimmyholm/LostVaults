@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../lib/class_big.png" />
+        <a href="Combat$.html" title="Go to companion"><img src="../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../package.html" class="extype" name="lostvaults">lostvaults</a>.<a href="package.html" class="extype" name="lostvaults.server">server</a></p>
-        <h1>Combat</h1>
+        <h1><a href="Combat$.html" title="Go to companion">Combat</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -80,7 +80,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="lostvaults.server.Combat#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():lostvaults.server.Combat"></a>
+      <a id="&lt;init&gt;(_dungeon:akka.actor.ActorRef,_roomIndex:Int):lostvaults.server.Combat"></a>
       <a id="&lt;init&gt;:Combat"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -88,7 +88,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Combat</span><span class="params">()</span>
+        <span class="name">Combat</span><span class="params">(<span name="_dungeon">_dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="_roomIndex">_roomIndex: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       </h4>
       
@@ -475,15 +475,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Actor</dd></dl></div>
     </li><li name="lostvaults.server.Combat#dungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dungeon:Option[akka.actor.ActorRef]"></a>
-      <a id="dungeon:Option[ActorRef]"></a>
+      <a id="dungeon:akka.actor.ActorRef"></a>
+      <a id="dungeon:ActorRef"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">dungeon</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="akka.actor.ActorRef">ActorRef</span>]</span>
+        <span class="name">dungeon</span><span class="result">: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>
       </span>
       </h4>
       
@@ -836,6 +836,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FSM → Actor</dd></dl></div>
+    </li><li name="lostvaults.server.Combat#roomIndex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="roomIndex:Int"></a>
+      <a id="roomIndex:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">roomIndex</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="akka.actor.Actor#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="self:akka.actor.ActorRef"></a>
       <a id="self:ActorRef"></a>

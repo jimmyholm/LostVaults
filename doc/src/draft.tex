@@ -35,7 +35,7 @@ På många platser i världen är gigantiska servrar igång dygnet runt för att
 att ge människor en så bra användarupplevelse som möjligt. 
 För att detta ska vara möjligt krävs mycket av serverprogrammen. 
 Servrarna ska kunna hantera många förfrågningar med låg fördröjning, samtidigt som de måste koordinera händelser så att det som en användare gör också ska påverka dem i anslutning till den. 
-Serverprogrammen ska också gärna vara finkornigt modulariserade för att möjliggöra parallellutveklingen av serverprogrammen på ett fungerande sätt.  
+Serverprogrammen ska också gärna vara finkornigt modulariserade för att möjliggöra parallellutveklingen av programmen på ett fungerande sätt.  
  
 Vi kände att komplexiteten av att göra ett multiplayer onlinespel var något som utmanade och intresserade oss, då det gav upphov till intressanta problem som kunde lösas med hjälp av concurrency. 
 Vi har skapat ett serverbaserat spel, som kommunicerar med användaren via en TCP/IP uppkoppling till användarens klient-program. Servern består av flera självständiga aktörer som interagerar
@@ -44,17 +44,14 @@ genom att skicka meddelanden fram och tillbaka. Detta ger oss ett bekvämt sätt
 Spelet kallas \textit{The Lost Vaults - Uneasy Alliance} och är ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. 
 Detta sker i grupper av flertal spelare som tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast 
 gagnar den enskilda invididen. Möjligheten finns att utforska som enskild individ, men fokuset för spelet ligger i den dynamik som följer av 
-interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon; där City är staden där spelarna samlas efter tidigare utforskningar, 
-kan fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. Dungeons är en procedurellt genererad uppsättning rum fyllt med monster, fällor och skatter. 
-Varje grupp spelare får alltså sin egen unikt genererade Dungeon när gruppen går ner i dessa magiska grottor under staden. Väl inne ges 
-gruppen en eller flera uppdrag som bör fullbordas innan de kommer upp till ytan igen.
+interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon. City är staden där spelarna samlas innan kommande exkursion, där kan de fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. En dungeon är en den värld som spelet utspelar sig i; en uppsättning rum fyllt med monster, fällor och skatter. 
+Varje grupp spelare får sin egen unikt genererade Dungeon när de går ner i dessa magiska grottor under staden. Väl inne ges gruppen en eller flera uppdrag som bör fullbordas innan de kommer upp till ytan igen.
 
-Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha fler än en spelare aktiva i spelet samtidigt och se hur dessa interagerar med varandra, samt flertalet 
-aktiva spelområden körandes samtidigt och oberoende av varandra.
+Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha fler än en spelare aktiva i spelet samtidigt, samt flertalet aktiva spelområden körandes samtidigt och oberoende av varandra.
 
 \section{Systemarkitektur}
 \subsection{Design}
-Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. Med tanke på att både klienten och servern är skrivna i Scala och körs via Java Virtual Maschine både servern och klienten kan köras på alla plattformar som stödjer Java VM 1.7.
+Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. På grund av att både klienten och servern är skrivna i Scala och körs via Java Virtual Maschine kan både servern och klienten köras på alla plattformar som stödjer Java VM 1.7.
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{client}
@@ -65,12 +62,11 @@ Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka
 Designen för klienten till Lost Vaults är utvecklad för att efterlikna en indirekt terminal, där ingen logik används förutom att skicka förfrågningar och 
 ta emot samt tolka svaren på förfrågningar. Konceptet för en indirekt terminal valdes för att kunna åstadkomma en implementation hos klienten som lätt kan utökas när serverns implementation av spelets logik ökar. Detta betyder med andra ord ett system som kan utkökas enkelt endast genom att addera nya förfrågningar och svar.
 
-Som Figur 1 illustrerar är klientfönstret uppdelat i flera textfält som visar relevant information för spelaren. Huvudområdet är för vanliga server-svar och kommer innehålla beskrivningar 
-av rummet, meddelanden i spelarchatten, meddelanden med systeminformation och liknande. Klientens högra sida är reserverat för ständig information som spelaren behöver ta del av snabbt. 
-Den övre delen innehåller information om spelarens egen karaktär, där spelarens liv och stridsegenskaper samt hur mycket mat gruppen har listas. 
+Som Figur 1 illustrerar är klientfönstret uppdelat i flera textfält som visar relevant information för spelaren. Det vänstra området är huvudområdet och används till spelets dynamiska informaton. Där får spelaren beskrivningar av rummen den besöker, meddelanden från andra spelare, meddelanden om vad som händer i spelet och liknande. Klientens högra sida innehåller statisk information som det kan vara bra för spelaren att snabbt kunna kolla upp. Den övre delen innehåller information om spelarens egen karaktär, där spelarens liv och stridsegenskaper samt hur mycket mat gruppen har listas. Den undre håller reda på vilka spelare som är i spelarens dungeon, vilka spelare som är i rummet spelaren är i, samt vad rummet har för föremål, monster och utgångar.   
 
-Den nedre delen av fönstret innehåller kommandoraden, där spelaren skriver in kommandon i enlighet med ett strikt syntax. När klienten startas välkomnas spelaren 
-av ett centrerat fönster för inloggning. Här kan spelaren skriva in sitt användarnamn och lösenord samt IP:n tillhörande den server som spelaren vill koppla upp sig mot. 
+Den nedre delen av fönstret innehåller kommandoraden, där spelaren skriver in kommandon i enlighet med ett strikt syntax. 
+
+När klienten startas välkomnas spelaren av ett centrerat fönster för inloggning. Här kan spelaren skriva in sitt användarnamn och lösenord samt IP:n tillhörande den server som spelaren vill koppla upp sig mot. Lösenordet krypteras enligt SHA-256 innan det skickas över nätverket och sparas i vår player-map, som håller koll på användarinformationen. 
 
 Klientens GUI är implementerat i Javas Swing UI bibliotek och integrerat i Scala för att använda Akkas TCP funktionalitet.
 
@@ -187,7 +183,7 @@ på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt ut
 \subsection{Algoritmer}
 För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
 bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
-Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda.
+Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda. I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet. Därefter slumpas koordinaterna till ett annat rum varefter programmet går i slumpad riktning från det nya rummet till angränsande rum, samtidigt som nya rum skapas i varje ny besökt koordinatruta, tills det nya rummet har fått en anknytning till startrummet.
 \begin{algorithm}
 \caption{Procedurell Rumsgenerering.}
 \label{alg:RoomGen}
