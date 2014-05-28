@@ -118,10 +118,11 @@ object RoomDescGen {
     }
   }
   def _GenerateExitDesc(exits: List[String]) = {
+    println(exits)
     exits.length match {
       case 0 => "You see no doors in front of you. "
       case 1 => "You see a door to the " + exits.head + ". "
-      case 2 => "You see doors to the " + exits.head + " and the" + exits.tail.head + ". "
+      case 2 => "You see doors to the " + exits.head + " and the " + exits.tail.head + ". "
       case 3 => "You see doors to the " + exits.head + ", " + exits.tail.head + " and to the " + exits.tail.tail.head
       case _ => "You see doors to the " + exits.head + ", " + exits.tail.head + ", " + exits.tail.tail.head + " and to the " + exits.tail.tail.tail.head
     }
@@ -175,7 +176,7 @@ object RoomDescGen {
   val SIZE = Tuple2(13, 16)
   val SOUND = Tuple2(17, 22)
   def _GenerateAdjective(range: Tuple2[Int, Int]) = {
-    val num = rand.nextInt(range._2) + range._1
+    val num = rand.nextInt(range._2 - range._1) + range._1
     num match {
       case 0 => "lemony yellow"
       case 1 => "blue"

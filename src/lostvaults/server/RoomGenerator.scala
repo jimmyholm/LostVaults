@@ -252,9 +252,7 @@ class RoomGenerator {
         } while (!success)
         created.foreach(c => {
           rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true;
-          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, dungeon, c._1, c._2);
-          rooms(coordToIndex(c)).createRoomDesc
-        })
+          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, dungeon, c._1, c._2);})
         var head = (0, 0)
         var lastCoord = (-1, -1)
         while (!(created isEmpty)) {
@@ -273,6 +271,7 @@ class RoomGenerator {
       }
     } while (roomsCreated < 40)
     // Finally return the generated array of rooms.
+      rooms.foreach(c => if(c.created == true) {c.createRoomDesc})
     println("Created " + itemcnt + " items in " + itemrooms + " rooms.")
     rooms
   }
