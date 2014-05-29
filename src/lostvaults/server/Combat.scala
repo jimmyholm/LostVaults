@@ -1,5 +1,5 @@
 package lostvaults.server
-import akka.actor.{ Actor, ActorRef, FSM }
+import akka.actor.{ Actor, ActorRef, FSM, Props}
 import scala.concurrent.duration._
 /**
  * Internal messages passed along to a combat
@@ -79,10 +79,16 @@ case class RestData(PlayerList: List[Tuple3[String, Int, ActorRef]], Duration: I
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
 case class ActionData(PlayerList: List[Tuple3[String, Int, ActorRef]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+object Combat {
+  def props(dungeon: ActorRef, roomIndex: Int): Props = Props(new Combat(dungeon: ActorRef, roomIndex: Int))
+}
 
-class Combat extends Actor with FSM[CombatState, CombatData] {
-  var dungeon: Option[ActorRef] = None
 
+class Combat (_dungeon: ActorRef, _roomIndex: Int) extends Actor with FSM[CombatState, CombatData] {
+  var dungeon = _dungeon
+  var roomIndex = _roomIndex
+
+  
   startWith(Rest, RestData(List(), 0, List()))
 
   when(Rest, stateTimeout = 500.milliseconds) {
@@ -143,10 +149,8 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       println("COMBAT-WaitForAck-RemovePlayer: RemovePlayer combatList ActionData: " + combatList)
 
       if (nextPlayerList isEmpty) {
-        if (dungeon != None) {
-          dungeon.get ! GameNotifyDungeon(" Combat has ended ")
-          dungeon.get ! GameCombatFinished
-        }
+          dungeon ! GameNotifyDungeon(" Combat has ended ")
+          dungeon ! GameCombatFinished(roomIndex)
         context stop self
       }
       if (nextTurnList isEmpty) {
@@ -184,9 +188,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
         }
       } else {
         println("COMBAT-Action-AttackPlayer: Tried to attack a player that is not in combat")
-        if (dungeon != None) {
-          dungeon.get ! GameAttackPlayer(name, target)
-        }
+          dungeon ! GameAttackPlayer(name, target)
         stay
       }
     }
@@ -232,7 +234,7 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
     combatList = combatList map (c => if (c._1.compareToIgnoreCase(name) == 0) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
     //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
     combatList = combatList map (c => if (c._1.compareToIgnoreCase(enemy) == 0) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
-    println("COMAT-addPlayerFunction: Addplayer combatList: " + combatList)
+    println("COMBAT-addPlayerFunction: Addplayer combatList: " + combatList)
     if (data.PlayerList.exists(x => x._1.compareToIgnoreCase(name) == 0)) {
       println("COMBAT-addPlayerFunction: no new player. PlayerList: " + data.PlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
       ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)

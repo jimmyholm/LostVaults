@@ -385,6 +385,7 @@ class Player extends Actor {
             dungeon ! GameDropItem(new Item(-2, "Food", food, 0, 0, "Food"), currentRoom)
             treasures = List()
             food = 0
+            target = ""
             self ! GameMoveToDungeon(Main.City.get)
             pushToNetwork("SYSTEM \n " +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +

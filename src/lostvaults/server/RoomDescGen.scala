@@ -7,9 +7,12 @@ object RoomDescGen {
   //maybe change item listan till en itemlist istället för en stringlist
   def generateDescription(npc: List[String], items: List[String], exits: List[String]) = {
     if (npc.isEmpty && items.isEmpty) {
-      "The room you walk into is empty. "
+      var string = "\nThe room you walk into is empty. "
+      string += _GenerateExitDesc(exits)
+      string += _GenerateMystery
+      string
     } else {
-      var string = ""
+      var string = "\n"
       string += _GenerateStartingSentence
       string += _GenerateNPCDesc(npc)
       string += _GenerateItemDesc(items)
@@ -115,10 +118,11 @@ object RoomDescGen {
     }
   }
   def _GenerateExitDesc(exits: List[String]) = {
+    println(exits)
     exits.length match {
       case 0 => "You see no doors in front of you. "
       case 1 => "You see a door to the " + exits.head + ". "
-      case 2 => "You see doors to the " + exits.head + " and the" + exits.tail.head + ". "
+      case 2 => "You see doors to the " + exits.head + " and the " + exits.tail.head + ". "
       case 3 => "You see doors to the " + exits.head + ", " + exits.tail.head + " and to the " + exits.tail.tail.head
       case _ => "You see doors to the " + exits.head + ", " + exits.tail.head + ", " + exits.tail.tail.head + " and to the " + exits.tail.tail.tail.head
     }
@@ -168,11 +172,11 @@ object RoomDescGen {
   }
   //Ranges for generateAdjective
   val COLOR = Tuple2(0, 12)
-  val ANYTHING = Tuple2(0, 22)
+  val ANYTHING = Tuple2(0, 16)
   val SIZE = Tuple2(13, 16)
   val SOUND = Tuple2(17, 22)
   def _GenerateAdjective(range: Tuple2[Int, Int]) = {
-    val num = rand.nextInt(range._2) + range._1
+    val num = rand.nextInt(range._2 - range._1) + range._1
     num match {
       case 0 => "lemony yellow"
       case 1 => "blue"

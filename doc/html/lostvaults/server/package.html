@@ -403,6 +403,19 @@ or continue a combat in action</p>
       </span>
       </h4>
       <p class="comment cmt">Passed along to a room, when the message sender is trying to attack attackee</p>
+    </li><li name="lostvaults.server.GameCombatFinished" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameCombatFinishedextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameCombatFinished:GameCombatFinished"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameCombatFinished.html"><span class="name">GameCombatFinished</span></a><span class="params">(<span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to the room, notifying that room that the battle has ended</p>
     </li><li name="lostvaults.server.GameDamage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameDamageextendsGameMsgwithProductwithSerializable"></a>
       <a id="GameDamage:GameDamage"></a>
@@ -657,6 +670,19 @@ remote client.</p>
       </span>
       </h4>
       <p class="comment cmt">Passed along to a dungeon to request for a player to move into a new room.</p>
+    </li><li name="lostvaults.server.GameRemoveNPCFromRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameRemoveNPCFromRoomextendsProductwithSerializable"></a>
+      <a id="GameRemoveNPCFromRoom:GameRemoveNPCFromRoom"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameRemoveNPCFromRoom.html"><span class="name">GameRemoveNPCFromRoom</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a Dungeon, when the NPC has died</p>
     </li><li name="lostvaults.server.GameRemovePlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameRemovePlayerextendsGameMsgwithProductwithSerializable"></a>
       <a id="GameRemovePlayer:GameRemovePlayer"></a>
@@ -1027,6 +1053,19 @@ This state waits for a message from the player who's turn it is
 From this state you can go to Action, WaitForAck or Rest
 Before going from this state to Action next player will be informed that it is her turn
 </p>
+    </li><li name="lostvaults.server.Combat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Combat"></a>
+      <a id="Combat:Combat"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Combat$.html"><span class="name">Combat</span></a>
+      </span>
+      </h4>
+      
     </li><li name="lostvaults.server.ConManShutDown" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ConManShutDown"></a>
       <a id="ConManShutDown:ConManShutDown"></a>
@@ -1067,20 +1106,6 @@ Before going from this state to Action next player will be informed that it is h
       </span>
       </h4>
       <p class="comment cmt">Special case message which tells a dungeon to act as the city process.</p>
-    </li><li name="lostvaults.server.GameCombatFinished" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="GameCombatFinished"></a>
-      <a id="GameCombatFinished:GameCombatFinished"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="GameCombatFinished$.html"><span class="name">GameCombatFinished</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Passed along to the room, notifying that room that the battle has ended
-</p>
     </li><li name="lostvaults.server.GameCombatOver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameCombatOver"></a>
       <a id="GameCombatOver:GameCombatOver"></a>

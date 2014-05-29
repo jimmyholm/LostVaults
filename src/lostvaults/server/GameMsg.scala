@@ -137,8 +137,9 @@ case object GameCombatWin extends GameMsg
 
 /**
  * Passed along to the room, notifying that room that the battle has ended
+ * @param room The index of the room the combat is in
  */
-case object GameCombatFinished extends GameMsg
+case class GameCombatFinished(room: Int) extends GameMsg
 /**
  * Passed along to a player to tell the player to move to a room.
  * @param room The room coordinates to move to
