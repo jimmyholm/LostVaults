@@ -140,26 +140,55 @@ Sammansättningen av dokumentationen utförs med Scaladoc på grund av dess likh
 \section{Implementation}
 
 \subsection{Programspråk}
-För att möjliggöra massiv concurrency med många individuella aktörer har vi gjort vårt projekt i Scala. Scala är bra för skalbarhet, vilket innebär att vårt program kommer fungera bra oavsätt om det är tio användare online eller om det är tio tusen. En annan anledning till att vi valde Scala är att Scala är ett objektorienterat språk, vilket passade ihop med det tänket vi hade när vi började planera programmet. Vi fokuserade på att skapa objekt som interagereade på rätt sätt med varandra, snarare än att skriva kod som ska exekveras i en särskild ordning.
+%För att möjliggöra massiv concurrency med många individuella aktörer har vi gjort vårt projekt i Scala. Scala är bra för skalbarhet, vilket innebär att vårt program kommer fungera bra oavsätt om det är tio användare online eller om det är tio tusen. En annan anledning till att vi valde Scala är att Scala är ett objektorienterat språk, vilket passade ihop med det tänket vi hade när vi började planera programmet. Vi fokuserade på att skapa objekt som interagereade på rätt sätt med varandra, snarare än att skriva kod som ska exekveras i en särskild ordning.
 
-Scala bygger på Java, och erbjuder därför liknande syntax. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig samtidigt som vi fick fördelarna med att kunna utveckla skalbart. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
-språket vilket kan ha motarbetat utvecklingen gämfört med om vi hade valt ett annat språk som vi var mer bekanta med.
+%Scala bygger på Java, och erbjuder därför liknande syntax. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig samtidigt som vi fick fördelarna med att kunna utveckla skalbart. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
+%språket vilket kan ha motarbetat utvecklingen gämfört med om vi hade valt ett annat språk som vi var mer bekanta med.
 
-Genom rekommendationer av skaparna bakom Scala, beslöt vi oss för att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek.
+%Genom rekommendationer av skaparna bakom Scala, beslöt vi oss för att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek.
 
-Java var det språket vi valde att använda vid skapandet av det grafiska gränssnittet som spelaren agerar mot. Vårt val grundade sig i biblioteket Swing som Java tillhandahåller. 
-Med hjälp att detta bibliotek var skapandet av det grafiska gränssnittet en relativt enkel process. Likt många andra av Javas bibliotek var dokumentationen välskriven och enkel 
-att använda vilket underlättade processen. En annan aspekt som fick oss att välja Java för just denna del var att vi ville kunna kommunicera med resterande kod, skriven i Scala, 
-på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt utifrån Javas Virtuella Maskin. 
+%Java var det språket vi valde att använda vid skapandet av det grafiska gränssnittet som spelaren agerar mot. Vårt val grundade sig i biblioteket Swing som Java tillhandahåller. 
+%Med hjälp att detta bibliotek var skapandet av det grafiska gränssnittet en relativt enkel process. Likt många andra av Javas bibliotek var dokumentationen välskriven och enkel 
+%att använda vilket underlättade processen. En annan aspekt som fick oss att välja Java för just denna del var att vi ville kunna kommunicera med resterande kod, skriven i Scala, 
+%på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt utifrån Javas Virtuella Maskin. 
+Vid reflektion över vår systemdesign och speciellt det aktörsystem vi planerade för kom vi fram till att vi skulle behöva
+ett stort antal aktörer körandes även vid ett lågt antal spelare och därmed att skalbarhet var en viktig faktor vid vårt
+val av språk. Vi kom fram till att vi skulle använda antingen Scala eller Erlang och efter en kort diskussion valde vi Scala.
+
+Att vi valde Scala över Erlang var dels en önskan att lära oss ett nytt språk, dels att just skalbarhet är just grundtanken
+i Scala och dels dess integrationsmöjligheter med Java och de likheter som finns mellan språken. Att lära oss skriva Scala kod
+visade sig vara en utmaning men likheterna med Java underlättade processen och vi kom snabbt igång.
+
+Scala är ett multiparadigmsspråks och tillåter att program skrivs både funktionellt och objektorienterat/imperativt. Detta gav oss en stor
+fördel vid implementationen av vår design då vi kunde använda en klasshierarki för våra aktörer men samtidigt använda 
+funktionella lösningar där dessa underlättade utvecklingen.
+
+Dess närhet med Java var dock grund till en del av svårigheterna att vänja sig till Scala. Scala använder både egna standardbibliotek
+och Javas standardbibliotek men inte alltid helt konsekvent. Samtidigt är alla datasamlingsstrukturer i Scala \textit{oföränderliga} 
+som standard, då trådsäkerhet är fundamentalt till Scala, vilket krävde en viss vana för att användas på rätt sätt.
+
+Versionen av Scala vi valde att använda har valt att tillfrån gå sitt egna aktörsbibliotek och istället använda sig av ett externt
+bibliotek kallat Akka. Vårt projekt använder till följd även det Akkas bibliotek för implementationen av det aktörssystem som
+vår server använder. Akka som bibliotek var samtidigt både lättanvänt och svårt att sätta sig in i. Det behövdes en viss förståelse
+för hur biblioteksskaparna tänkt sig att det ska användas för att förstå den dokumentation som finns tillgänglig och det krävdes
+en del försöksprogram för att sätta sig in i just hur biblioteket fungerar. Akka tillhandahöll även en implementation av TCP/IP
+sockets vilket märkbart förenklade nätverksdelen av vår kod och med dess hjälp undkom vi vad kunde varit stor huvudbry då vi inte
+hade stor erfarenhet av nätverkskodning sen tidigare.
+
+Att Scala är byggt ovanpå Javas virtuella maskin innebar att vi lätt kunde använda Javas Swing bibliotek för att snabbt skapa
+ett grafiskt gränssnitt till den klient som kommunicerar mot vår server. Bortsett från gränssnittet använder även klienten i
+grunden Scala och Akkas TCP/IP bibliotek.
 
 \subsection{Algoritmer}
 För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
 bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
-<<<<<<< HEAD
-Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Algoritm \ref{alg:RoomGen} beskriver med pseudokod den algoritm vi bestämde oss för att använda.
-=======
-Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda. I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet. Därefter slumpas koordinaterna till ett annat rum varefter programmet går i slumpad riktning från det nya rummet till angränsande rum, samtidigt som nya rum skapas i varje ny besökt koordinatruta, tills det nya rummet har fått en anknytning till startrummet.
->>>>>>> d172518306cc332eaa23fba87f025afee6e32a30
+
+Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Algoritm \ref{alg:RoomGen} beskriver med pseudokod den algoritm vi bestämde oss för att använda. 
+I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet. 
+Därefter slumpas koordinaterna till ett annat rum varefter programmet går i slumpad riktning från det nya rummet 
+till angränsande rum, samtidigt som nya rum skapas i varje ny besökt koordinatruta, tills det nya rummet har fått 
+en anknytning till startrummet.
+
 \begin{algorithm}
 \caption{Procedurell Rumsgenerering.}
 \label{alg:RoomGen}
