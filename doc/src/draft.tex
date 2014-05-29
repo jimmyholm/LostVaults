@@ -89,10 +89,12 @@ Systemarkitekturens serverdel är uppdelad i sektionerna Aktörmodell och Klassm
 \end{figure}
 
 \subsubsection{Aktörmodell}
-Serverdelen är uppdelad i flera processer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency-modellen .
+Serverdelen är uppdelad i flera aktörer via Akkas aktörbibliotek för att upprätthålla Actor Concurrency-modellen. 
 Två typer av aktörer kommmunicerar direkt med nätverket via TCP/IP, ConManaktören och Playeraktörerna. ConManaktören har som syfte att hantera inkommande anslutningar för att sedan starta en ny Playeraktör för varje godkänd anslutning. Den nyetablerade anslutningen skickas till den nya Playeraktören, som sedan kommer hantera all kommunikation mellan spelet och den nyanslutna klienten, se fig. \ref{fig:ConManPlayer}.   
 
-PlayerMapaktören och GroupMapaktören fyller två specifika funktioner. PlayerMap mappar på en uppkopplad spelares användarnamn till spelarens Playeraktör. Genom PlayerMap kan en aktör snabbt och enkelt skicka meddelanden till en specifik spelare baserat på dess namn - ett viktigt kommando som agerar på följande sätt är exempelvis “WHISPER”. Det är även via PlayerMap som Playeraktören ser till att samma användarnamn inte används av flera uppkopplade spelare samtidigt. 
+PlayerMapaktören och GroupMapaktören fyller två specifika funktioner. PlayerMap mappar på en uppkopplad spelares användarnamn till spelarens Playeraktör. Genom PlayerMap kan en aktör snabbt och enkelt skicka meddelanden till en specifik spelare baserat på dess namn - ett viktigt kommando som agerar på följande sätt är exempelvis \textit{WHISPER}. Det är även via PlayerMap som Playeraktören ser till att samma användarnamn inte används av flera uppkopplade spelare samtidigt.
+
+Det finns även en aktör som kallas CheatActor som agerar som ett administrationsverkyg. Den har befogenheter som överstiger alla andra aktörer som agerar på spelet och detta med anledning till att värden för servern ska kunna administrera i spelet utan att vara i spelet. Aktören kan leta reda på spelaraktörer via PlayerMapAktören och därefter utföra ett antal operationer som påverkar spelaren i fråga. Dessa operationer består av: att skada spelare, att läka spelare, att leta efter föremål och NPCs, prata med spelare, skapa spelare och NPCs samt operationen som endast påverkar servern själv vilket är operationen för omstart av servern.    
 
 \begin{figure}[hbt]
 \centering
@@ -104,7 +106,7 @@ GroupMapaktörens uppgift är att länka samman namn på spelare, för att forma
 
 De två resterande lagren av aktörer som servern använder är Dungeonlagret och Stridslagret, och det är dessa som utför spelets logik. Det existerar ett speciellt tillstånd av Dungeonaktören, kallat Cityaktören. City är spelets uppsamlingsplats. Det är här spelaren bildar grupper med andra spelare, för att göra sig i ordning inför utforskandet av en Dungeon. Så i City kan spelaren chatta med andra spelare, köpa mat och bilda grupper.
 
-När en grupp bestämmer sig för att stiga in i en Dungeon skapas en ny slumpvis genererad grotta, som endast de kan komma åt. Grottan består av en array med rum med dörrar som spelaren kan förflytta sig emellan. Det är i dessa rum som spelare kommer kunna göra uppdrag, finna skatter, slåss mot monster eller andra spelare etc. Dungeonaktören koordinerar också kommunikation, och händelser som påverkar spelarna som befinner sig i grottan. Ett exempel på detta är kommandot “SAY”  som skickar ett meddelande till alla spelare som är i samma rum som spelaren. 
+När en grupp bestämmer sig för att stiga in i en Dungeon skapas en ny slumpvis genererad grotta, som endast de kan komma åt. Grottan består av en array med rum med dörrar som spelaren kan förflytta sig emellan. Det är i dessa rum som spelare kommer kunna göra uppdrag, finna skatter, slåss mot monster eller andra spelare etc. Dungeonaktören koordinerar också kommunikation, och händelser som påverkar spelarna som befinner sig i grottan. Ett exempel på detta är kommandot \textit{SAY} som skickar ett meddelande till alla spelare som är i samma rum som spelaren. 
 
 Strider koordineras av sin egen aktör, en finit tillståndsmaskin kallad Combat, som sköter turordning av spelare och monster vid strid. Varje rum i en Dungeon kan innehålla en referens till en Combat, vilket leder till att det kan vara max en aktiv Combat per rum. Combataktören skapas då spelare går i strid mot monster eller andra spelare och terminerar när det inte längre finns någon som anfaller någon annan. 
 
