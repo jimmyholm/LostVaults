@@ -17,14 +17,13 @@
 
 %Döp om pseudokod.
 \floatname{algorithm}{Algoritm}
-\renewcommand{\algorithmicindent}{8 pt}
+\renewcommand{\algorithmicindent}{4 pt}
 \begin{document}
 \maketitle
 \thispagestyle{empty}
 \newpage
 \setcounter{page}{1}
 \pagenumbering{Roman}
-
 \tableofcontents
 \listoffigures
 \newpage
@@ -94,8 +93,6 @@ Två typer av aktörer kommmunicerar direkt med nätverket via TCP/IP, ConManakt
 
 PlayerMapaktören och GroupMapaktören fyller två specifika funktioner. PlayerMap mappar på en uppkopplad spelares användarnamn till spelarens Playeraktör. Genom PlayerMap kan en aktör snabbt och enkelt skicka meddelanden till en specifik spelare baserat på dess namn - ett viktigt kommando som agerar på följande sätt är exempelvis \textit{WHISPER}. Det är även via PlayerMap som Playeraktören ser till att samma användarnamn inte används av flera uppkopplade spelare samtidigt.
 
-Det finns även en aktör som kallas CheatActor som agerar som ett administrationsverkyg. Den har befogenheter som överstiger alla andra aktörer som agerar på spelet och detta med anledning till att värden för servern ska kunna administrera i spelet utan att vara i spelet. Aktören kan leta reda på spelaraktörer via PlayerMapAktören och därefter utföra ett antal operationer som påverkar spelaren i fråga. Dessa operationer består av: att skada spelare, att läka spelare, att leta efter föremål och NPCs, prata med spelare, skapa spelare och NPCs samt operationen som endast påverkar servern själv vilket är operationen för omstart av servern.    
-
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{serverActorModel2-2}
@@ -103,6 +100,8 @@ Det finns även en aktör som kallas CheatActor som agerar som ett administratio
 \end{figure}
 
 GroupMapaktörens uppgift är att länka samman namn på spelare, för att forma spelargrupper, se fig. \ref{fig:ServerActorModel}. En spelargrupp är en samling av en eller fler spelare som tillsammans kan gå ner i en Dungeon. Syftet med denna aktör är att underlätta skapandet av spelargrupper samt anslutning till redan existerande spelargrupper. Genom att använda GroupMap räcker det att ansluta sig till en spelare via dess namn för att inkluderas i denna spelares grupp.
+
+Det finns även en aktör som kallas CheatActor som agerar som ett administrationsverkyg. Den har befogenheter som överstiger alla andra aktörer som agerar på spelet och detta med anledning till att värden för servern ska kunna administrera i spelet utan att vara i spelet. Aktören kan leta reda på spelaraktörer via PlayerMapAktören och därefter utföra ett antal operationer som påverkar spelaren i fråga. Dessa operationer består av: att skada spelare, att läka spelare, att leta efter föremål och NPCs, prata med spelare, skapa spelare och NPCs samt operationen som endast påverkar servern själv vilket är operationen för omstart av servern. 
 
 De två resterande lagren av aktörer som servern använder är Dungeonlagret och Stridslagret, och det är dessa som utför spelets logik. Det existerar ett speciellt tillstånd av Dungeonaktören, kallat Cityaktören. City är spelets uppsamlingsplats. Det är här spelaren bildar grupper med andra spelare, för att göra sig i ordning inför utforskandet av en Dungeon. Så i City kan spelaren chatta med andra spelare, köpa mat och bilda grupper.
 
@@ -142,44 +141,22 @@ Sammansättningen av dokumentationen utförs med Scaladoc på grund av dess likh
 \section{Implementation}
 
 \subsection{Programspråk}
-Vid reflektion över vår systemdesign och speciellt det aktörsystem vi planerade för kom vi fram till att vi skulle behöva
-ett stort antal aktörer körandes även vid ett lågt antal spelare och därmed att skalbarhet var en viktig faktor vid vårt
-val av språk. Vi kom fram till att vi skulle använda antingen Scala eller Erlang och efter en kort diskussion valde vi Scala.
+För att möjliggöra massiv concurrency med många individuella aktörer har vi gjort vårt projekt i Scala. Scala är bra för skalbarhet, vilket innebär att vårt program kommer fungera bra oavsätt om det är tio användare online eller om det är tio tusen. En annan anledning till att vi valde Scala är att Scala är ett objektorienterat språk, vilket passade ihop med det tänket vi hade när vi började planera programmet. Vi fokuserade på att skapa objekt som interagereade på rätt sätt med varandra, snarare än att skriva kod som ska exekveras i en särskild ordning.
 
-Att vi valde Scala över Erlang var dels en önskan att lära oss ett nytt språk, dels att just skalbarhet är just grundtanken
-i Scala och dels dess integrationsmöjligheter med Java och de likheter som finns mellan språken. Att lära oss skriva Scala kod
-visade sig vara en utmaning men likheterna med Java underlättade processen och vi kom snabbt igång.
+Scala bygger på Java, och erbjuder därför liknande syntax. Detta innebar att övergången mellan att skriva Java och Scala var en någorlunda mjuk sådan, koden var ganska lättigenkännlig samtidigt som vi fick fördelarna med att kunna utveckla skalbart. Några nackdelar med Scala som vi finner nämnvärda är exempelvis att det, trots likheter med Java, tog en viss tid att sätta sig in i det nya 
+språket vilket kan ha motarbetat utvecklingen gämfört med om vi hade valt ett annat språk som vi var mer bekanta med.
 
-Scala är ett multiparadigmsspråks och tillåter att program skrivs både funktionellt och objektorienterat/imperativt. Detta gav oss en stor
-fördel vid implementationen av vår design då vi kunde använda en klasshierarki för våra aktörer men samtidigt använda 
-funktionella lösningar där dessa underlättade utvecklingen.
+Genom rekommendationer av skaparna bakom Scala, beslöt vi oss för att använda Akka som vårt aktörbibliotek. Detta för att kunna använda Akkas TCP-bibliotek för nätverkskommunikationen. Bibliotekets enkla integration var en av punkterna som ledde till vårt beslut att använda Scala och Akka som val av programspråk och aktörbibliotek.
 
-Dess närhet med Java var dock grund till en del av svårigheterna att vänja sig till Scala. Scala använder både egna standardbibliotek
-och Javas standardbibliotek men inte alltid helt konsekvent. Samtidigt är alla datasamlingsstrukturer i Scala \textit{oföränderliga} 
-som standard, då trådsäkerhet är fundamentalt till Scala, vilket krävde en viss vana för att användas på rätt sätt.
-
-Versionen av Scala vi valde att använda har valt att tillfrån gå sitt egna aktörsbibliotek och istället använda sig av ett externt
-bibliotek kallat Akka. Vårt projekt använder till följd även det Akkas bibliotek för implementationen av det aktörssystem som
-vår server använder. Akka som bibliotek var samtidigt både lättanvänt och svårt att sätta sig in i. Det behövdes en viss förståelse
-för hur biblioteksskaparna tänkt sig att det ska användas för att förstå den dokumentation som finns tillgänglig och det krävdes
-en del försöksprogram för att sätta sig in i just hur biblioteket fungerar. Akka tillhandahöll även en implementation av TCP/IP
-sockets vilket märkbart förenklade nätverksdelen av vår kod och med dess hjälp undkom vi vad kunde varit stor huvudbry då vi inte
-hade stor erfarenhet av nätverkskodning sen tidigare.
-
-Att Scala är byggt ovanpå Javas virtuella maskin innebar att vi lätt kunde använda Javas Swing bibliotek för att snabbt skapa
-ett grafiskt gränssnitt till den klient som kommunicerar mot vår server. Bortsett från gränssnittet använder även klienten i
-grunden Scala och Akkas TCP/IP bibliotek.
+Java var det språket vi valde att använda vid skapandet av det grafiska gränssnittet som spelaren agerar mot. Vårt val grundade sig i biblioteket Swing som Java tillhandahåller. 
+Med hjälp att detta bibliotek var skapandet av det grafiska gränssnittet en relativt enkel process. Likt många andra av Javas bibliotek var dokumentationen välskriven och enkel 
+att använda vilket underlättade processen. En annan aspekt som fick oss att välja Java för just denna del var att vi ville kunna kommunicera med resterande kod, skriven i Scala, 
+på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt utifrån Javas Virtuella Maskin. 
 
 \subsection{Algoritmer}
 För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
 bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
-
-Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Algoritm \ref{alg:RoomGen} beskriver med pseudokod den algoritm vi bestämde oss för att använda. 
-I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet. 
-Därefter slumpas koordinaterna till ett annat rum varefter programmet går i slumpad riktning från det nya rummet 
-till angränsande rum, samtidigt som nya rum skapas i varje ny besökt koordinatruta, tills det nya rummet har fått 
-en anknytning till startrummet.
-
+Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda. I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet. Därefter slumpas koordinaterna till ett annat rum varefter programmet går i slumpad riktning från det nya rummet till angränsande rum, samtidigt som nya rum skapas i varje ny besökt koordinatruta, tills det nya rummet har fått en anknytning till startrummet.
 \begin{algorithm}
 \caption{Procedurell Rumsgenerering.}
 \label{alg:RoomGen}
@@ -219,35 +196,16 @@ en anknytning till startrummet.
 \Until{$CreatedRooms \geq GoalRooms$}
 \EndFunction
 \end{algorithmic}
+
 \end{algorithm}
 
 \subsection{Datastrukturer}
-Under projektets gång har vi använt oss av Scalas standarbibliotek för datastrukturer där vi behövt använda datasamlingar. 
-Förutom arräer och listor har vi använt oss av Hashmap för att kunna koppla spelarnamn med aktörer och spelargrupper, vilket ses i klasserna
-PlayerMap och GroupMap.
 
 \subsection{Concurrency}
-Som nämnts tidigare valde vi att använda Aktörsmodellen som vår concurrencymodell därför att vi vid designen såg hur de olika
-delarna av servern kunde delas in i till stor del självständiga moduler där minne inte behövde delas. Detta underlättade
-skapandet av deadlock-säker kod men vår ovana i hur Akka biblioteket fungerade gav oss vissa svårigheter i synkronisering av
-meddelanden som skickades mellan aktörerna. Det var inte förrän sent under projektetsgång vi lyckades få Futures, ett sätt att 
-vänta på resultat från en annan aktör, att fungera på rätt sätt och i det stadiet hade vi redan skapat andra, dock ej optimala,
-lösningar på synkroniseringsproblemen. Akkas meddelandeskickning är icke garanterad, vilket innebär att meddelanden kan
-tappas, speciellt på väg från klient till server över nätverk, vilket vi inte på ett okomplicerat sätt kunde ta hänsyn till utan
-synkronisering och meddelande time-out hantering som vi inte implementerat. Dessutom är inte heller ordningsföljden av meddelanden
-garanterade, så utan någon form av tidsstämpling finns inget okomplicerat sätt att sortera meddelanden som inkommer till aktörer.
-
-Implementationen är även svårtestad, integrationstester av aktörerna krävde mer specialkunskap om Akkas bibliotek än vi
-hann skaffa oss och vi fick istället nöja oss med enhetstester av de aktörer där detta är aktuellt.
-
-Som alternativ till komplicerad synkronisering vid strider mellan spelare och monster eller enbart strid mellan spelare valde vi att
-skapa en speciell typ av aktör som använder en finit tillståndsmaskin.
-
-Vår implementation av servern skapar ett stort antal aktörer även för få klienter. Dels skapas alltid ett flertal aktörer som
-agerar som verktyg för systemet, exempelvis för att hantera inkommande anslutningar eller binda samman spelarnamn och spelaraktörer.
-Det skapas även två nya aktörer för varje nyinkommen anslutning, en aktör för varje nyskapad dungeon, en aktör för varje nystartad strid
-och en aktör för varje levande monsterkaraktär.
-Tack vare Akka och Scalas skalbarhet har vi dock inte sett något problem i detta.
+Flera spelare samtidigt
+Skicka meddelanden - jobbigt när man bara vill ta reda på ett värde - skicka meddelanden fram och tillbaka. Men ingen risk för deadlock då all kommunikation sker via meddelanden. 
+Meddelanden är ej synkrona, vilket märks då en spelare ibland kan bli slagen efter att den har dött (det ser uut så i prompten eftersom meddelandena kommer så, men det är inte sant)
+För att skapa en slags synkronisering har vi använt FSM, vilket kräver att man är i en särskild state för att kunna ta emot ett särskilt meddelanden. 
 
 \section{Slutsatser}
 Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom \textit{WHISPER} (personligt meddelande) eller \textit{SAY} (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker man hittar, gå till andra rum och slåss mot andra spelare eller NPC som är i rummet. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
@@ -260,46 +218,23 @@ Implementation av föremål och monster att slåss mot i grottan.
 Något vi lärt oss är att skriva nätverkskod. Vi har även fått kunskap i ett nytt programspråk.
 Det vi tycker har varit svårt var bland annat att integrationstesta våra aktörer. Svårigheterna uppstod på grund av bristande 
 information att ta del av om hur vi skulle gå till väga för att göra detta. En annan sak som också varit relativt svår var att 
-begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa oss till en rimlig nivå för spelet 
-och samtidigt ha det tillräckligt intressant för den som spelar visade sig vara mer utmanande än vi först trott.
+begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa utvecklingen till en rimlig nivå för spelet 
+och samtidigt ha det tillräckligt intressant för den som spelar.
 
-
-En stor sak som vi inte hann med under projektets gång är att implementera uppdrag. Utan uppdrag missar spelet sitt djup, och lyckas inte fånga spelaren. Dessutom ska spelet ha fällor i vissa rum, för att göra färden genom grottorna farligare. 
-
-Vi har arbetat med automatiserad testing medan vi har byggt upp vårt spel. Men på grund av aktöruppbyggnaden av vårt program har det vara svårt att göra annat än enhetstester, och dessa har endast gett ytlig testning av spelet, då mängder av olika händelseförlopp kan inträffa. Så för att uppväga våra brister i automatiserade tester har vi helt enkelt testkört spelet många gånger. 
+En stor sak som vi inte han med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa steg skulle vara, nu när det grundläggande fungerar som det ska. 
 
 \section{Appendix}
-\subsection{Använda externa bibliotek}
-För licensinformation angående följande bibliotek, se .license filer i projektets rotmapp.
-\begin{description}
-\item[Scala 2.10.4] \hfill \\ Copyright © 2002-2014 EPFL, Copyright (c) 2011-2014 Typesafe, Inc.\hfill \\http://scala-lang.org/
-\item[Akka 2.3.2] \hfill \\ Copyright © 2009-2014 Typesafe Inc.\hfill \\ http://akka.io/
-\item[SLF4J 1.7.7] \hfill \\ Copyright © 2004-2013 QOS.ch\hfill \\ http://www.slf4j.org/
-\item[Slick 2.0.2] \hfill \\ Copyright © 2011-2014 Typesafe, Inc.\hfill \\ http://slick.typesafe.com
-\item[SQLite JDBC 3.7.2] \hfill \\ Copyright © Taro L. Saito\hfill \\ http://bitbucket.org/xerial/sqlite-jdbc
-\end{description}
 
-\subsection{Tillgänglighet}
-Projektet finns tillgängligt för nedladdning på https://github.com/senilica/LostVaults/
+Scala 2.10.4, Akka 2.3.2, SLF4J 1.7.7, Slick 2.0.2, SQLite JDBC 3.7.2
 
-\subsection{Kompilering}
-Kompilering av systemet sker med hjälp av ANT, Apache's byggsystem, och är automatiserat. Byggskriptet använder följande byggmål:
-\begin{description}
-\item[build\_server] \hfill \\ Kompilerar alla serverns scalafiler.
-\item[build\_client] \hfill \\ Kompilerar alla klientens scalafiler.
-\item[build\_tools] \hfill \\ Kompilerar alla databasverktygens scalafiler samt skapar körbara \textbf{.jar} arkiv i rotmappen.
-\item[server] \hfill \\ Kompilerar alla serverns scalafiler och skapar ett körbart \textbf{server.jar} arkiv i rotmappen.
-\item[client] \hfill \\ Kompilerar alla klientens scala- och javafiler och skapar ett körbart \textbf{client.jar} arkiv i rotmappen.
-\item[clean] \hfill \\ Återställer kompilartoromgivningen och tvingar ny kompilering av all källkod.
-\item[doc] \hfill \\ Skapar html-baserad Scaladoc dokumentation av projektet.
-\item[run\_tests] \hfill \\ Kompilerar alla testens scalafiler och kör automatiska enhetstester genom Scalatest.
-\item[archive] \hfill \\ Återställer kompilatoromgivningen samt skapar .tar.gz arkiv som följer projektanvisningarnas namn och katalogstruktur.
-\item[run\_server] \hfill \\ Kompilerar alla serverns scalafiler, skapar samt kör ett körbart \textbf{server.jar} arkiv i rotmappen.
-\item[run\_server] \hfill \\ Kompilerar alla klientens scala- och javafiler, skapar samt kör ett körbart \textbf{client.jar} arkiv i rotmappen.
-\end{description}
+https://github.com/senilica/LostVaults/
 
-\subsection{Körning}
-Körning av systemet kräver kompilering och körning av serverns och klientens java arkiv, och kan göras antingen via byggsystemet
-eller från terminal via \textit{java -jar server.jar} respektive  \textit{java -jar client.jar}.
+Vilka versioner av till exempel Erlang, Java, Python etc har använts?
+Hur kan koden laddas ner? Finns koden tillgänglig på till exempel GitHub eller Bitbucket eller som Tar arkiv?  Beskriv projektets katalogstruktur.
+Vilket stöd för automatiserad testning finns och hur används det, till exempel JUnit (Java), EUnint (Erlang) eller PyUnit (Python)?
+%Vilket stöd för automatiserad generering av dokumentation finns och hur används det, till exempel Doxygen (C, C++, C\#, Fortran, Java, Objective\­C, PHP, Python), EDoc (Erlang), Pydoc (Python), Javadoc (Java)?
+Hur kompileras systemet?
+Hur startas systemet? tryck på play
+
 
 \end{document}
