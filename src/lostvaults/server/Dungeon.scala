@@ -106,7 +106,7 @@ class Dungeon extends Actor {
       rooms(entrance).addPlayer(name)
       PMap ! PMapSendGameMessage(name, GameDungeonMove(entrance, true))
       PMap ! PMapSendGameMessage(name, GameSystem(rooms(entrance).getDescription(name)))
-      PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(entrance).getExitsString + " City"))
+      PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(entrance).getExitsString))
     }
 
     case GamePlayerMove(name, dir, index) => {

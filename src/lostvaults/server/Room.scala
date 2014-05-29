@@ -66,7 +66,10 @@ class Room() {
       s = s + "South "
     }
     if (exits(3)) {
-      s = s + "West"
+      s = s + "West "
+    }
+    if (startRoom) {
+      s = s + "City"
     }
     s
   }
