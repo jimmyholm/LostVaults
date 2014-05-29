@@ -129,6 +129,15 @@ class Dungeon extends Actor {
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
         rooms(nextRoom).getPlayerList.foreach(c => if (c != name) { PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name)) })
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) => if (pName != name) { pName + "\n" + s } else { "" + s })))
+        if(rooms(nextRoom).getItemList.isEmpty) {
+            PMap ! PMapSendGameMessage(name, GameMessage("ITEMLIST  "))
+        } else {
+          var retString = ""
+          rooms(nextRoom).getItemList.foreach(c => (retString += c.name + "\n"))
+          println(retString)
+          println(";;;;;;;;;;;;;;;;;;;;;")
+          PMap ! PMapSendGameMessage(name, GameMessage("ITEMLIST " + retString))
+        }
       } else {
         println("Cannot move player.")
         PMap ! PMapSendGameMessage(name, GameSystem("You cannot move in that direction."))
@@ -220,6 +229,7 @@ class Dungeon extends Actor {
         }
         PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
         var msg = "ITEMLEFT " + pItem.name
+        println(msg+"--------------------------------")
         rooms(index).getPlayerList().foreach(n => (PMap ! PMapSendGameMessage(n, GameMessage(msg))))
       } else {
         PMap ! PMapSendGameMessage(name, GameMessage("No such item in the room."))

@@ -364,7 +364,7 @@ class Player extends Actor {
           } else if (item.isPotion) {
             potions = potions + 1
           }
-          pushToNetwork("SYTEM You picked up " + item.name)
+          pushToNetwork("SYSTEM You picked up " + item.name)
         }
         case GameDamage(from, strength) => {
           var damage = strength - getDefense
