@@ -366,6 +366,7 @@ class Player extends Actor {
             potions = potions + 1
           }
           pushToNetwork("SYSTEM You picked up " + item.name)
+
           sendStats
         }
         case GameDamage(from, strength) => {

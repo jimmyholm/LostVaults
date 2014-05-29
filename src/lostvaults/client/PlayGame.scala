@@ -106,8 +106,12 @@ class playGame extends Actor {
           game.setItems(Parser.findRest(c, 0))
         case "ITEMJOIN" =>
           game.addItem(Parser.findRest(c, 0))
-        case "ITEMLEFT" =>
+        case "ITEMLEFT" => {
+          println("_:_:_:__:__:_:_::")
+          println(Parser.findRest(c, 0))
+          println("_:_:_:_:_:_::_:_:::_:")
           game.removeItem(Parser.findRest(c, 0))
+        }
         case "ROOMEXITS" =>
           game.setExits(Parser.findRest(c, 0))
         case "LOGINOK" =>
