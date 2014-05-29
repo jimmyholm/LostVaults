@@ -169,6 +169,9 @@ Att Scala är byggt ovanpå Javas virtuella maskin innebar att vi lätt kunde an
 ett grafiskt gränssnitt till den klient som kommunicerar mot vår server. Bortsett från gränssnittet använder även klienten i
 grunden Scala och Akkas TCP/IP bibliotek.
 \subsection{Algoritmer}
+För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
+bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
+ 
 Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Algoritm \ref{alg:RoomGen} beskriver med pseudokod den algoritm vi bestämde oss för att använda. 
 
 I kort fungerar algoritmen så att först slumpas koordinaterna till ett rum som blir startrummet.
