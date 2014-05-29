@@ -48,7 +48,7 @@ class Dungeon extends Actor {
         }
       }
       if (matches == 0) // Check the reverse as well.
-        for (i <- str2.length until 0 by -1)
+        for (i <- (str1.length - 1) to 0 by -1)
           if (str1(i).toString().compareToIgnoreCase(str2(i).toString()) == 0) {
             matches += 1
           }
@@ -106,6 +106,7 @@ class Dungeon extends Actor {
       rooms(entrance).addPlayer(name)
       PMap ! PMapSendGameMessage(name, GameDungeonMove(entrance, true))
       PMap ! PMapSendGameMessage(name, GameSystem(rooms(entrance).getDescription(name)))
+      PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS " + rooms(entrance).getExitsString + " City"))
     }
 
     case GamePlayerMove(name, dir, index) => {
@@ -149,8 +150,8 @@ class Dungeon extends Actor {
         PMap ! PMapSendGameMessage(name, GameSystem(rooms(nextRoom).getDescription(name)))
         rooms(nextRoom).getPlayerList.foreach(c => if (c != name) { PMap ! PMapSendGameMessage(c, GameMessage("ROOMJOIN " + name)) })
         PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST " + rooms(nextRoom).getPlayerList.foldRight("")((pName, s) => if (pName != name) { pName + "\n" + s } else { "" + s })))
-        if(rooms(nextRoom).getItemList.isEmpty) {
-            PMap ! PMapSendGameMessage(name, GameMessage("ITEMLIST  "))
+        if (rooms(nextRoom).getItemList.isEmpty) {
+          PMap ! PMapSendGameMessage(name, GameMessage("ITEMLIST  "))
         } else {
           var retString = ""
           rooms(nextRoom).getItemList.foreach(c => (retString += c.name + "\n"))
@@ -279,7 +280,9 @@ class Dungeon extends Actor {
       if (items.isEmpty) {
         PMap ! PMapSendGameMessage(name, GameMessage("There are no items in this rooms to pick up."))
       } else {
+        println("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
         items foreach (it => { itemMatch = (compareStrings(item, it.name), i) :: itemMatch; i += 1 })
+        println("*****************************************************************")
         var highest = -1.0
         var ind = -1
         itemMatch foreach (it => { if (it._1 > highest && it._1 >= 0.5) { highest = it._1; ind = it._2 }; println(it._1) })
@@ -289,8 +292,14 @@ class Dungeon extends Actor {
           val pItem = rooms(index).takeItem(items(ind).name)
           if (pItem.isWeapon) {
             rooms(index).addItem(ItemRepo.getById(currentWep))
+            rooms(index).getPlayerList().foreach(n =>
+              (PMap ! PMapSendGameMessage(n, GameMessage("ITEMJOIN " + ItemRepo.getById(currentWep).name))))
+
           } else if (pItem.isArmor) {
             rooms(index).addItem(ItemRepo.getById(currentArmor))
+            rooms(index).getPlayerList().foreach(n =>
+              (PMap ! PMapSendGameMessage(n, GameMessage("TEMJOIN " + ItemRepo.getById(currentArmor).name))))
+
           }
           PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
           var msg = "ITEMLEFT " + pItem.name
