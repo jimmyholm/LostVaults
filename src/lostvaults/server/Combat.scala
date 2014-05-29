@@ -1,5 +1,5 @@
 package lostvaults.server
-import akka.actor.{ Actor, ActorRef, FSM }
+import akka.actor.{ Actor, ActorRef, FSM, Props}
 import scala.concurrent.duration._
 /**
  * Internal messages passed along to a combat
@@ -48,41 +48,47 @@ case object Rest extends CombatState
  * The Action state: Can arrive to this state from Action, WaitForAck and Rest
  * This state waits for a message from the player who's turn it is
  * From this state you can go to Action, WaitForAck or Rest
- * Before going from this state to Action next player will be informed that it is her turn 
+ * Before going from this state to Action next player will be informed that it is her turn
  */
 case object Action extends CombatState
 /**
  * The WaitForAck state: Can arrive to this state from Action
- * This state wait for a message from the player who was attacked, acknowledging that the player 
+ * This state wait for a message from the player who was attacked, acknowledging that the player
  * has received damage and calculated it's new HP. If the player is alive a DamageAck will be received.
  * If the player is dead a RemovePlayer will be received.
- * From this state you can go to Action or Rest 
+ * From this state you can go to Action or Rest
  * Before going from this state to Action next player will be informed that it is her turn
  */
 case object WaitForAck extends CombatState
 /**
- * The data that the states keep track of. 
+ * The data that the states keep track of.
  */
 sealed trait CombatData
 /**
- * Data within Rest. 
+ * Data within Rest.
  * @param PlayerList A list with all players in combat, element in list looks like: Tuple2(name, speed)
  * @param Duration The game clock, increased by 1 with each turn
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
 case class RestData(PlayerList: List[Tuple3[String, Int, ActorRef]], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
 /**
- * Data within Action. 
+ * Data within Action.
  * @param PlayerList All players in combat, element in list looks like: Tuple2(name, speed)
  * @param TurnList The players who are currently up for their turn
  * @param Duration The game clock, increased by 1 with each turn
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
 case class ActionData(PlayerList: List[Tuple3[String, Int, ActorRef]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+object Combat {
+  def props(dungeon: ActorRef, roomIndex: Int): Props = Props(new Combat(dungeon: ActorRef, roomIndex: Int))
+}
 
-class Combat extends Actor with FSM[CombatState, CombatData] {
-  var dungeon: Option[ActorRef] = None
 
+class Combat (_dungeon: ActorRef, _roomIndex: Int) extends Actor with FSM[CombatState, CombatData] {
+  var dungeon = _dungeon
+  var roomIndex = _roomIndex
+
+  
   startWith(Rest, RestData(List(), 0, List()))
 
   when(Rest, stateTimeout = 500.milliseconds) {
@@ -143,10 +149,8 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       println("COMBAT-WaitForAck-RemovePlayer: RemovePlayer combatList ActionData: " + combatList)
 
       if (nextPlayerList isEmpty) {
-        if (dungeon != None) {
-          dungeon.get ! GameNotifyDungeon(" Combat has ended ")
-          dungeon.get ! GameCombatFinished
-        }
+          dungeon ! GameNotifyDungeon(" Combat has ended ")
+          dungeon ! GameCombatFinished(roomIndex)
         context stop self
       }
       if (nextTurnList isEmpty) {
@@ -168,9 +172,12 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
 
   when(Action) {
     case Event(AttackPlayer(name, target, strength), data: ActionData) => {
+      println("COMBAT: AttackPlayer received")
       val turnPlayer = data.TurnList.head
-      if (data.PlayerList.exists(c => c._1.equals(target))) {
+      if (data.PlayerList.exists(c => c._1.compareToIgnoreCase(target) == 0)) {
+        println("COMBAT: Target exists")
         if (name == turnPlayer) {
+          println("COMBAT: name == turnplayer")
           println("COMBAT-Action-AttackPlayer: Attack message received from the player whose turn it is.")
           combatSendGameMsg(target, data.PlayerList, GameDamage(name, strength))
           goto(WaitForAck)
@@ -180,9 +187,8 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
           stay
         }
       } else {
-        if (dungeon != None) {
-          dungeon.get ! GameAttackPlayer(name, target)
-        }
+        println("COMBAT-Action-AttackPlayer: Tried to attack a player that is not in combat")
+          dungeon ! GameAttackPlayer(name, target)
         stay
       }
     }
@@ -221,15 +227,15 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
       data = ActionData(restData.PlayerList, List(), restData.Duration, restData.CombatsPerPlayer)
     }
     var combatList = data.CombatsPerPlayer
-    if (!(combatList exists (c => c._1 == name))) {
+    if (!(combatList exists (c => c._1.compareToIgnoreCase(name) == 0))) {
       combatList = (name, List()) :: combatList
     }
     //Returns a new list which has added enemy to name's CombatsPerPlayer, unless enemy is already in list
-    combatList = combatList map (c => if (c._1 == name) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
+    combatList = combatList map (c => if (c._1.compareToIgnoreCase(name) == 0) { if (!(c._2 exists (d => d == enemy))) { (c._1, enemy :: c._2) } else { c } } else { c })
     //Returns a new list which has added name to enemy's CombatsPerPlayer, unless name is already in list
-    combatList = combatList map (c => if (c._1 == enemy) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
-    println("COMAT-addPlayerFunction: Addplayer combatList: " + combatList)
-    if (data.PlayerList.exists(x => x == Tuple3(name, speed, nameActorRef))) {
+    combatList = combatList map (c => if (c._1.compareToIgnoreCase(enemy) == 0) { if (!(c._2 exists (d => d == name))) { (c._1, name :: c._2) } else { c } } else { c })
+    println("COMBAT-addPlayerFunction: Addplayer combatList: " + combatList)
+    if (data.PlayerList.exists(x => x._1.compareToIgnoreCase(name) == 0)) {
       println("COMBAT-addPlayerFunction: no new player. PlayerList: " + data.PlayerList + " TurnList: " + data.TurnList + " combatList: " + combatList)
       ActionData(data.PlayerList, data.TurnList, data.Duration, combatList)
     } else {
@@ -239,10 +245,10 @@ class Combat extends Actor with FSM[CombatState, CombatData] {
     }
   }
   def combatSendGameMsg(name: String, playerList: List[(String, Int, ActorRef)], msg: GameMsg) {
-	  var tupleOption = playerList.find(c => c._1.equalsIgnoreCase(name))
-	  if(tupleOption != None) {
-	    tupleOption.get._3 ! msg
-	  }
+    var tupleOption = playerList.find(c => c._1.equalsIgnoreCase(name))
+    if (tupleOption != None) {
+      tupleOption.get._3 ! msg
+    }
   }
 }
 

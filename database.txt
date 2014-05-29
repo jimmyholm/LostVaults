@@ -66,8 +66,8 @@ INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Clay
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Claymore (10)', 10, 0, 8, 6, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Dagger (1)', 1, 0, 1, 1, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Dagger (2)', 2, 0, 1, 1, 'Weapon');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Staff (1)', 1, 1, 1, 1, 'Weapon');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Staff (1)', 1, 1, 2, 1, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Staff (1)', 1, 1, 1, 2, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Staff (2)', 2, 1, 2, 2, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Metal Staff (2)', 2, 1, 3, 3, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Metal Staff (3)', 3, 1, 3, 3, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Spear (3)', 3, 1, 3, 3, 'Weapon');
@@ -84,7 +84,8 @@ INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Flai
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Flail (5)', 5, 0, 4, 4, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Flail (6)', 6, 0, 3, 4, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Flail (6)', 6, 0, 4, 4, 'Weapon');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Sling (1)', 1, 1, 1, 1, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Sling (1)', 1, 1, 1, 2, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Sling (2)', 2, 1, 1, 2, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Morning Star (6)', 6, 0, 4, 5, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Morning Star (6)', 6, 0, 5, 5, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Morning Star (7)', 7, 0, 4, 5, 'Weapon');
@@ -93,8 +94,8 @@ INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Morn
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Morning Star (8)', 8, 0, 5, 5, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Club (2)', 2, 0, 3, 2, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Wooden Club (2)', 2, 0, 4, 2, 'Weapon');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Hatchet (2)', 2, 0, 2, 2, 'Weapon');
-INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Hatchet (3)', 3, 0, 2, 2, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Hatchet (2)', 2, 0, 2, 1, 'Weapon');
+INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Hatchet (2)', 2, 0, 3, 1, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Battle Axe (9)', 9, 0, 7, 6, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Battle Axe (9)', 9, 0, 8, 6, 'Weapon');
 INSERT INTO Items (name, attack, defense, speed, rating, itemType) VALUES ('Battle Axe (10)', 10, 0, 7, 6, 'Weapon');

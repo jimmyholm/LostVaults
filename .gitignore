@@ -24,6 +24,5 @@ log.txt
 *.log
 /bin
 
-#*#
+*.tar.gz
 *#
-#*

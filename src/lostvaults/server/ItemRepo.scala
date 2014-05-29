@@ -9,9 +9,12 @@ import scala.util.Random
 object ItemRepo {
   import JdbcBackend.Database
   case class ItemData(id: Int, name: String, attack: Int, defense: Int, speed: Int, rating: Int, itemType: String)
-  implicit val getItemDataResult = GetResult(r => ItemData(r.nextInt, r.nextString, r.nextInt,  r.nextInt, r.nextInt, r.nextInt, r.nextString))
+  implicit val getItemDataResult = GetResult(r => ItemData(r.nextInt, r.nextString, r.nextInt, r.nextInt, r.nextInt, r.nextInt, r.nextString))
   val Rnd = new Random(System.currentTimeMillis)
   var itemArray: Array[ItemData] = Array()
+  def clearArray() {
+    itemArray = Array()
+  }
   def populateArray() {
     Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC") withSession {
       implicit session =>
@@ -19,7 +22,7 @@ object ItemRepo {
     }
   }
   def getOneRandom(Type: String, Rating: Int): Item = {
-    var pool = Array[ItemData]()
+    var pool = List[ItemData]()
     itemArray foreach (item => if ((item.itemType.compareToIgnoreCase(Type) == 0 || Type.compareToIgnoreCase("Any") == 0 ||
       (Type.compareToIgnoreCase("NoTreasure") == 0 && item.itemType.compareToIgnoreCase("Treasure") != 0)) && item.rating <= Rating) pool = pool :+ item)
     val rndHigh = pool.length
@@ -27,13 +30,13 @@ object ItemRepo {
       val r = (Rnd.nextFloat() * rndHigh - 1).asInstanceOf[Int]
       val itemData = pool(r)
       new Item(itemData.id, itemData.name, itemData.attack, itemData.defense, itemData.speed, itemData.itemType)
-    }
-    new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
+    } else
+      new Item(-4, "Invalid Item", 0, 0, 0, "Invalid")
   }
 
-  def getManyRandom(Amnt: Int, Type: String, Rating: Int): Array[Item] = {
-    var pool = Array[ItemData]()
-    var ret = Array[Item]()
+  def getManyRandom(Amnt: Int, Type: String, Rating: Int): List[Item] = {
+    var pool = List[ItemData]()
+    var ret = List[Item]()
     itemArray foreach (item => if ((item.itemType.compareToIgnoreCase(Type) == 0 || Type.compareToIgnoreCase("Any") == 0 ||
       (Type.compareToIgnoreCase("NoTreasure") == 0 && item.itemType.compareToIgnoreCase("Treasure") != 0)) && item.rating <= Rating) pool = pool :+ item)
     val rndHigh = pool.length

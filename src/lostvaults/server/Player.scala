@@ -1,11 +1,10 @@
 package lostvaults.server
+import lostvaults.Parser
 import akka.actor.{ Actor, ActorRef }
 import akka.util.ByteString
 import akka.io.{ Tcp }
-import lostvaults.Parser
 import scala.util.Random
 import scala.collection.mutable.Queue
-import scala.concurrent.duration._
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
 import scala.slick.jdbc.JdbcBackend
@@ -27,8 +26,8 @@ class Player extends Actor {
   val PMap = Main.PMap.get
   var name = ""
   var dungeon = self
-  var maxhp = 10
-  var hp = 10
+  var maxhp = 20
+  var hp = 20
   var potions = 10
   var food = 5
   var gold = 10
@@ -152,8 +151,9 @@ class Player extends Actor {
                 hp = player.maxHp;
                 food = 5
                 potions = 5
-                weapon = ItemRepo.getById(3)
-                armor = ItemRepo.getById(6)
+                weapon = ItemRepo.getById(player.weapon)
+                armor = ItemRepo.getById(player.armor)
+                name = player.name
                 savePlayer
                 pushToNetwork("LOGINOK")
                 PMap ! PMapAddPlayer(name, self)
@@ -217,12 +217,12 @@ class Player extends Actor {
                 pushToNetwork("Don't hit yourself")
               } else {
                 if (battle != None) {
-                  battle.get ! AttackPlayer(name, Parser.findWord(decodedMsg, 1), getAttack)
+                  battle.get ! AttackPlayer(name, Parser.findRest(decodedMsg, 0), getAttack)
                 } else {
-                  dungeon ! GameAttackPlayer(name, Parser.findWord(decodedMsg, 1))
-                  dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
+                  dungeon ! GameAttackPlayer(name, Parser.findRest(decodedMsg, 0))
+                  //dungeon ! GameAttackPlayerInCombat(Parser.findWord(decodedMsg, 1))
                 }
-                target = Parser.findWord(decodedMsg, 1)
+                target = Parser.findRest(decodedMsg, 0)
                 state = PAttack
               }
             }
@@ -316,16 +316,18 @@ class Player extends Actor {
           pushToNetwork("SYSTEM " + _name + " is not in room, so you cannot attack her/him")
         }
         case GamePlayerJoinBattle(_battle, enemy) => {
+          println("PLAYER: GamePlayerJoinBattle received")
           battle = Some(_battle)
           _battle ! AddPlayer(self, name, getSpeed, enemy)
         }
         case GameYourTurn => {
-          println("It is " + name + "'s turn")
+          println("PLAYER: It is " + name + "'s turn")
+          println("PLAYER: Current State is " + state)
           state match {
             case PAttack => {
               if (battle != None) {
+                println("PLAYER: sending attack message to combat")
                 battle.get ! AttackPlayer(name, target, getAttack)
-                state
               }
             }
             case PDrinkPotion => {
@@ -335,7 +337,6 @@ class Player extends Actor {
             }
             case PDecide => {
               pushToNetwork("SYSTEM It's your turn")
-              state
             }
           }
         }
@@ -365,8 +366,11 @@ class Player extends Actor {
             potions = potions + 1
           }
           pushToNetwork("SYSTEM You picked up " + item.name)
+
+          sendStats
         }
         case GameDamage(from, strength) => {
+          println("PLAYER: GameDamage received")
           var damage = strength - getDefense
           if (damage < 0) { damage = 0 }
           hp = hp - damage
@@ -382,6 +386,7 @@ class Player extends Actor {
             dungeon ! GameDropItem(new Item(-2, "Food", food, 0, 0, "Food"), currentRoom)
             treasures = List()
             food = 0
+            target = ""
             self ! GameMoveToDungeon(Main.City.get)
             pushToNetwork("SYSTEM \n " +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
@@ -454,6 +459,18 @@ class Player extends Actor {
         case GameSystem(msg) => {
           pushToNetwork("SYSTEM " + msg)
         }
+        
+        case GameHeal => {
+          hp = maxhp
+          sendStats
+        }
+        
+        case GameHarm(amnt) => {
+          hp -= amnt
+          if (hp <= 0) hp = 1
+          sendStats
+        }
+        
         case PMapGetPlayerResponse(player, purpose) => {
           val action = Parser.findWord(purpose, 0).toUpperCase
           action match {

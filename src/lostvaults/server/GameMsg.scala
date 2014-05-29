@@ -137,8 +137,9 @@ case object GameCombatWin extends GameMsg
 
 /**
  * Passed along to the room, notifying that room that the battle has ended
+ * @param room The index of the room the combat is in
  */
-case object GameCombatFinished extends GameMsg
+case class GameCombatFinished(room: Int) extends GameMsg
 /**
  * Passed along to a player to tell the player to move to a room.
  * @param room The room coordinates to move to
@@ -185,3 +186,16 @@ case class GameDropItem(item: Item, room: Int) extends GameMsg
  * @param item The player's new item.
  */
 case class GameUpdateItem(item: Item) extends GameMsg
+
+case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
+
+case object GameHeal extends GameMsg
+
+case class GameHarm(amnt: Int) extends GameMsg
+/**
+ * Passed along to a Dungeon, when the NPC has died
+ * @param name The name of the NPC
+ * @param room The room the NPC is in
+ */
+case class GameRemoveNPCFromRoom(name: String, room: Int)
+
