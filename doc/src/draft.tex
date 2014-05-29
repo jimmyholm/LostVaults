@@ -17,13 +17,14 @@
 
 %Döp om pseudokod.
 \floatname{algorithm}{Algoritm}
-\renewcommand{\algorithmicindent}{4 pt}
+\renewcommand{\algorithmicindent}{8 pt}
 \begin{document}
 \maketitle
 \thispagestyle{empty}
 \newpage
 \setcounter{page}{1}
 \pagenumbering{Roman}
+
 \tableofcontents
 \listoffigures
 \newpage
@@ -187,7 +188,7 @@ på ett enkelt sätt och detta kunde uppnås utan problem då Scala är byggt ut
 \subsection{Algoritmer}
 För att spelarna alltid skall få  nya och intressanta upplevelser bestämde vi oss för att skriva en algoritm för slumpmässig generering av rum som spelarna kan utforska. Vi
 bestämde oss för att nyttja ett rutnät där varje cell representerar ett rum. Spelare kan ta sig från rum till rum via utgångar placerade på några av eller alla rummens fyra väggar.
-Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Nedan beskrivs med pseudokod den algoritm vi bestämde oss för att använda.
+Vår algoritm skall även säkerställa att inga rum skapas som inte går att nå från ingången. Algoritm \ref{alg:RoomGen} beskriver med pseudokod den algoritm vi bestämde oss för att använda.
 \begin{algorithm}
 \caption{Procedurell Rumsgenerering.}
 \label{alg:RoomGen}
@@ -227,10 +228,12 @@ Vår algoritm skall även säkerställa att inga rum skapas som inte går att n�
 \Until{$CreatedRooms \geq GoalRooms$}
 \EndFunction
 \end{algorithmic}
-
 \end{algorithm}
 
 \subsection{Datastrukturer}
+Under projektets gång har vi använt oss av Scalas standarbibliotek för datastrukturer där vi behövt använda datasamlingar. 
+Förutom arräer och listor har vi använt oss av Hashmap för att kunna koppla spelarnamn med aktörer och spelargrupper, vilket ses i klasserna
+PlayerMap och GroupMap.
 
 \subsection{Concurrency}
 Flera spelare samtidigt
@@ -240,7 +243,7 @@ För att skapa en slags synkronisering har vi använt FSM, vilket kräver att ma
 
 \section{Slutsatser}
 Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom whisper (personligt meddelande) eller say (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker som man hittar i grottan, börja slåss mot en spelare eller NPC som är i rummet och man kan gå till andra rum. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
-Vi har också skapat en \textit{god mode} som gör att man i terminalen kan ge spelare speciella items, samt hela den så att den får fullt hp. Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla salarna.     
+Vi har också skapat en \textit{god mode} som gör att man i terminalen kan ge spelare speciella items, samt hela den så att den får fullt hp. Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla rum i en dungeon.
 
 Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera massiva uppkopplingar mot dess server. 
 Då den delen av projektet var klart kunde vi utöka produkten med funktioner för att göra spelet roligare och mer interaktivt. 
@@ -248,10 +251,10 @@ Implementation av föremål och monster att slåss mot i grottan.
 Något vi lärt oss är att skriva nätverkskod. Vi har även fått kunskap i ett nytt programspråk.
 Det vi tycker har varit svårt var bland annat att integrationstesta våra aktörer. Svårigheterna uppstod på grund av bristande 
 information att ta del av om hur vi skulle gå till väga för att göra detta. En annan sak som också varit relativt svår var att 
-begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa utvecklingen till en rimlig nivå för spelet 
-och samtidigt ha det tillräckligt intressant för den som spelar.
+begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa oss till en rimlig nivå för spelet 
+och samtidigt ha det tillräckligt intressant för den som spelar visade sig vara mer utmanande än vi först trott.
 
-En stor sak som vi inte han med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa stek skulle vara, nu när det grundläggande fungerar som det ska. 
+En stor sak som vi inte hann med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa steg skulle vara, nu när det grundläggande fungerar som det ska.
 
 \section{Appendix}
 
