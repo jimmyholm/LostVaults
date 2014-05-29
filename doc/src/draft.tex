@@ -31,21 +31,21 @@
 \setcounter{page}{1}
 \pagenumbering{arabic}
 \section{Inledning}
-Att spela spel över internet är en del av vår kultur som antagligen aldrig kommer försvinna. Det är ett sätt att umgås och samarbeta, ofta med människor man aldrig har mött. 
+Att spela spel över internet har blivit en del av vår kultur som antagligen aldrig kommer försvinna. Det är ett sätt att umgås och samarbeta, ofta med människor man aldrig har mött. 
 På många platser i världen är gigantiska servrar igång dygnet runt för att hantera förfrågningar från miljontals användare, och tusentals programmerare gör sitt bästa för 
 att ge människor en så bra användarupplevelse som möjligt. 
 För att detta ska vara möjligt krävs mycket av serverprogrammen. 
-Servrarna ska kunna hantera många förfrågningar med låg fördröjning, samtidigt som de måste koordinera händelser så att det som en användare gör också ska påverka dem i anslutning till den. 
-Serverprogrammen ska också gärna vara finkornigt modulariserade för att möjliggöra parallellutveklingen av programmen på ett fungerande sätt.  
+Servrarna ska kunna hantera massvis av förfrågningar med låg fördröjning, samtidigt som de måste koordinera händelser så att det som en användare gör också ska påverka dem i anslutning till den. 
+Serverprogrammen ska också vara finkornigt modulariserade för att möjliggöra parallellutveckling av programmen på ett fungerande sätt.  
  
 Vi kände att komplexiteten av att göra ett multiplayer onlinespel var något som utmanade och intresserade oss, då det gav upphov till intressanta problem som kunde lösas med hjälp av concurrency. 
 Vi har skapat ett serverbaserat spel, som kommunicerar med användaren via en TCP/IP uppkoppling till användarens klient-program. Servern består av flera självständiga aktörer som interagerar
 genom att skicka meddelanden fram och tillbaka. Detta ger oss ett bekvämt sätt att skriva fungerande spellogik, utan att behöva bry oss om att låsa delad data.
 
 Spelet kallas \textit{The Lost Vaults - Uneasy Alliance} och är ett semi-traditionellt MUD där användaren interagerar med andra spelare och tar del i uppdrag. 
-Detta sker i grupper av flertal spelare som tillsammans arbetar mot ett gemensamt mål samtidigt som varje enskild gruppmedlem har en personlig agenda som endast 
+Detta sker i grupper av flertal spelare vilka tillsammans arbetar mot ett gemensamt mål. Samtidigt har varje enskild gruppmedlem en personlig agenda som endast 
 gagnar den enskilda invididen. Möjligheten finns att utforska som enskild individ, men fokuset för spelet ligger i den dynamik som följer av 
-interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon. City är staden där spelarna samlas innan kommande exkursion, där kan de fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. En dungeon är en den värld som spelet utspelar sig i; en uppsättning rum fyllt med monster, fällor och skatter. 
+interaktionen med andra spelare. Spelet utspelas på två olika platser, i City och i Dungeon. City är staden där spelarna samlas innan kommande exkursion, där kan de fylla på förnödenheter samt forma grupper för att gå ner i Dungeons. En dungeon är den värld som spelet utspelar sig i; en uppsättning rum fyllt med monster, fällor och skatter. 
 Varje grupp spelare får sin egen unikt genererade Dungeon när de går ner i dessa magiska grottor under staden. Väl inne ges gruppen en eller flera uppdrag som bör fullbordas innan de kommer upp till ytan igen.
 
 Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha fler än en spelare aktiva i spelet samtidigt, samt flertalet aktiva spelområden körandes samtidigt och oberoende av varandra.
@@ -225,14 +225,32 @@ Förutom arräer och listor har vi använt oss av Hashmap för att kunna koppla 
 PlayerMap och GroupMap.
 
 \subsection{Concurrency}
-Flera spelare samtidigt
-Skicka meddelanden - jobbigt när man bara vill ta reda på ett värde - skicka meddelanden fram och tillbaka. Men ingen risk för deadlock då all kommunikation sker via meddelanden. 
-Meddelanden är ej synkrona, vilket märks då en spelare ibland kan bli slagen efter att den har dött (det ser uut så i prompten eftersom meddelandena kommer så, men det är inte sant)
-För att skapa en slags synkronisering har vi använt FSM, vilket kräver att man är i en särskild state för att kunna ta emot ett särskilt meddelanden. 
+Som nämnts tidigare valde vi att använda Aktörsmodellen som vår concurrencymodell därför att vi vid designen såg hur de olika
+delarna av servern kunde delas in i till stor del självständiga moduler där minne inte behövde delas. Detta underlättade
+skapandet av deadlock-säker kod men vår ovana i hur Akka biblioteket fungerade gav oss vissa svårigheter i synkronisering av
+meddelanden som skickades mellan aktörerna. Det var inte förrän sent under projektetsgång vi lyckades få Futures, ett sätt att 
+vänta på resultat från en annan aktör, att fungera på rätt sätt och i det stadiet hade vi redan skapat andra, dock ej optimala,
+lösningar på synkroniseringsproblemen. Akkas meddelandeskickning är icke garanterad, vilket innebär att meddelanden kan
+tappas, speciellt på väg från klient till server över nätverk, vilket vi inte på ett okomplicerat sätt kunde ta hänsyn till utan
+synkronisering och meddelande time-out hantering som vi inte implementerat. Dessutom är inte heller ordningsföljden av meddelanden
+garanterade, så utan någon form av tidsstämpling finns inget okomplicerat sätt att sortera meddelanden som inkommer till aktörer.
+
+Implementationen är även svårtestad, integrationstester av aktörerna krävde mer specialkunskap om Akkas bibliotek än vi
+hann skaffa oss och vi fick istället nöja oss med enhetstester av de aktörer där detta är aktuellt.
+
+Som alternativ till komplicerad synkronisering vid strider mellan spelare och monster eller enbart strid mellan spelare valde vi att
+skapa en speciell typ av aktör som använder en finit tillståndsmaskin.
+
+Vår implementation av servern skapar ett stort antal aktörer även för få klienter. Dels skapas alltid ett flertal aktörer som
+agerar som verktyg för systemet, exempelvis för att hantera inkommande anslutningar eller binda samman spelarnamn och spelaraktörer.
+Det skapas även två nya aktörer för varje nyinkommen anslutning, en aktör för varje nyskapad dungeon, en aktör för varje nystartad strid
+och en aktör för varje levande monsterkaraktär.
+Tack vare Akka och Scalas skalbarhet har vi dock inte sett något problem i detta.
 
 \section{Slutsatser}
-Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom whisper (personligt meddelande) eller say (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker som man hittar i grottan, börja slåss mot en spelare eller NPC som är i rummet och man kan gå till andra rum. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
-Vi har också skapat en \textit{god mode} som gör att man i terminalen kan ge spelare speciella items, samt hela den så att den får fullt hp. Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla rum i en dungeon.
+Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom \textit{WHISPER} (personligt meddelande) eller \textit{SAY} (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker man hittar, gå till andra rum och slåss mot andra spelare eller NPC som är i rummet. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
+
+Vi har också skapat ett administrationsverktyg som gör att man i terminalen kan ge spelare objekt, återställa hälsan så att spelaren får fullt HP\footnote{HP står för Health Points, vilket är hur mycket liv spelaren har vid givet tillfälle} och skada den genom att bestämma hur mycket HP som ska dras av (man kan inte döda en spelare). Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla salarna.     
 
 Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera massiva uppkopplingar mot dess server. 
 Då den delen av projektet var klart kunde vi utöka produkten med funktioner för att göra spelet roligare och mer interaktivt. 
@@ -246,17 +264,37 @@ och samtidigt ha det tillräckligt intressant för den som spelar visade sig var
 En stor sak som vi inte hann med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa steg skulle vara, nu när det grundläggande fungerar som det ska.
 
 \section{Appendix}
+\subsection{Använda externa bibliotek}
+För licensinformation angående följande bibliotek, se .license filer i projektets rotmapp.
+\begin{description}
+\item[Scala 2.10.4] \hfill \\ Copyright © 2002-2014 EPFL, Copyright (c) 2011-2014 Typesafe, Inc.\hfill \\http://scala-lang.org/
+\item[Akka 2.3.2] \hfill \\ Copyright © 2009-2014 Typesafe Inc.\hfill \\ http://akka.io/
+\item[SLF4J 1.7.7] \hfill \\ Copyright © 2004-2013 QOS.ch\hfill \\ http://www.slf4j.org/
+\item[Slick 2.0.2] \hfill \\ Copyright © 2011-2014 Typesafe, Inc.\hfill \\ http://slick.typesafe.com
+\item[SQLite JDBC 3.7.2] \hfill \\ Copyright © Taro L. Saito\hfill \\ http://bitbucket.org/xerial/sqlite-jdbc
+\end{description}
 
-Scala 2.10.4, Akka 2.3.2, SLF4J 1.7.7, Slick 2.0.2, SQLite JDBC 3.7.2
+\subsection{Tillgänglighet}
+Projektet finns tillgängligt för nedladdning på https://github.com/senilica/LostVaults/
 
-https://github.com/senilica/LostVaults/
+\subsection{Kompilering}
+Kompilering av systemet sker med hjälp av ANT, Apache's byggsystem, och är automatiserat. Byggskriptet använder följande byggmål:
+\begin{description}
+\item[build\_server] \hfill \\ Kompilerar alla serverns scalafiler.
+\item[build\_client] \hfill \\ Kompilerar alla klientens scalafiler.
+\item[build\_tools] \hfill \\ Kompilerar alla databasverktygens scalafiler samt skapar körbara \textbf{.jar} arkiv i rotmappen.
+\item[server] \hfill \\ Kompilerar alla serverns scalafiler och skapar ett körbart \textbf{server.jar} arkiv i rotmappen.
+\item[client] \hfill \\ Kompilerar alla klientens scala- och javafiler och skapar ett körbart \textbf{client.jar} arkiv i rotmappen.
+\item[clean] \hfill \\ Återställer kompilartoromgivningen och tvingar ny kompilering av all källkod.
+\item[doc] \hfill \\ Skapar html-baserad Scaladoc dokumentation av projektet.
+\item[run\_tests] \hfill \\ Kompilerar alla testens scalafiler och kör automatiska enhetstester genom Scalatest.
+\item[archive] \hfill \\ Återställer kompilatoromgivningen samt skapar .tar.gz arkiv som följer projektanvisningarnas namn och katalogstruktur.
+\item[run\_server] \hfill \\ Kompilerar alla serverns scalafiler, skapar samt kör ett körbart \textbf{server.jar} arkiv i rotmappen.
+\item[run\_server] \hfill \\ Kompilerar alla klientens scala- och javafiler, skapar samt kör ett körbart \textbf{client.jar} arkiv i rotmappen.
+\end{description}
 
-Vilka versioner av till exempel Erlang, Java, Python etc har använts?
-Hur kan koden laddas ner? Finns koden tillgänglig på till exempel GitHub eller Bitbucket eller som Tar arkiv?  Beskriv projektets katalogstruktur.
-Vilket stöd för automatiserad testning finns och hur används det, till exempel JUnit (Java), EUnint (Erlang) eller PyUnit (Python)?
-%Vilket stöd för automatiserad generering av dokumentation finns och hur används det, till exempel Doxygen (C, C++, C\#, Fortran, Java, Objective\­C, PHP, Python), EDoc (Erlang), Pydoc (Python), Javadoc (Java)?
-Hur kompileras systemet?
-Hur startas systemet? tryck på play
-
+\subsection{Körning}
+Körning av systemet kräver kompilering och körning av serverns och klientens java arkiv, och kan göras antingen via byggsystemet
+eller från terminal via \textit{java -jar server.jar} respektive  \textit{java -jar client.jar}.
 
 \end{document}
