@@ -405,7 +405,7 @@ public class GUI {
 
 	public void removeItem(String item) {
 		String i = items.getText();
-		i = i.replace(item + "\n", "");
+		i = i.replaceFirst(item + "\n", "");
 		items.setText(i);
 	}
 
