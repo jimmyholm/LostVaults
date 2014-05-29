@@ -44,7 +44,7 @@ class RoomGenerator {
     if (X != startRoom._1 || Y != startRoom._2) {
       var howMany = rand(0, 3)
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
-      if(range == 0) range = 1
+      if (range == 0) range = 1
       println(startRoom._1 + " - " + X + " + " + startRoom._2 + " - " + Y + " / 16 *  10 = " + range)
       println("ROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
@@ -61,7 +61,7 @@ class RoomGenerator {
   }
   def addNPCToRoom(system: ActorSystem, dungeon: ActorRef, X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
-      var howMany = 1 //rand(0, 1)
+      var howMany = rand(0, 1)
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
       if (range == 0) range = 1
       println("ROOMGENERATOR-addNPCToRoom: This is the range: " + range)
@@ -108,7 +108,6 @@ class RoomGenerator {
       directions(5) = 1
       directions(6) = 1
       directions(7) = 1
-
     } else if (dirX == -1 && dirY == 0) {
       directions(0) = 0
       directions(1) = 2
@@ -253,8 +252,7 @@ class RoomGenerator {
         } while (!success)
         created.foreach(c => {
           rooms(coordToIndex(c)).created = true; rooms(coordToIndex(c)).connected = true;
-          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, dungeon, c._1, c._2)
-        })
+          if (rand(0, 100) <= 50) addItemsToRoom(c._1, c._2); if (rand(0, 100) <= 100) addNPCToRoom(system, dungeon, c._1, c._2);})
         var head = (0, 0)
         var lastCoord = (-1, -1)
         while (!(created isEmpty)) {
@@ -273,6 +271,7 @@ class RoomGenerator {
       }
     } while (roomsCreated < 40)
     // Finally return the generated array of rooms.
+      rooms.foreach(c => if(c.created == true) {c.createRoomDesc})
     println("Created " + itemcnt + " items in " + itemrooms + " rooms.")
     rooms
   }

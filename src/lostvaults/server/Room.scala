@@ -24,6 +24,8 @@ class Room() {
   var playerList: List[String] = List()
   var itemList: List[Item] = List()
   var NPCList: List[(String, ActorRef)] = List()
+  var activeCombat: Option[ActorRef] = None 
+  var roomDesc = ""
 
   /**
    * This method returns true if the direction exists in this room
@@ -65,6 +67,23 @@ class Room() {
     }
     if (exits(3)) {
       s = s + "West"
+    }
+    s
+  }
+  
+  def getExitsList = {
+       var s: List[String] = List()
+    if (exits(0)) {
+      s = "North" :: s
+    }
+    if (exits(1)) {
+      s = "East" :: s
+    }
+    if (exits(2)) {
+      s = "South" :: s
+    }
+    if (exits(3)) {
+      s = "West" :: s
     }
     s
   }
@@ -186,7 +205,7 @@ class Room() {
    * @param name the name of the player wanting the description
    * @return representation of the exits,items  and players in this room
    */
-  def getDescription(name: String): String = {
+  /*def getDescription(name: String): String = {
     var ret = "You are standing in a wide, open room.\n"
     ret += "You see exits to the:" + "\n"
     if (exits(0))
@@ -212,8 +231,16 @@ class Room() {
       playerList.foreach(o => if (o.compareToIgnoreCase(name) != 0) ret += o + "\n")
     }
     ret
+  }*/
+  def getDescription(name: String): String = {
+    roomDesc
   }
 
+  def createRoomDesc {
+    roomDesc = RoomDescGen.generateDescription(NPCList.map(c => c._1), itemList.map(c => c.name), getExitsList)
+    println(roomDesc)
+  }
+  
   /**
    * String representation of the room with the possible exits
    * marked by a N,E,S or W character for each direction

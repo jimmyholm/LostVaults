@@ -21,12 +21,11 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
   var backPack: List[Item] = List()
   var target = ""
   var battle: Option[ActorRef] = None
+  var rating = _rating
 
 
   def getSpeed = {
-    println("This NPC:s rating: " + _rating)
-    println("Weapon: " + weapon.toString() + " Armor: " + armor.toString)
-    weapon.speed + armor.speed
+    weapon.speed + armor.speed + rating/2
   }
   def getAttack = {
     weapon.attack + armor.attack
@@ -60,11 +59,14 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
           battle.get ! RemovePlayer(name)
           battle = None
         }
+        target = ""
+        context stop self
       } else {
         dungeon ! GameNotifyRoom(room, "NPC " + name + " has received " + damage + " damage from " + from + ".")
         if (battle != None) {
           battle.get ! DamageAck
         }
+        target = ""
       }
     }
     case GameCombatWin => {
