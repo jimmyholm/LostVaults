@@ -405,7 +405,11 @@ public class GUI {
 
 	public void removeItem(String item) {
 		String i = items.getText();
+		item = item.replace("(", "\\(");
+		item = item.replace(")", "\\)");
 		i = i.replaceFirst(item + "\n", "");
+		System.out.println("tar bort item " + item);
+		
 		items.setText(i);
 	}
 
