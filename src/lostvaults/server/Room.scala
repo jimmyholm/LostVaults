@@ -107,8 +107,6 @@ class Room() {
     playerList.find(f => f.compareToIgnoreCase(player) == 0) != None
   }
 
-  // TESTAT FRAM TILL DENNA PUNKT
-
   /**
    * This method adds an item to the list of items in a room.
    * @param newItem The name of the item to be added.
@@ -119,29 +117,26 @@ class Room() {
 
   /**
    * This method removes an item from the list of items in a room.
-   * @param item The name of the item to be removed.
+   * @param item The name of the Item to be removed.
    */
   def removeItem(item: Item) = {
     itemList = itemList.filterNot((c => c == item))
   }
 
   /**
-   * This method returns the list of items in a room.
-   * @return the items in the room
+   * This method returns the list of Items in a room.
+   * @return the Items in the room
    */
   def getItemList(): List[Item] = {
     itemList
   }
 
   /**
-   *
+   * Removes an Item from this Room and returns it.
+   * @param the name of the Item
    */
   def takeItem(_name: String): Item = {
     val ret = itemList.find(i => i.name.compareToIgnoreCase(_name) == 0).get
-    //    if (ret != None) {
-    //      removeItem(ret)
-    //      ret
-    //    }
     removeItem(ret)
     ret
   }
@@ -202,43 +197,17 @@ class Room() {
     }
   }
 
-  /**
-   * This method returns a string describing the
-   * players, items and possible exits in this room.
-   * @param name the name of the player wanting the description
-   * @return representation of the exits,items  and players in this room
-   */
-  /*def getDescription(name: String): String = {
-    var ret = "You are standing in a wide, open room.\n"
-    ret += "You see exits to the:" + "\n"
-    if (exits(0))
-      ret += "North\n"
-    if (exits(1))
-      ret += "East\n"
-    if (exits(2))
-      ret += "South\n"
-    if (exits(3))
-      ret += "West\n"
-    if (startRoom)
-      ret += "You also see an exit to the city above.\n"
-    if (!itemList.isEmpty) {
-      ret += "On the floor you find: \n"
-      itemList.foreach(item => ret += item.name + "\n")
-    }
-    if (!NPCList.isEmpty) {
-      ret += "You suddenly see: \n"
-      NPCList.foreach(npc => ret += npc._1 + "\n")
-    }
-    if (playerList.size > 1) {
-      ret += "With you is: \n"
-      playerList.foreach(o => if (o.compareToIgnoreCase(name) != 0) ret += o + "\n")
-    }
-    ret
-  }*/
+/**
+ * This method returns the Room's description.
+ * @return the Room's description
+ */
   def getDescription(name: String): String = {
     roomDesc
   }
 
+  /**
+   * Creates a description for this Room.
+   */
   def createRoomDesc {
     roomDesc = RoomDescGen.generateDescription(NPCList.map(c => c._1), itemList.map(c => c.name), getExitsList)
   }
