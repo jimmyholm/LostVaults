@@ -176,6 +176,7 @@ class Dungeon extends Actor {
       PSet -= name
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players
       Main.City.get ! GameAddPlayer(name)
+      PMap ! PMapSendGameMessage(name, GameMessage("GUICITY"))
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(Main.City.get))
       GMap ! GMapExitDungeon(name)
       if (PSet isEmpty) {

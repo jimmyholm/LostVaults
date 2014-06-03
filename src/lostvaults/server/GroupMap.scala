@@ -149,6 +149,7 @@ class GroupMap extends Actor {
         var join = new PlayerGroup
         join.addPlayer(name)
         PMap ! PMapSendGameMessage(name, GameSystem("Entering dungeon..."))
+        PMap ! PMapSendGameMessage(name, GameMessage("GUIDUNGEON"))
         val newDungeon = context.actorOf(Props[Dungeon])
         newDungeon ! NewDungeon
         newDungeon ! GameAddPlayer(name)
@@ -158,6 +159,7 @@ class GroupMap extends Actor {
         group.setReady(name)
         if (group isGroupReady) {
           group.groupSendMessage(GameSystem("All players ready! Entering dungeon..."))
+          PMap ! PMapSendGameMessage(name, GameMessage("GUIDUNGEON"))
           val newDungeon = context.actorOf(Props[Dungeon])
           newDungeon ! NewDungeon
           val list = group.listPlayers
