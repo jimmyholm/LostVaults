@@ -47,6 +47,12 @@ object playGameCommunication {
 	def setCombatStats(stats: String) {
 		gui.setCombatStats(stats)
 	}
+	def setLabelCity {
+	  gui.setLabelCity
+	}
+	def setLabelDungeon {
+	  gui.setLabelDungeon
+	}
   /**
    * s
    * This method will replace the current list of players in the dungeon, shown by the GUI, with the given list of players.

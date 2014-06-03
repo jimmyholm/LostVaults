@@ -11,7 +11,7 @@ public class GUI {
 	 *******************************************/
 	String name;
 	String passwordstr;
-	
+
 	int screenWidth;
 	int screenHeight;
 
@@ -86,12 +86,13 @@ public class GUI {
 		statsPanel.add(healthStats, BorderLayout.NORTH);
 		statsPanel.add(combatStats, BorderLayout.CENTER);
 
-		JPanel dungeonPlayersPanel = createRightBox(dungeonPlayers, playersInDungeon,
-				"Players in Dungeon: ");
+		JPanel dungeonPlayersPanel = createRightBox(dungeonPlayers,
+				playersInDungeon, "Players in Dungeon: ");
 		JPanel roomPlayersPanel = createRightBox(roomPlayers, playersInRoom,
 				"Players in Room: ");
 		JPanel npcsPanel = createRightBox(npcs, npcsInRoom, "NPCs in Room: ");
-		JPanel itemsPanel = createRightBox(items, itemsInRoom, "Items in Room: ");
+		JPanel itemsPanel = createRightBox(items, itemsInRoom,
+				"Items in Room: ");
 
 		exits.setFont(font);
 		exits.setForeground(textColor);
@@ -162,7 +163,7 @@ public class GUI {
 	/*******************************************
 	 * * Right window in the GUI * *
 	 *******************************************/
-	public JPanel createRightBox(JTextArea c, JPanel cLabel, String label) {
+	public JPanel createRightBox(JTextArea c, JLabel cLabel, String label) {
 		c.setFont(font);
 		c.setForeground(textColor);
 		c.setBackground(mediumBackground);
@@ -338,7 +339,7 @@ public class GUI {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getPass() {
 		return passwordstr;
 	}
@@ -346,6 +347,13 @@ public class GUI {
 	public void updateDynamicInfo(String msg) {
 		dynamicInfo.append(msg + "\n");
 		dynamicInfo.setCaretPosition(dynamicInfo.getDocument().getLength());
+	}
+	public void setLabelCity() {
+		playersInDungeon.setText(" Players In City: ");
+	}
+
+	public void setLabelDungeon() {
+		playersInDungeon.setText(" Players In Dungeon: ");
 	}
 
 	public void setHealthStats(String stats) {
@@ -412,7 +420,7 @@ public class GUI {
 		item = item.replace(")", "\\)");
 		i = i.replaceFirst(item + "\n", "");
 		System.out.println("tar bort item " + item);
-		
+
 		items.setText(i);
 	}
 
