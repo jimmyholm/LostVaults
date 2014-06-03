@@ -31,7 +31,7 @@ class RoomGenerator {
     (c._1 < 0 || c._1 >= Width || c._2 < 0 || c._2 >= Height)
   }
   def rand(min: Int, max: Int) = {
-    (min + (Rnd.nextFloat() * (max - min))).asInstanceOf[Int]
+    min + (Rnd.nextFloat() * (max - min).asInstanceOf[Float]).asInstanceOf[Int]
   }
 
   def findEmptyRoom(depth: Int): (Int, Int) = {
@@ -42,11 +42,9 @@ class RoomGenerator {
 
   def addItemsToRoom(X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
-      var howMany = rand(0, 3)
+      var howMany = rand(1, 3)
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
       if (range == 0) range = 1
-      println(startRoom._1 + " - " + X + " + " + startRoom._2 + " - " + Y + " / 16 *  10 = " + range)
-      println("ROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       var items = ItemRepo.getManyRandom(howMany, "NoTreasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
       itemcnt += items.length
@@ -54,7 +52,6 @@ class RoomGenerator {
       items = ItemRepo.getManyRandom(howMany, "Treasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
       items foreach (i => print(i.name))
-      println("\nROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       itemcnt += items.length
       itemrooms += 1
     }
@@ -64,11 +61,8 @@ class RoomGenerator {
       var howMany = rand(0, 1)
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
       if (range == 0) range = 1
-      println("ROOMGENERATOR-addNPCToRoom: This is the range: " + range)
-      println(startRoom._1 + " - " + X + " + " + startRoom._2 + " - " + Y + " / 16 *  10 = " + range)
       var npcs = NPCRepo.getManyRandom(howMany, system, dungeon, range, coordToIndex(X, Y))
       npcs foreach (i => print(i._1))
-      println("\nROOMGENERATOR-addItemsToRoom: This is the range: " + range)
       npcs foreach (i => rooms(coordToIndex(X, Y)).addNPC(i))
     }
   }
@@ -270,7 +264,6 @@ class RoomGenerator {
         roomsCreated += created.size + 1
       }
     } while (roomsCreated < 40)
-    // Finally return the generated array of rooms.
       rooms.foreach(c => if(c.created == true) {c.createRoomDesc})
     println("Created " + itemcnt + " items in " + itemrooms + " rooms.")
     rooms
