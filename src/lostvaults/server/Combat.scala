@@ -79,6 +79,9 @@ case class RestData(PlayerList: List[Tuple3[String, Int, ActorRef]], Duration: I
  * @param CombatsPerPlayer A list with all players in combat, and with each player a list of that player's enemies, element in list looks like: Tuple2(name, List(name of players))
  */
 case class ActionData(PlayerList: List[Tuple3[String, Int, ActorRef]], TurnList: List[String], Duration: Int, CombatsPerPlayer: List[Tuple2[String, List[String]]]) extends CombatData
+
+
+
 object Combat {
   def props(dungeon: ActorRef, roomIndex: Int): Props = Props(new Combat(dungeon: ActorRef, roomIndex: Int))
 }
@@ -172,7 +175,7 @@ class Combat (_dungeon: ActorRef, _roomIndex: Int) extends Actor with FSM[Combat
 
   when(Action) {
     case Event(AttackPlayer(name, target, strength), data: ActionData) => {
-      println("COMBAT: AttackPlayer received")
+      println("COMBAT: AttackPlayer received attacking " + target)
       val turnPlayer = data.TurnList.head
       if (data.PlayerList.exists(c => c._1.compareToIgnoreCase(target) == 0)) {
         println("COMBAT: Target exists")

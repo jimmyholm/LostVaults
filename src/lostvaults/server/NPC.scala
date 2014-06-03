@@ -35,14 +35,14 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
   }
 
   def receive = {
-    case GamePlayerJoinBattle(_battle, enemy) => {
-      println("NPC: GamePlayerJoinBattle received")
+    case GamePlayerJoinBattle(_battle, enemy) => {      
+      println("NPC: GamePlayerJoinBattle received, target is \"" + target + "\"")
       battle = Some(_battle)
       _battle ! AddPlayer(self, name, getSpeed, enemy)
       target = enemy
     }
     case GameYourTurn => {
-      println("NPC: GameYourTurn received")
+      println("NPC: GameYourTurn received attacking \"" + target + "\"")
       if (battle != None) {
         battle.get ! AttackPlayer(name, target, getAttack)
       }

@@ -201,7 +201,6 @@ class Dungeon extends Actor {
         val npcs = rooms(findRoom(attacker)).NPCList
         npcs foreach (name => {
           nameMatches = (compareStrings(attackee, name._1), name._1) :: nameMatches
-          println(compareStrings(attackee, name._1))
         })
         if (nameMatches isEmpty)
           PMap ! PMapSendGameMessage(attacker, GameMessage("There is no one with that name to attack."))
@@ -218,8 +217,8 @@ class Dungeon extends Actor {
           if (rooms(currentRoom).hasPlayer(attackee)) {
             println(attacker + " attacks player " + attackee)
             if (rooms(currentRoom).activeCombat == None) {
-              println("New combat actor created.")
-              rooms(currentRoom).activeCombat = Some(context.actorOf(Props[Combat]))
+              println("New combat actor created - attackee == Player")
+              rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom)))
               rooms(currentRoom).activeCombat.get ! self
             }
             println("Adding " + attackee + " to combat")
@@ -231,8 +230,8 @@ class Dungeon extends Actor {
           } else if (rooms(currentRoom).hasNPC(attackee)) {
             println(attacker + " attacks player " + attackee)
             if (rooms(currentRoom).activeCombat == None) {
-              println("New combat actor created.")
-              rooms(currentRoom).activeCombat = Some(context.actorOf(Props[Combat]))
+              println("New combat actor created - attackee == Monster")
+              rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom)))
               rooms(currentRoom).activeCombat.get ! self
             }
             println("Adding " + attackee + " to combat")
