@@ -130,6 +130,10 @@ class playGame extends Actor {
           game.updateDynamicInfo(Parser.findWord(c, 1) + " whispers to " + Parser.findWord(c, 2) + ": " + Parser.findRest(c, 2))
         case "SYSTEM" =>
           game.updateDynamicInfo(Parser.findRest(c, 0))
+        case "GUICITY" => 
+          game.setLabelCity
+        case "GUIDUNGEON" => 
+          game.setLabelDungeon
         case _ =>
           game.updateDynamicInfo(c)
       }
