@@ -241,7 +241,6 @@ class Room() {
 
   def createRoomDesc {
     roomDesc = RoomDescGen.generateDescription(NPCList.map(c => c._1), itemList.map(c => c.name), getExitsList)
-    println(roomDesc)
   }
   
   /**

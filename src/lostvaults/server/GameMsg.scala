@@ -1,3 +1,4 @@
+
 package lostvaults.server
 import akka.actor.{ActorRef}
 /**
@@ -197,5 +198,6 @@ case class GameHarm(amnt: Int) extends GameMsg
  * @param name The name of the NPC
  * @param room The room the NPC is in
  */
-case class GameRemoveNPCFromRoom(name: String, room: Int)
+case class GameRemoveNPCFromRoom(name: String, room: Int) extends GameMsg
 
+case class GamePlayerSetTarget(newTarget: String) extends GameMsg

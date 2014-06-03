@@ -17,7 +17,7 @@ object Main {
     val gmap = system.get.actorOf(Props[GroupMap])
     GMap = Some(gmap)
     val conMan = system.get.actorOf(Props[ConMan])
-    City = Some(system.get.actorOf(Props[Dungeon]))
+    City = Some(system.get.actorOf(Dungeon.props(0)))
     City.get ! DungeonMakeCity
     CheatActor = Some(system.get.actorOf(Props[CheatActor]))
   }

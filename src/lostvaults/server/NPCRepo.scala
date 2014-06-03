@@ -21,7 +21,7 @@ object NPCRepo {
   }
   populateArray
   def rand(min: Int, max: Int) = {
-    (min + (random.nextFloat() * (max - min))).asInstanceOf[Int]
+    min + (random.nextFloat() * (max - min).asInstanceOf[Float]).asInstanceOf[Int]
   }
   def getRandomNPC(system: ActorSystem, dungeon: ActorRef, rating: Int, room: Int): (String, ActorRef) = {
     val ratingList = npcList.filter(c => c.rating <= rating)

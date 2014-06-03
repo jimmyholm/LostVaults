@@ -51,7 +51,6 @@ class RoomGenerator {
       howMany = rand(0, 3)
       items = ItemRepo.getManyRandom(howMany, "Treasure", range)
       items foreach (i => rooms(coordToIndex(X, Y)).addItem(i))
-      items foreach (i => print(i.name))
       itemcnt += items.length
       itemrooms += 1
     }
@@ -62,7 +61,6 @@ class RoomGenerator {
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
       if (range == 0) range = 1
       var npcs = NPCRepo.getManyRandom(howMany, system, dungeon, range, coordToIndex(X, Y))
-      npcs foreach (i => print(i._1))
       npcs foreach (i => rooms(coordToIndex(X, Y)).addNPC(i))
     }
   }

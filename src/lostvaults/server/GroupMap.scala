@@ -68,6 +68,7 @@ case class GMapEnterDungeon(name: String) extends GMapMsg
 case class GMapExitDungeon(name: String) extends GMapMsg
 
 class GroupMap extends Actor {
+  var nextID = 1
   val PMap = Main.PMap.get
   var groupMap: HashMap[String, PlayerGroup] = HashMap()
   def _FindName(name: String): Option[PlayerGroup] = {
@@ -149,7 +150,8 @@ class GroupMap extends Actor {
         var join = new PlayerGroup
         join.addPlayer(name)
         PMap ! PMapSendGameMessage(name, GameSystem("Entering dungeon..."))
-        val newDungeon = context.actorOf(Props[Dungeon])
+        val newDungeon = context.actorOf(Dungeon.props(nextID))
+        nextID += 1
         newDungeon ! NewDungeon
         newDungeon ! GameAddPlayer(name)
         groupMap(name) = join
@@ -158,7 +160,8 @@ class GroupMap extends Actor {
         group.setReady(name)
         if (group isGroupReady) {
           group.groupSendMessage(GameSystem("All players ready! Entering dungeon..."))
-          val newDungeon = context.actorOf(Props[Dungeon])
+          val newDungeon = context.actorOf(Dungeon.props(nextID))
+          nextID += 1
           newDungeon ! NewDungeon
           val list = group.listPlayers
           println("Putting players " + list + " into new dungeon.")
