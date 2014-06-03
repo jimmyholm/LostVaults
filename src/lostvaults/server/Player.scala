@@ -110,7 +110,7 @@ class Player extends Actor {
       connection = sender
       db = Some(Database.forURL("jdbc:sqlite:lostvaults.db", driver = "org.sqlite.JDBC"))
       val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name)
-      println("(Player) Received message: " + decodedMsg)
+      println("(Player ["+ name + "]) sent message: " + decodedMsg)
       if (Parser.findWord(decodedMsg, 0) == "LOGIN") {
         name = Parser.findWord(decodedMsg, 1)
         PMap ! PMapIsOnline(name, decodedMsg)
@@ -120,13 +120,11 @@ class Player extends Actor {
       {
         println("PMap Response.")
         if (Parser.findWord(purpose, 0) == "LOGIN") {
-          println("Login detected!")
+          println("Login detected.")
           if (response) {
-            println("Player already logged in.")
             pushToNetwork("LOGINFAIL")
             context stop self
           } else {
-            println("Checking for player exists...")
             implicit val session = db.get.createSession()
             // This guy's not online, check if the passwords match.
             val pass = Parser.findRest(purpose, 1)
@@ -186,7 +184,7 @@ class Player extends Actor {
         }
         case Received(msg) => {
           val decodedMsg = msg.decodeString(java.nio.charset.StandardCharsets.UTF_8.name())
-          println("(Player[" + name + "]) Received message: " + decodedMsg)
+          println("(Player[" + name + "]) sent message: " + decodedMsg)
           val action = Parser.findWord(decodedMsg, 0).toUpperCase
           action match {
             case "ACK" => {
@@ -487,7 +485,6 @@ class Player extends Actor {
         }
 
         case _: ConnectionClosed => {
-          println("Connection closed event.")
           dungeon ! GameRemovePlayer(name)
           PMap ! PMapRemovePlayer(name)
           context stop self
