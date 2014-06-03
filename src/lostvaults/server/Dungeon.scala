@@ -298,7 +298,7 @@ class Dungeon extends Actor {
           } else if (pItem.isArmor) {
             rooms(index).addItem(ItemRepo.getById(currentArmor))
             rooms(index).getPlayerList().foreach(n =>
-              (PMap ! PMapSendGameMessage(n, GameMessage("TEMJOIN " + ItemRepo.getById(currentArmor).name))))
+              (PMap ! PMapSendGameMessage(n, GameMessage("ITEMJOIN " + ItemRepo.getById(currentArmor).name))))
 
           }
           PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))
