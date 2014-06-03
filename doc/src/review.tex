@@ -1,0 +1,72 @@
+\documentclass[a4paper]{article}
+\usepackage[swedish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.png}
+
+\title{Mandelpool\\\small{Operativsystem och Multicoreprogrammering (1DT089) våren 2014. Peer review på grupp 20 genomförd av grupp 04}}
+
+\author{Felix Färjsjö\\(19911225-4678) \and Jimmy Holm\\(19870928-0138) \and Fredrik Larsson\\(19890422-0590) \and Anna Nilsson\\(19910804-0628) \and Philip Åkerfeldt\\(19920508-1335)}
+
+\date{\today\\Version 1.0}
+
+\begin{document}
+\maketitle
+\newpage
+
+\section{Helhetsintryck}
+När vi läste igenom grupp 20:s rapportutkast var det första vi märkte att den inte var i närheten av en färdig rapport. Det var många strukturella och formmässiga fel, flertalet avsnitt var
+inte färdigskrivna och tillsynes ej genomlästa av gruppen själv innan inlämning. Vi fick känslan att de olika avsnitten hade klistrats samman utan hänsyn till övriga avsnitt, då språkbruket
+var överlag väldigt inkonsekvent. Det fanns flertalet språkliga fel, såsom felaktig användning av bindestreck, och stavfel, vilket vi diskuterar vidare senare i denna review. Mycket av
+innehållet i rapporten var god och informativ men dispositionen och de språkliga felen gjorde det svårt att ta till sig av den.
+
+Avsnittet för implementationen av trådpoolen och Mandelbrotuträknaren innehåller god, väl utvald och relevant information men är något kort. Djupare diskussion av implementationen skulle vara
+till fördel då det är detta som bör vara fokus för rapporten då en diskussion om implementationen är en diskussion om problemlösningen som föreslagits, och ge bättre insikt i vad som gör detta
+en trådpool en bra lösning.
+
+Inledningens innehåll är mestadels välskriven, informativ och intressant dock saknas själva inledningen. Det vill säga det saknas en introduktion till problemet som söks att lösa, utan går
+direkt in på en beskrivning av lösningen som föreslås i rapporten, trådpoolen, och det förslagsproblem som lösningen ska appliceras på, Mandelbrotsmängden. Beskrivningen av Mandelbrotmängden
+är utförlig och på god nivå men trådpoolen beskrivs endast ytligt och utan motivering till varför en trådpool är ett bra lösningsförslag till det problem som den ska appliceras på.
+
+
+\section{Struktur och disposition}
+Överlag följer rapporten den givna strukturen bortsett från ett stort problem, avsnittet Slutsats. Slutsatsavsnittet i rapporten innehåller inte slutsater utan är en resultat och analys
+av trådpoolens prestanda. Det finns ingen reflektion eller återkoppling i slutsatsen utan bara ny information och dess analys.
+
+I övrigt är styckesindelningen god, texten flyter väl bortsett från vissa språkliga fel, men innehållet i sig är väl motiverat för det mesta. Som sagt tidigare saknas dock en faktisk slutsats,
+det finns ingen avslutning utan texten tar slut med en icke färdigskriven lista av möjliga förbättringar.
+
+Dispositionen inom avsnitten är bra men sammanhållningen mellan avsnitt är dock inte lika bra. Texten har mycket inkonsekvent språkbruk och vid läsning ser det ut som om de olika avsnitten
+var skrivna separat och sedan ihopsatta utan att se till att de stilistikt och språkligt håller ihop. Detta leder till att det blir svårt att följa någon röd tråd i hur rapporten är
+upplagd.
+
+Rapporten behöver korrekturläsning för att sammanfoga de olika avsnitten och förena dessa.
+
+\section{Språk och formattering}
+Då rapporten tillsynes inte har undergått korrekturläsning innehåller den ett stort antal språkliga fel. Det största felet är brist på konsekvent användning av uttryck, exempelvis finnes
+tre olika bestämda former av GUI: GUI:et, GUIet och GUI:t. Det finns många stavfel och många ord sammanskrivs felaktigt med bindestreck, exempelvis Mandelbrot-mängd istället för Mandelbrotmängd
+och det finns ingen konsekvent användning av engelska respektive svenska ord och uttryck. Exempelvis används jobb och task godtyckligt. Det skulle ligga till fördel att bestämma sig för att
+använda ett av dessa ord och sedan hålla sig till det genom hela rapporten.
+
+Fackuttryck används på rätt sätt, förutom vissa små problem exempelvis ska API och OS skrivas med stora bokstäver och ``svengelska'' bör undvikas där det är möjligt. Exempelvis bör jobbkö användas
+över taskkö. Vidare bör Mandelbrotmängden skrivas med stor bokstav, då det är en namngiven mängd.
+
+Språket i rapporten känns för löst för en akademisk rapport. Den innehåller många talspråkiga uttryck vilket får den att kännas mindre proffesionell. Exempelvis introduceras avsnittet om
+förbättringar med att ``till och med solen har sina fläckar'' vilket ger ett oseriöst intryck.
+
+\section{Sammanfattning och slutsats}
+Mycket av de fel som vi stötte på är enkla språkfel som lätt skulle kunna åtgärdas genom korrekturläsning av dokumentet och bättre sammanfogning av de olika avsnitten. Det syns tydligt att
+de olika delarna skrevs av olika personer då det är mycket inkonsekvent språkbruk vilket korrekturläsning som sagt skulle kunna åtgärda. Vidare är det svårt att ge vad som känns som relevant
+kritik då detta endast var ett grovutkast av rapporten. Mycket text ser ut att saknas, avsnitt är ofärdiga med kommentarer som ``Vidare utveckling i slutrapporten'' och ``Adam förklarar varför
+work stealing skulle leda till en snabbare thread pool''. Det saknas sidnumrering, sidhänvisningar i innehållsförteckning, texten är inte marginaljusterad och liknande formateringsfel. Men
+då rapporten är uppenbart ofärdig är det troligen en följd av att slutdisposition inte skett. 
+
+En följd av att rapporten är ofärdig är att vi känner att vår kritik tappar tyngd. Mycket av meningen med en kritisk review förloras då vi istället måste agera korrekturläsare snarare
+än ge kritik på innehåll och struktur. Som ett grovt utkast är dessa problem små men som slutgiltigt utkast blir de genast väldigt stora, då de bryter mot stil, form och inte
+uppfyller den mall som gavs.
+\end{document}
