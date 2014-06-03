@@ -257,18 +257,28 @@ Tack vare Akka och Scalas skalbarhet har vi dock inte sett något problem i dett
 \section{Slutsatser}
 Vårt slutresultat är ett textbaserat multiplayer dungeon spel. I spelets startrum kan man chatta med de andra spelarna som är online genom \textit{WHISPER} (personligt meddelande) eller \textit{SAY} (till alla spelare i rummet). Där kan man också forma en grupp så att man tillsammans med andra spelare kan gå ner i en dungeon och börja spela. Väl nere i en dungeon kan man chatta som vanligt, men man kan också plocka upp saker man hittar, gå till andra rum och slåss mot andra spelare eller NPC som är i rummet. När detta sker uppdateras klienten på korrekt sätt, så att spelaren får information om vad som händer i grottan.
 
-Vi har också skapat ett administrationsverktyg som gör att man i terminalen kan ge spelare objekt, återställa hälsan så att spelaren får fullt HP\footnote{HP står för Health Points, vilket är hur mycket liv spelaren har vid givet tillfälle} och skada den genom att bestämma hur mycket HP som ska dras av (man kan inte döda en spelare). Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla salarna.     
+Vi har också skapat ett administrationsverktyg som gör att man i terminalen kan ge spelare föremål, återställa hälsan så att spelaren får fullt HP\footnote{HP står för Health Points, vilket är hur mycket liv spelaren har vid givet tillfälle} och skada den genom att bestämma hur mycket HP som ska dras av (man kan inte döda en spelare). Detta gjorde vi för att kunna testa spelet och för att kunna visa upp hur det faktiskt fungerar utan att behöva leta genom alla rum.     
 
-Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera massiva uppkopplingar mot dess server. 
+Något vi gjorde bra var att vi gjorde klart det essentiella för huvudmålet med projektet, att uppnå concurrency på något sätt. Spelet hanterar många individuella aktörer, och klarar av att hantera flertalet uppkopplingar mot dess server. 
 Då den delen av projektet var klart kunde vi utöka produkten med funktioner för att göra spelet roligare och mer interaktivt. 
-Implementation av föremål och monster att slåss mot i grottan. 
-Något vi lärt oss är att skriva nätverkskod. Vi har även fått kunskap i ett nytt programspråk.
-Det vi tycker har varit svårt var bland annat att integrationstesta våra aktörer. Svårigheterna uppstod på grund av bristande 
-information att ta del av om hur vi skulle gå till väga för att göra detta. En annan sak som också varit relativt svår var att 
+
+Något vi lärt oss är att skriva nätverkskod. Det var ganska komplicerat och svårt att förstå akkas dokumentation, vilket vi hade problem med i början. Vi har även fått kunskap i ett nytt programspråk.
+
+Vi tyckte det var svårt att bland annat integrationstesta våra aktörer. Svårigheterna uppstod på grund av bristande information att ta del av om hur vi skulle gå till väga för att göra detta.
+Vi har arbetat med automatiserad testing medan vi har byggt upp vårt spel. Men på grund av aktöruppbyggnaden av vårt program har det vara svårt att göra annat än enhetstester, och dessa har endast gett ytlig testning av spelet, då mängder av olika händelseförlopp kan inträffa. Så för att uppväga våra brister i automatiserade tester har vi helt enkelt testkört spelet många gånger. 
+
+ En annan sak som vi tyckte var svårt var att 
 begränsa oss när det gällde den utsträckning för vilket spelet skulle utvecklas. Att begränsa utvecklingen till en rimlig nivå för spelet 
 och samtidigt ha det tillräckligt intressant för den som spelar.
 
-En stor sak som vi inte han med under projektets gång är att implementera uppdrag. Detta är vad vårt nästa steg skulle vara, nu när det grundläggande fungerar som det ska. 
+En stor sak som vi inte hann med under projektets gång är att implementera uppdrag. Utan uppdrag missar spelet sitt djup, och lyckas inte riktigt fånga spelaren. Dessutom ska spelet ha fällor i vissa rum, för att göra färden genom grottorna blir farligare. 
+
+Något som förvånade oss med projektet var hur lång tid saker tar att få klart. I många delar hittade vi buggar som var tvugna att åtgärdas, vilket ledde till att den delen drog ut på tiden. Men vi blev ändå klara så långt som var vår minimumplan. 
+
+Vi gjorde aldrig någon långsiktig planering, som t.ex. en ordning av när saker ska göras och vem som skulle göra det. Vi arbetade ganska fritt utifrån vår ursprungliga idé och kom på vad som var nästa sak som skulle fokuseras på då en sak hade blivit färdigt. Detta fungerade ganska bra, men krävde att vi ofta hade gruppmöten för att planera vad som skulle göras härnäst. 
+
+Överlag har projektet gått bra. Vi har fungerat bra som grupp, haft bra kommunikation och arbetet har fortskridit på ett bra sätt.
+
 
 \section{Appendix}
 \subsection{Använda externa bibliotek}

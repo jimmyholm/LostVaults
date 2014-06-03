@@ -218,9 +218,10 @@ class Dungeon(id: Int) extends Actor {
           if (rooms(currentRoom).hasPlayer(attackee)) {
             println("(Dungeon: " + myID + ") " + attacker + " attacks player " + attackee)
             if (rooms(currentRoom).activeCombat == None) {
-              println("(Dungeon: " + myID + ") New combat actor created.")
-              rooms(currentRoom).activeCombat = Some(context.actorOf(Props[Combat]))
+              println("(Dungeon: " + myID + ") New combat actor created - attackee == Player")
+              rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom, myID, nextCombat)))
               rooms(currentRoom).activeCombat.get ! self
+              nextCombat += 1
             }
             println("(Dungeon: " + myID + ") Adding " + attackee + " to combat")
             PMap ! PMapSendGameMessage(attackee, GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attacker))
@@ -231,8 +232,8 @@ class Dungeon(id: Int) extends Actor {
           } else if (rooms(currentRoom).hasNPC(attackee)) {
             println("(Dungeon: " + myID + ") " + attacker + " attacks player " + attackee)
             if (rooms(currentRoom).activeCombat == None) {
-              println("(Dungeon: " + myID + ") New combat actor created.")
-              rooms(currentRoom).activeCombat = Some(context.actorOf(Props[Combat]))
+              println("(Dungeon: " + myID + ") New combat actor created - attackee == Monster")
+              rooms(currentRoom).activeCombat = Some(context.actorOf(Combat.props(self, currentRoom, myID, nextCombat)))
               rooms(currentRoom).activeCombat.get ! self
             }
             println("(Dungeon: " + myID + ") Adding " + attackee + " to combat")
@@ -296,7 +297,7 @@ class Dungeon(id: Int) extends Actor {
           } else if (pItem.isArmor) {
             rooms(index).addItem(ItemRepo.getById(currentArmor))
             rooms(index).getPlayerList().foreach(n =>
-              (PMap ! PMapSendGameMessage(n, GameMessage("TEMJOIN " + ItemRepo.getById(currentArmor).name))))
+              (PMap ! PMapSendGameMessage(n, GameMessage("ITEMJOIN " + ItemRepo.getById(currentArmor).name))))
 
           }
           PMap ! PMapSendGameMessage(name, GameUpdateItem(pItem))

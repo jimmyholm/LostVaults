@@ -58,7 +58,7 @@ class RoomGenerator {
   }
   def addNPCToRoom(system: ActorSystem, dungeon: ActorRef, X: Int, Y: Int) {
     if (X != startRoom._1 || Y != startRoom._2) {
-      var howMany = rand(0, 1)
+      var howMany = rand(1, 2)
       var range = (((((startRoom._1 - X).abs.asInstanceOf[Double] + (startRoom._2 - Y).abs.asInstanceOf[Double])) / 16.0) * 10.0).ceil.asInstanceOf[Int] - 1
       if (range == 0) range = 1
       var npcs = NPCRepo.getManyRandom(howMany, system, dungeon, range, coordToIndex(X, Y))
