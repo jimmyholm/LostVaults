@@ -26,6 +26,10 @@ public class GUI {
 	JTextArea exits = new JTextArea();
 	JLabel healthStats = new JLabel();
 	JLabel combatStats = new JLabel();
+	JLabel playersInDungeon = new JLabel(" Players In City: ");
+	JLabel playersInRoom = new JLabel(" Players In Room: ");
+	JLabel itemsInRoom = new JLabel(" Items In Room: ");
+	JLabel npcsInRoom = new JLabel(" NPC In Room: ");
 	JFrame window = new JFrame("The Lost Vaults");
 
 	Color darkBackground = new Color(0x800000);
@@ -82,12 +86,12 @@ public class GUI {
 		statsPanel.add(healthStats, BorderLayout.NORTH);
 		statsPanel.add(combatStats, BorderLayout.CENTER);
 
-		JPanel dungeonPlayersPanel = createRightBox(dungeonPlayers,
+		JPanel dungeonPlayersPanel = createRightBox(dungeonPlayers, playersInDungeon,
 				"Players in Dungeon: ");
-		JPanel roomPlayersPanel = createRightBox(roomPlayers,
+		JPanel roomPlayersPanel = createRightBox(roomPlayers, playersInRoom,
 				"Players in Room: ");
-		JPanel npcsPanel = createRightBox(npcs, "NPCs in Room: ");
-		JPanel itemsPanel = createRightBox(items, "Items in Room: ");
+		JPanel npcsPanel = createRightBox(npcs, npcsInRoom, "NPCs in Room: ");
+		JPanel itemsPanel = createRightBox(items, itemsInRoom, "Items in Room: ");
 
 		exits.setFont(font);
 		exits.setForeground(textColor);
@@ -158,14 +162,13 @@ public class GUI {
 	/*******************************************
 	 * * Right window in the GUI * *
 	 *******************************************/
-	public JPanel createRightBox(JTextArea c, String label) {
+	public JPanel createRightBox(JTextArea c, JPanel cLabel, String label) {
 		c.setFont(font);
 		c.setForeground(textColor);
 		c.setBackground(mediumBackground);
 		c.setEditable(false);
 		JScrollPane cScroll = new JScrollPane(c);
 		cScroll.setBorder(BorderFactory.createEmptyBorder());
-		JLabel cLabel = new JLabel(label);
 		cLabel.setForeground(textColor);
 		cLabel.setFont(bigFont);
 		JPanel cPanel = new JPanel(new BorderLayout());

@@ -7,7 +7,6 @@ object NPC {
   def props(name: String, hp: Int, rating: Int, dungeon: ActorRef, room: Int): Props = Props(new NPC(name, hp, rating, dungeon, room: Int))
 }
 
-
 class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int) extends Actor {
   var rand = new Random(System.currentTimeMillis())
   var name = _name
@@ -23,9 +22,8 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
   var battle: Option[ActorRef] = None
   var rating = _rating
 
-
   def getSpeed = {
-    weapon.speed + armor.speed + rating/2
+    weapon.speed + armor.speed + rating / 2 + 1
   }
   def getAttack = {
     weapon.attack + armor.attack
@@ -35,7 +33,7 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
   }
 
   def receive = {
-    case GamePlayerJoinBattle(_battle, enemy) => {      
+    case GamePlayerJoinBattle(_battle, enemy) => {
       println("NPC: GamePlayerJoinBattle received, target is \"" + target + "\"")
       battle = Some(_battle)
       _battle ! AddPlayer(self, name, getSpeed, enemy)
@@ -59,18 +57,17 @@ class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int)
           battle.get ! RemovePlayer(name)
           battle = None
         }
-        target = ""
         context stop self
       } else {
         dungeon ! GameNotifyRoom(room, "NPC " + name + " has received " + damage + " damage from " + from + ".")
         if (battle != None) {
           battle.get ! DamageAck
         }
-        target = ""
       }
     }
     case GameCombatWin => {
       battle = None
+      target = ""
     }
   }
 }
