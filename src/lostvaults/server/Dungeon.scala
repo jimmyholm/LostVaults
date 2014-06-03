@@ -244,6 +244,7 @@ class Dungeon(id: Int) extends Actor {
             println("(Dungeon: " + myID + ") Adding " + attacker + " to combat")
             PMap ! PMapSendGameMessage(attacker, GamePlayerJoinBattle(rooms(currentRoom).activeCombat.get, attackee))
             PMap ! PMapSendGameMessage(attacker, GameMessage("You have attacked " + attackee))
+            PMap ! PMapSendGameMessage(attacker, GamePlayerSetTarget(attackee))
           } else {
             PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
           }
@@ -336,9 +337,11 @@ class Dungeon(id: Int) extends Actor {
 
   def CityReceive: Receive = {
     case GMapJoin(joinee, group) => {
+      println("(City) Player " + joinee + " wants to join " + group + "'s group.")
       GMap ! GMapJoin(joinee, group)
     }
     case GMapLeave(name) => {
+      println("(City) Player " + name + " wants to leave their group.")
       GMap ! GMapLeave(name)
     }
     case GameSay(name, msg) => {
@@ -347,6 +350,7 @@ class Dungeon(id: Int) extends Actor {
     }
 
     case GameAddPlayer(name) => {
+      println("(City) Player " + name + " joined the City.")
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerEnter(name)))
       var PString = ""
       PSet foreach (c => PString = c + "\n" + PString)
@@ -356,6 +360,7 @@ class Dungeon(id: Int) extends Actor {
     }
 
     case GameRemovePlayer(name) => {
+      println("(City) Player " + name + " left the City.")
       PSet -= name
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players*/
     }
@@ -370,7 +375,7 @@ class Dungeon(id: Int) extends Actor {
       GMap ! GMapEnterDungeon(name)
     }
     case PMapFailure => {
-      println("(Dungeon: " + myID + ") Failed to send a player a message.")
+      println("(City) Failed to send a player a message.")
     }
   }
 }

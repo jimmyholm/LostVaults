@@ -483,6 +483,10 @@ class Player extends Actor {
             }
           }
         }
+        
+        case GamePlayerSetTarget(newTarget) => {
+          target = newTarget
+        }
 
         case _: ConnectionClosed => {
           dungeon ! GameRemovePlayer(name)
