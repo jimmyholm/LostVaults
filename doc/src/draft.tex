@@ -51,7 +51,7 @@ Relationen mellan konceptet concurrency och vårt projekt är förmågan att ha 
 
 \section{Systemarkitektur}
 \subsection{Design}
-Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. På grund av att både klienten och servern är skrivna i Scala och körs via Java Virtual Maschine kan de köras på alla plattformar som stödjer Java VM 1.7.
+Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka beskriver akritekturen för klienten samt servern. På grund av att både klienten och servern är skrivna i Scala och körs via Java Virtual Machine kan de köras på alla plattformar som stödjer Java VM 1.7.
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{client}
@@ -59,7 +59,7 @@ Systemarkitekturen som beskrivs i detta dokument är uppdelat i två delar vilka
 \end{figure}
 
 \subsection{Klient}
-Designen för klienten till Lost Vaults är utvecklad för att efterlikna en indirekt terminal, vars ända uppgift är att skicka samt ta emot och tolka svaren på förfrågningar. Konceptet med en indirekt terminal valdes för att fokus skulle ligga på spellogiken, och inte på GUI:t. Det textbaserade gränssnittet tillåter utökning av serversidan utan att kräva att användaren återinstallerar sin klient. Detta innebär att det är enkelt att åtgärda buggar och bygga ut spelet utan att söra användaren. 
+Designen för klienten till Lost Vaults är utvecklad för att efterlikna en indirekt terminal, vars ända uppgift är att skicka samt ta emot och tolka svaren på förfrågningar. Konceptet med en indirekt terminal valdes för att fokus skulle ligga på spellogiken, och inte på GUI:t. Det textbaserade gränssnittet tillåter utökning av serversidan utan att kräva att användaren återinstallerar sin klient. Detta innebär att det är enkelt att åtgärda buggar och bygga ut spelet utan att störa användaren. 
 
 Klientfönstret uppdelat i flera textfält som visar relevant information för spelaren, se fig. \ref{fig:Client}. Det vänstra området är huvudområdet och används till spelets dynamiska informaton. Där får spelaren beskrivningar av rummen den besöker, meddelanden från andra spelare, meddelanden om vad som händer i spelet och liknande. Klientens högra sida innehåller statisk information som det kan vara bra för spelaren att snabbt kunna kolla upp. Den övre delen innehåller information om spelarens egen karaktär, där listas bl.a. spelarens liv, stridsegenskaper och hur mycket mat spelaren har. Den undre håller reda på vilka spelare som är i spelarens dungeon, vilka spelare som är i rummet spelaren är i, samt vad rummet har för föremål, monster och utgångar.   
 
@@ -84,7 +84,7 @@ Systemarkitekturens serverdel är uppdelad i sektionerna Aktörmodell och Klassm
 \begin{figure}[hbt]
 \centering
 \includegraphics[width=1.0\textwidth]{serverActorModel2-1}
-\caption{\label{fig:ConManPlayer}Figur över förhållandet mellan ConMan och Player.}
+\caption{\label{fig:ConManPlayer}Figur över hur ConMan hanterar inkommande anslutningar.}
 \end{figure}
 
 \subsubsection{Aktörmodell}
@@ -120,9 +120,9 @@ Efter att Cityaktören har skapat en Dungeonaktör ansvarar den nya aktören fö
 \subsubsection{Klassmodell}
 Klasserna i servermodellen är konceptuellt uppdelade i fyra lager: Anslutningslagret, Spelarlagret, Dungeonlagret och Verktygslagret, se fig \ref{fig:ServerKlassModell}. 
 
-Anslutningslagret är ingångspunkten till servern över nätverket genom Akkas TCP bibliotek. Vår anslutningshanterare, ConMan, agerar som en singleton och endast en instans av denna ska existera vid en given tidpunkt. ConMan är den klass som lyssnar efter och godtar anslutningar från klienter, samt skapar nya Player-instanser vid nyupprättad anslutning. 
+Anslutningslagret är ingångspunkten till servern över nätverket genom Akkas TCP bibliotek. Vår anslutningshanterare, ConMan, agerar som en singleton dvs endast en instans av denna ska existera vid varje given tidpunkt. ConMan är den klass som lyssnar efter och godtar anslutningar från klienter, samt skapar nya Player-instanser vid nyupprättad anslutning. 
 
-Dungeonlagret innehåller de klasser som är viktiga för spelets logiska funktioner. Lagret innehåller dungeonklassen, som ansvarar över en mängd slumpmässigt genererade rum. Rummen i sin tur ansvarar för aktiva strider samt icke-spelarkaraktärer och objekt. Tidigare design visar att Item klassen används som superklass till olika typer av objekt. Vi valde dock att platta till vår klasshierarki och förenkla designen genom att låta alla typer av objekt vara instanser av Item klassen med olika attribut. På samma sätt valde vi att göra oss av med distinktionen mellan goda och onda icke-spelarkaraktärer, och har istället valt att implementera enbart monster.
+Dungeonlagret innehåller de klasser som är viktiga för spelets logiska funktioner. Lagret innehåller dungeonklassen, som ansvarar över en mängd slumpmässigt genererade rum. Rummen i sin tur ansvarar för aktiva strider samt icke-spelarkaraktärer och objekt. Tidigare design visar att Itemklassen används som superklass till olika typer av objekt. Vi valde dock att platta till vår klasshierarki och förenkla designen genom att låta alla typer av objekt vara instanser av Item klassen med olika attribut. På samma sätt valde vi att göra oss av med distinktionen mellan goda och onda icke-spelarkaraktärer, och har istället valt att implementera enbart monster.
 
 Verktygslagret tillhandahåller understödjande funktionalitet till de andra klasserna. Bortsett från RoomGenerator är alla klasser i Verktygslagret Singletons. 
 
@@ -136,7 +136,7 @@ För hanteringen av versionskontroll har vi använt det tillförlitliga och väl
 
 Testandet av vår kod görs med ScalaTest-ramverket samt ett Ant Build-skript som ger oss möjligheten till automatiskt byggande och körning av tester.
 
-Sammansättningen av dokumentationen utförs med Scaladoc på grund av dess likhet med JavaDoc, ett verktyg vi är vana med att använda, och Ant har omarbetats för att automatiskt bygga dokumentationen.
+Sammansättningen av dokumentationen utförs med Scaladoc på grund av dess likhet med JavaDoc, ett verktyg vi är vana med att använda, och Ant har konfigurerats för att automatiskt bygga dokumentationen.
 
 \section{Implementation}
 
@@ -157,7 +157,7 @@ Dess närhet med Java var dock grund till en del av svårigheterna att vänja si
 och Javas standardbibliotek men inte alltid helt konsekvent. Samtidigt är alla datasamlingsstrukturer i Scala \textit{oföränderliga} 
 som standard, då trådsäkerhet är fundamentalt till Scala, vilket krävde en viss vana för att användas på rätt sätt.
 
-Versionen av Scala vi valde att använda har valt att tillfrån gå sitt egna aktörsbibliotek och istället använda sig av ett externt
+Versionen av Scala vi valde att använda har valt att tillfrångå sitt egna aktörsbibliotek och istället använda sig av ett externt
 bibliotek kallat Akka. Vårt projekt använder till följd även det Akkas bibliotek för implementationen av det aktörssystem som
 vår server använder. Akka som bibliotek var samtidigt både lättanvänt och svårt att sätta sig in i. Det behövdes en viss förståelse
 för hur biblioteksskaparna tänkt sig att det ska användas för att förstå den dokumentation som finns tillgänglig och det krävdes
@@ -227,8 +227,7 @@ Förutom arräer och listor har vi använt oss av Hashmap för att kunna koppla 
 PlayerMap och GroupMap.
 
 \subsection{Concurrency}
-Som nämnts tidigare valde vi att använda Aktörsmodellen som vår concurrencymodell därför att vi vid designen såg hur de olika
-
+Som nämnts tidigare valde vi att använda Aktörsmodellen som vår concurrencymodell därför att vi vid designen såg hur de olika 
 delarna av servern kunde delas in i till stor del självständiga moduler där minne inte behövde delas. Detta underlättade
 skapandet av deadlock-säker kod men vår ovana i hur Akka biblioteket fungerade gav oss vissa svårigheter i synkronisering av
 meddelanden som skickades mellan aktörerna. Det var inte förrän sent under projektets gång som vi lyckades få Futures, ett sätt att 
