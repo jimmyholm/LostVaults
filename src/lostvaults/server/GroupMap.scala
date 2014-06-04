@@ -160,6 +160,7 @@ class GroupMap extends Actor {
         var group = groupOp.get
         group.setReady(name)
         if (group isGroupReady) {
+          group.inDungeon = true
           group.groupSendMessage(GameSystem("All players ready! Entering dungeon..."))
           val newDungeon = context.actorOf(Dungeon.props(nextID))
           nextID += 1
@@ -167,7 +168,7 @@ class GroupMap extends Actor {
           newDungeon ! NewDungeon
           val list = group.listPlayers
           println("Putting players " + list + " into new dungeon.")
-          list.foreach(n => { groupMap(n) = group; newDungeon ! GameAddPlayer(n) })
+          list.foreach(n => { groupMap(n) = group; /*newDungeon ! GameAddPlayer(n); */PMap ! PMapSendGameMessage(n, GameMoveToDungeon(newDungeon)) })
         } else {
           group.groupSendMessage(GameSystem(name + " is ready to enter the dungeon!"))
         }

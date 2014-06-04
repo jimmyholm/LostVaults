@@ -108,7 +108,7 @@ class Dungeon(id: Int) extends Actor {
       var PString = ""
       PSet foreach (c => PString = c + "\n" + PString)
       PSet += name
-      PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
+      //PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
       PMap ! PMapSendGameMessage(name, GameMessage("DUNGEONLIST " + PString))
       rooms(entrance).addPlayer(name)
       PMap ! PMapSendGameMessage(name, GameDungeonMove(entrance, true))
@@ -167,6 +167,11 @@ class Dungeon(id: Int) extends Actor {
         PMap ! PMapSendGameMessage(name, GameSystem("You cannot move in that direction."))
       }
     }
+    
+    case GameRemoveFromRoom(name, roomIndex) => {
+    	rooms(roomIndex).removePlayer(name)
+    }
+    
     case GameExitDungeon(name) => {
       val room = findRoom(name)
       if (room != entrance)
@@ -178,10 +183,13 @@ class Dungeon(id: Int) extends Actor {
     case GameRemovePlayer(name) => {
       PSet -= name
       PSet foreach (c => if (name != c) PMap ! PMapSendGameMessage(c, GamePlayerLeft(name))) // Send "GamePlayerLeft" to all other players
-      Main.City.get ! GameAddPlayer(name)
       PMap ! PMapSendGameMessage(name, GameMessage("GUICITY"))
       PMap ! PMapSendGameMessage(name, GameMoveToDungeon(Main.City.get))
       GMap ! GMapExitDungeon(name)
+      PMap ! PMapSendGameMessage(name, GameMessage("ROOMEXITS "))
+      PMap ! PMapSendGameMessage(name, GameMessage("NPCLIST "))
+      PMap ! PMapSendGameMessage(name, GameMessage("ITEMLIST "))
+      PMap ! PMapSendGameMessage(name, GameMessage("ROOMLIST "))
       if (PSet isEmpty) {
         // Give quest rewards.
         context stop self
@@ -200,14 +208,10 @@ class Dungeon(id: Int) extends Actor {
           nameMatches = (compareStrings(attackee, name), name) :: nameMatches
         }
       })
-      if (nameMatches isEmpty) { // Not a player, check NPCs.
-        val npcs = rooms(findRoom(attacker)).NPCList
-        npcs foreach (name => {
-          nameMatches = (compareStrings(attackee, name._1), name._1) :: nameMatches
-        })
-        if (nameMatches isEmpty)
-          PMap ! PMapSendGameMessage(attacker, GameMessage("There is no one with that name to attack."))
-      }
+      val npcs = rooms(findRoom(attacker)).NPCList
+      npcs foreach (name => {
+        nameMatches = (compareStrings(attackee, name._1), name._1) :: nameMatches
+      })
       if (!nameMatches.isEmpty) {
         var highest = -1.0
         nameMatches foreach (it => { if (it._1 > highest && it._1 >= 0.25) { highest = it._1; ind = it._2 } })
@@ -250,6 +254,8 @@ class Dungeon(id: Int) extends Actor {
             PMap ! PMapSendGameMessage(attacker, GameAttackNotInRoom(attackee))
           }
         }
+      } else {
+        PMap ! PMapSendGameMessage(attacker, GameMessage("There is no one with that name to attack."))
       }
     }
     case GameAttackPlayerInCombat(attackee) => {
@@ -356,7 +362,7 @@ class Dungeon(id: Int) extends Actor {
       var PString = ""
       PSet foreach (c => PString = c + "\n" + PString)
       PSet += name
-      PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
+      //PMap ! PMapSendGameMessage(name, GameMoveToDungeon(self))
       PMap ! PMapSendGameMessage(name, GameMessage("DUNGEONLIST " + PString))
     }
 

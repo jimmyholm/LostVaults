@@ -143,8 +143,9 @@ class Combat (_dungeon: ActorRef, _roomIndex: Int, dungeonId: Int, id: Int) exte
       combatList = combatList map (c => (c._1, c._2 filterNot (d => d.equals(name))))
       var nextPlayerList = data.PlayerList.filterNot(x => x._1.equals(name))
       nextTurnList = data.TurnList.filterNot(x => x.equals(name))
+      dungeon ! GameRemoveFromRoom(name, roomIndex) 
       /**Now all ocurrences of name has been removed, lets remove all players that had name as their last enemy: **/
-
+      
       //Removes players that has emptied their combatPerPlayer list from nextPlayerList and nextTurnList, and notifies them that they won
       combatList foreach (c => if (c._2 isEmpty) { combatSendGameMsg(c._1, data.PlayerList, GameCombatWin); nextPlayerList = nextPlayerList filterNot (d => d._1 == c._1) })
       combatList foreach (c => if (c._2 isEmpty) { nextTurnList = nextTurnList filterNot (d => d == c._1) })
