@@ -201,3 +201,5 @@ case class GameHarm(amnt: Int) extends GameMsg
 case class GameRemoveNPCFromRoom(name: String, room: Int) extends GameMsg
 
 case class GamePlayerSetTarget(newTarget: String) extends GameMsg
+
+case class GameRemoveFromRoom(name:String, roomIndex: Int) extends GameMsg

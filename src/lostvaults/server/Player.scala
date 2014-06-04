@@ -139,6 +139,7 @@ class Player extends Actor {
               PMap ! PMapAddPlayer(name, self)
               dungeon = Main.City.get
               dungeon ! GameAddPlayer(name)
+              self ! GameMoveToDungeon(dungeon)
               sendStats
               become(LoggedIn)
               session.close()
@@ -374,7 +375,6 @@ class Player extends Actor {
           hp = hp - damage
           sendStats
           if (hp <= 0) {
-            dungeon ! GameRemovePlayer(name)
             dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ". " + name + " has died.")
             if (battle != None) {
               battle.get ! RemovePlayer(name)
@@ -385,7 +385,6 @@ class Player extends Actor {
             treasures = List()
             food = 0
             target = ""
-            self ! GameMoveToDungeon(Main.City.get)
             pushToNetwork("SYSTEM \n " +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
               "███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n" +
@@ -412,7 +411,7 @@ class Player extends Actor {
               "┼┼┼┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n" +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n" +
               "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼")
-
+              dungeon ! GameRemovePlayer(name)
           } else {
             dungeon ! GameNotifyRoom(currentRoom, "Player " + name + " has received " + damage + " damage from " + from + ".")
             if (battle != None) {
@@ -445,6 +444,7 @@ class Player extends Actor {
         }
         case GameMoveToDungeon(dungeon) => {
           this.dungeon = dungeon
+          this.dungeon ! GameAddPlayer(name)
           clearKnownRooms
         }
         case GameDungeonMove(room, start) => {
