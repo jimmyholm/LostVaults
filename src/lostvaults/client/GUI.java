@@ -1,5 +1,9 @@
 package lostvaults.client;
-
+/**
+ * GUI.java
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
