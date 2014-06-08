@@ -1,7 +1,14 @@
 package lostvaults.server
-
+/**
+ * RoomDescGen.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import scala.util.Random
 
+/** 
+ * RoomDescGen provides functionality to randomly generate room descriptions.
+ */
 object RoomDescGen {
   var rand = new Random(System.currentTimeMillis)
   //maybe change item listan till en itemlist istället för en stringlist
