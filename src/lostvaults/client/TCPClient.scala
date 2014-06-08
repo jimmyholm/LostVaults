@@ -1,4 +1,9 @@
 package lostvaults.client
+/**
+ * TCPClient.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import akka.io.{ IO, Tcp }
 import akka.actor.{ Actor, ActorRef, Props }
 import java.net.InetSocketAddress
