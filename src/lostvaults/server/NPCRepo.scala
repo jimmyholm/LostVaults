@@ -1,3 +1,8 @@
+/**
+ * NPCRepo.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 package lostvaults.server
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
@@ -7,6 +12,9 @@ import Q.interpolation
 import scala.util.Random
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
 
+/**
+ * NPCRepo provides a global repository of NPC templates, from which NPC objects can be instantiated when needed.
+ */
 object NPCRepo {
   import JdbcBackend.Database
   case class NPCData(id: Int, name: String, minhp: Int, maxhp: Int, rating: Int)
