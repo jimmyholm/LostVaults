@@ -11,59 +11,22 @@ import scala.concurrent.duration._
 import lostvaults.Parser
 import akka.util.ByteString
 
-/**
- *
- */
 sealed trait MyMsg
-
-/**
- *
- * @param
- */
 case class Print(msg: String) extends MyMsg
-
-/**
- *
- */
 case object ConnClosed extends MyMsg
-
-/**
- *
- */
 case object ShutDown extends MyMsg
-
-/**
- *
- * @param
- */
 case class ConnectTo(ip: InetSocketAddress) extends MyMsg
-
-/**
- *
- */
 case object Ok extends MyMsg
-
-/**
- *
- *
- */
 object TCPClient {
   def props(listener: ActorRef): Props = Props(new TCPClient(listener))
 }
 
-/**
- *
- * @param
- */
 class TCPClient(listener: ActorRef) extends Actor {
   import Tcp._
   import context.{ system, become }
   val manager = IO(Tcp)
   var connection: Option[ActorRef] = None
 
-  /**
-   *
-   */
   def receive = {
     case ConnectTo(ipAddress) => {
       println("Connecting to " + ipAddress)

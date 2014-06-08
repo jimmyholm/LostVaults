@@ -227,6 +227,6 @@ case class GamePlayerSetTarget(newTarget: String) extends GameMsg
 
 /** Passed to a dungeon, it removes a player from a room's player set.
  *  @param name The name of the player to be removed
- *  @roomIndex The index of the room to remove the player from.
+ *  @param roomIndex The index of the room to remove the player from.
  */
 case class GameRemoveFromRoom(name:String, roomIndex: Int) extends GameMsg

@@ -3,7 +3,7 @@ package lostvaults.client
 /**
  * PlayGameCommunication.scala
  * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
- * @Version 1.0
+ * @version 1.0
  */
 
 object playGameCommunication {

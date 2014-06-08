@@ -109,7 +109,9 @@
         <a href="CheatActor.html"><span class="name">CheatActor</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">CheatActor provides a way to perform admin-related tasks on the server, including testing functionality
+such as giving items to player, healing players, hurting players and listing NPCs and Items from the
+database.</p>
     </li><li name="lostvaults.server.Combat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CombatextendsActorwithFSM[lostvaults.server.CombatState,lostvaults.server.CombatData]"></a>
       <a id="Combat:Combat"></a>
@@ -494,7 +496,7 @@ wishes to drop an item.</p>
         <a href="GameHarm.html"><span class="name">GameHarm</span></a><span class="params">(<span name="amnt">amnt: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Message sent to a player to reduce the player's health to a minimum of 1.</p>
     </li><li name="lostvaults.server.GameMessage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameMessageextendsGameMsgwithProductwithSerializable"></a>
       <a id="GameMessage:GameMessage"></a>
@@ -561,7 +563,8 @@ wishes to drop an item.</p>
         <a href="GameNotifyGUI.html"><span class="name">GameNotifyGUI</span></a><span class="params">(<span name="room">room: <span class="extype" name="scala.Int">Int</span></span>, <span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Passed along to a dungeon, it relays a network message to all players
+in a given room.</p>
     </li><li name="lostvaults.server.GameNotifyRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameNotifyRoomextendsGameMsgwithProductwithSerializable"></a>
       <a id="GameNotifyRoom:GameNotifyRoom"></a>
@@ -670,8 +673,34 @@ remote client.</p>
       </span>
       </h4>
       <p class="comment cmt">Passed along to a dungeon to request for a player to move into a new room.</p>
+    </li><li name="lostvaults.server.GamePlayerSetTarget" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GamePlayerSetTargetextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GamePlayerSetTarget:GamePlayerSetTarget"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GamePlayerSetTarget.html"><span class="name">GamePlayerSetTarget</span></a><span class="params">(<span name="newTarget">newTarget: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed along to a player, it changes the player's internal combat target.</p>
+    </li><li name="lostvaults.server.GameRemoveFromRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GameRemoveFromRoomextendsGameMsgwithProductwithSerializable"></a>
+      <a id="GameRemoveFromRoom:GameRemoveFromRoom"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GameRemoveFromRoom.html"><span class="name">GameRemoveFromRoom</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="roomIndex">roomIndex: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Passed to a dungeon, it removes a player from a room's player set.</p>
     </li><li name="lostvaults.server.GameRemoveNPCFromRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="GameRemoveNPCFromRoomextendsProductwithSerializable"></a>
+      <a id="GameRemoveNPCFromRoomextendsGameMsgwithProductwithSerializable"></a>
       <a id="GameRemoveNPCFromRoom:GameRemoveNPCFromRoom"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -679,7 +708,7 @@ remote client.</p>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="GameRemoveNPCFromRoom.html"><span class="name">GameRemoveNPCFromRoom</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="GameRemoveNPCFromRoom.html"><span class="name">GameRemoveNPCFromRoom</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Passed along to a Dungeon, when the NPC has died</p>
@@ -819,7 +848,7 @@ same dungeon as the player named name.</p>
         <a href="NPC.html"><span class="name">NPC</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">NPC represents monsters in dungeons.</p>
     </li><li name="lostvaults.server.PMapAddPlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PMapAddPlayerextendsPMapMsgwithProductwithSerializable"></a>
       <a id="PMapAddPlayer:PMapAddPlayer"></a>
@@ -937,7 +966,7 @@ same dungeon as the player named name.</p>
         <a href="Player.html"><span class="name">Player</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Player is the connection point between the server and the remote client connection.</p>
     </li><li name="lostvaults.server.PlayerAction" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PlayerActionextendsAnyRef"></a>
       <a id="PlayerAction:PlayerAction"></a>
@@ -950,7 +979,7 @@ same dungeon as the player named name.</p>
         <a href="PlayerAction.html"><span class="name">PlayerAction</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">PlayerAction is the base trait for the possible internal combat states a player can be in.</p>
     </li><li name="lostvaults.server.PlayerGroup" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PlayerGroupextendsAnyRef"></a>
       <a id="PlayerGroup:PlayerGroup"></a>
@@ -976,7 +1005,7 @@ same dungeon as the player named name.</p>
         <a href="PlayerMap.html"><span class="name">PlayerMap</span></a><span class="result"> extends <span class="extype" name="akka.actor.Actor">Actor</span></span>
       </span>
       </h4>
-      <p class="comment cmt"></p>
+      <p class="comment cmt">PlayerMap acts as a lookup table for players, mapping player names as strings to their internal actor reference.</p>
     </li><li name="lostvaults.server.RemovePlayer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RemovePlayerextendsCombatEventwithProductwithSerializable"></a>
       <a id="RemovePlayer:RemovePlayer"></a>
@@ -1028,7 +1057,7 @@ same dungeon as the player named name.</p>
         <a href="RoomGenerator.html"><span class="name">RoomGenerator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">RoomGenerator provides functionality to procedurally generate dungeon rooms.</p>
     </li></ol>
             </div>
 
@@ -1093,6 +1122,19 @@ Before going from this state to Action next player will be informed that it is h
       </h4>
       <p class="comment cmt">Passed along to a combat, notifying that a player has received it's damage
 </p>
+    </li><li name="lostvaults.server.Dungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Dungeon"></a>
+      <a id="Dungeon:Dungeon"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Dungeon$.html"><span class="name">Dungeon</span></a>
+      </span>
+      </h4>
+      
     </li><li name="lostvaults.server.DungeonMakeCity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DungeonMakeCity"></a>
       <a id="DungeonMakeCity:DungeonMakeCity"></a>
@@ -1160,7 +1202,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="GameHeal$.html"><span class="name">GameHeal</span></a><span class="result"> extends <a href="GameMsg.html" class="extype" name="lostvaults.server.GameMsg">GameMsg</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Message sent to a player to restore the player's health.</p>
     </li><li name="lostvaults.server.GameYourTurn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GameYourTurn"></a>
       <a id="GameYourTurn:GameYourTurn"></a>
@@ -1187,7 +1229,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="ItemRepo$.html"><span class="name">ItemRepo</span></a>
       </span>
       </h4>
-      
+      <p class="comment cmt">ItemRepo provides a repository of item templates, loaded from the database.</p>
     </li><li name="lostvaults.server.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Main"></a>
       <a id="Main:Main"></a>
@@ -1226,7 +1268,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="NPCRepo$.html"><span class="name">NPCRepo</span></a>
       </span>
       </h4>
-      
+      <p class="comment cmt">NPCRepo provides a global repository of NPC templates, from which NPC objects can be instantiated when needed.</p>
     </li><li name="lostvaults.server.NewDungeon" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NewDungeon"></a>
       <a id="NewDungeon:NewDungeon"></a>
@@ -1239,7 +1281,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="NewDungeon$.html"><span class="name">NewDungeon</span></a><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Message sent to tell a dungeon to initialize.</p>
     </li><li name="lostvaults.server.PAttack" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PAttack"></a>
       <a id="PAttack:PAttack"></a>
@@ -1252,7 +1294,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="PAttack$.html"><span class="name">PAttack</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">PAttack represents a player's wish to continue attacking their set target.</p>
     </li><li name="lostvaults.server.PDecide" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PDecide"></a>
       <a id="PDecide:PDecide"></a>
@@ -1265,7 +1307,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="PDecide$.html"><span class="name">PDecide</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">PDecide represents a player's wish to pause the combat situation and make a new decision.</p>
     </li><li name="lostvaults.server.PDrinkPotion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PDrinkPotion"></a>
       <a id="PDrinkPotion:PDrinkPotion"></a>
@@ -1278,7 +1320,7 @@ Before going from this state to Action next player will be informed that it is h
         <a href="PDrinkPotion$.html"><span class="name">PDrinkPotion</span></a><span class="result"> extends <a href="PlayerAction.html" class="extype" name="lostvaults.server.PlayerAction">PlayerAction</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">PDrinkPotion represents a player's wish to consume a potion to restore health.</p>
     </li><li name="lostvaults.server.PMapFailure" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PMapFailure"></a>
       <a id="PMapFailure:PMapFailure"></a>
@@ -1334,7 +1376,7 @@ Before going from Rest to Action next player will be informed that it is her tur
         <a href="RoomDescGen$.html"><span class="name">RoomDescGen</span></a>
       </span>
       </h4>
-      
+      <p class="comment cmt">RoomDescGen provides functionality to randomly generate room descriptions.</p>
     </li><li name="lostvaults.server.WaitForAck" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="WaitForAck"></a>
       <a id="WaitForAck:WaitForAck"></a>

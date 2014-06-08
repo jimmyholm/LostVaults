@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>NPCRepo - lostvaults.server.NPCRepo</title>
-          <meta name="description" content="NPCRepo - lostvaults.server.NPCRepo" />
-          <meta name="keywords" content="NPCRepo lostvaults.server.NPCRepo" />
+          <title>Dungeon - lostvaults.server.Dungeon</title>
+          <meta name="description" content="Dungeon - lostvaults.server.Dungeon" />
+          <meta name="keywords" content="Dungeon lostvaults.server.Dungeon" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../index.html';
-            var hash = 'lostvaults.server.NPCRepo$';
+            var hash = 'lostvaults.server.Dungeon$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,9 +24,9 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../lib/object_big.png" />
+        <a href="Dungeon.html" title="Go to companion"><img src="../../lib/object_to_class_big.png" /></a>
         <p id="owner"><a href="../package.html" class="extype" name="lostvaults">lostvaults</a>.<a href="package.html" class="extype" name="lostvaults.server">server</a></p>
-        <h1>NPCRepo</h1>
+        <h1><a href="Dungeon.html" title="Go to companion">Dungeon</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,12 +35,11 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">NPCRepo</span>
+        <span class="name">Dungeon</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>NPCRepo provides a global repository of NPC templates, from which NPC objects can be instantiated when needed.
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -60,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="lostvaults.server.NPCRepo"><span>NPCRepo</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="lostvaults.server.Dungeon"><span>Dungeon</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -80,23 +79,7 @@
         <div id="allMembers">
         
 
-        <div id="types" class="types members">
-              <h3>Type Members</h3>
-              <ol><li name="lostvaults.server.NPCRepo.NPCData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="NPCDataextendsProductwithSerializable"></a>
-      <a id="NPCData:NPCData"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="NPCRepo$$NPCData.html"><span class="name">NPCData</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="minhp">minhp: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxhp">maxhp: <span class="extype" name="scala.Int">Int</span></span>, <span name="rating">rating: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      
-    </li></ol>
-            </div>
+        
 
         
 
@@ -257,45 +240,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="lostvaults.server.NPCRepo#getManyRandom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="getManyRandom(num:Int,system:akka.actor.ActorSystem,dungeon:akka.actor.ActorRef,rating:Int,room:Int):List[(String,akka.actor.ActorRef)]"></a>
-      <a id="getManyRandom(Int,ActorSystem,ActorRef,Int,Int):List[(String,ActorRef)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">getManyRandom</span><span class="params">(<span name="num">num: <span class="extype" name="scala.Int">Int</span></span>, <span name="system">system: <span class="extype" name="akka.actor.ActorSystem">ActorSystem</span></span>, <span name="dungeon">dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="rating">rating: <span class="extype" name="scala.Int">Int</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="akka.actor.ActorRef">ActorRef</span>)]</span>
-      </span>
-      </h4>
-      
-    </li><li name="lostvaults.server.NPCRepo#getNPCDataResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="getNPCDataResult:scala.slick.jdbc.GetResult[lostvaults.server.NPCRepo.NPCData]"></a>
-      <a id="getNPCDataResult:GetResult[NPCData]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">getNPCDataResult</span><span class="result">: <span class="extype" name="scala.slick.jdbc.GetResult">GetResult</span>[<a href="NPCRepo$$NPCData.html" class="extype" name="lostvaults.server.NPCRepo.NPCData">NPCData</a>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="lostvaults.server.NPCRepo#getRandomNPC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="getRandomNPC(system:akka.actor.ActorSystem,dungeon:akka.actor.ActorRef,rating:Int,room:Int):(String,akka.actor.ActorRef)"></a>
-      <a id="getRandomNPC(ActorSystem,ActorRef,Int,Int):(String,ActorRef)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">getRandomNPC</span><span class="params">(<span name="system">system: <span class="extype" name="akka.actor.ActorSystem">ActorSystem</span></span>, <span name="dungeon">dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="rating">rating: <span class="extype" name="scala.Int">Int</span></span>, <span name="room">room: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="akka.actor.ActorRef">ActorRef</span>)</span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
@@ -361,55 +305,16 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="lostvaults.server.NPCRepo#npcList" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="npcList:List[lostvaults.server.NPCRepo.NPCData]"></a>
-      <a id="npcList:List[NPCData]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">var</span>
-      </span>
-      <span class="symbol">
-        <span class="name">npcList</span><span class="result">: <span class="extype" name="scala.List">List</span>[<a href="NPCRepo$$NPCData.html" class="extype" name="lostvaults.server.NPCRepo.NPCData">NPCData</a>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="lostvaults.server.NPCRepo#populateArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="populateArray:Unit"></a>
-      <a id="populateArray:Unit"></a>
+    </li><li name="lostvaults.server.Dungeon#props" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="props(id:Int):akka.actor.Props"></a>
+      <a id="props(Int):Props"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">populateArray</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="lostvaults.server.NPCRepo#rand" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="rand(min:Int,max:Int):Int"></a>
-      <a id="rand(Int,Int):Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">rand</span><span class="params">(<span name="min">min: <span class="extype" name="scala.Int">Int</span></span>, <span name="max">max: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="lostvaults.server.NPCRepo#random" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="random:scala.util.Random"></a>
-      <a id="random:Random"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">var</span>
-      </span>
-      <span class="symbol">
-        <span class="name">random</span><span class="result">: <span class="extype" name="scala.util.Random">Random</span></span>
+        <span class="name">props</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="akka.actor.Props">Props</span></span>
       </span>
       </h4>
       

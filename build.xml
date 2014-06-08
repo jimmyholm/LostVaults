@@ -74,13 +74,13 @@
       <src path="src/" />
       <exclude name="**/client/*.java" />
       <exclude name="**/server/*" />
-      <exclude name="**/test/*" />
+      <exclude name="**/tests/*" />
       <exclude name="**/util/*" />
     </scalac>
     <javac srcdir="src" debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
       <exclude name="**/client/*.scala" />
       <exclude name="**/server/*" />
-      <exclude name="**/test/*" />
+      <exclude name="**/tests/*" />
       <exclude name="**/util/*" />
       <classpath refid="LostVaults.classpath" />
     </javac>
@@ -101,7 +101,6 @@
     <jar destfile="client.jar" basedir="bin/">
       <include name="application.conf" />
       <include name="lostvaults/*.class" />
-      <include name="lostvaults/Logger.class" />
       <include name="lostvaults/client/*.class" />
       <include name="*.jar" />
       <manifest>
@@ -117,7 +116,6 @@
       <include name="lostvaults/*.class" />
       <include name="lostvaults/server/*.class" />
       <include name="*.jar" />
-      <exclude name="lostvaults/tests/*" />
       <manifest>
 	<attribute name="Class-Path" value="libs/akka-actor_2.10-2.3.2.jar libs/config-1.2.0.jar libs/junit.jar libs/org.hamcrest.core_1.3.0.v201303031735.jar libs/scala-actors.jar libs/scala-library.jar libs/scala-reflect.jar libs/scala-swing.jar libs/slf4j-api-1.7.7.jar libs/slf4j-simple-1.7.7.jar libs/slick_2.10-2.0.2.jar libs/sqlite-jdbc-3.7.2.jar" />
 	<attribute name="Main-Class" value="lostvaults.server.Main" />
@@ -149,8 +147,14 @@
     <java jar="server.jar" fork="true" />
   </target>
   <target name="build_jars" depends="client,server" />
-  <target name="run_tests" depends="build" description="Build and run scala tests.">
+  <target name="run_tests" depends="build_server" description="Build and run scala tests.">
     <copy file="src/server_application.conf" tofile="bin/application.conf" force="true" overwrite="true" />
+    <scalac destdir="bin" scalacdebugging="true" deprecation="true" failonerror="false" force="false" classpathref="LostVaults.classpath" addparams="-language:postfixOps">
+      <src path="src/" />
+      <exclude name="**/client/*" />
+      <exclude name="**/server/*" />
+      <exclude name="**/util/*" />
+    </scalac>
     <scalatest wildcard="lostvaults.tests">
       <runpath>
 	<pathelement location="bin/" />

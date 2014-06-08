@@ -297,6 +297,19 @@ The other two variables represent the list of player and the list of items in th
       </span>
       </h4>
       
+    </li><li name="lostvaults.server.Room#createRoomDesc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="createRoomDesc:Unit"></a>
+      <a id="createRoomDesc:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createRoomDesc</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a description for this Room.</p>
     </li><li name="lostvaults.server.Room#created" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="created:Boolean"></a>
       <a id="created:Boolean"></a>
@@ -393,10 +406,21 @@ The other two variables represent the list of player and the list of items in th
         <span class="name">getDescription</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">This method returns a string describing the
-players, items and possible exits in this room.</p><div class="fullcomment"><div class="comment cmt"><p>This method returns a string describing the
-players, items and possible exits in this room.</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>the name of the player wanting the description</p></dd><dt>returns</dt><dd class="cmt"><p>representation of the exits,items  and players in this room
+      <p class="shortcomment cmt">This method returns the Room's description.</p><div class="fullcomment"><div class="comment cmt"><p>This method returns the Room's description.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the Room's description
 </p></dd></dl></div>
+    </li><li name="lostvaults.server.Room#getExitsList" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getExitsList:List[String]"></a>
+      <a id="getExitsList:List[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getExitsList</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      
     </li><li name="lostvaults.server.Room#getExitsString" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="getExitsString:String"></a>
       <a id="getExitsString:String"></a>
@@ -422,7 +446,7 @@ players, items and possible exits in this room.</p></div><dl class="paramcmts bl
         <span class="name">getItemList</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.List">List</span>[<a href="Item.html" class="extype" name="lostvaults.server.Item">Item</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">This method returns the list of items in a room.</p><div class="fullcomment"><div class="comment cmt"><p>This method returns the list of items in a room.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the items in the room
+      <p class="shortcomment cmt">This method returns the list of Items in a room.</p><div class="fullcomment"><div class="comment cmt"><p>This method returns the list of Items in a room.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the Items in the room
 </p></dd></dl></div>
     </li><li name="lostvaults.server.Room#getNPCActorRef" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="getNPCActorRef(npc:String):Option[akka.actor.ActorRef]"></a>
@@ -623,7 +647,7 @@ players, items and possible exits in this room.</p></div><dl class="paramcmts bl
         <span class="name">removeItem</span><span class="params">(<span name="item">item: <a href="Item.html" class="extype" name="lostvaults.server.Item">Item</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">This method removes an item from the list of items in a room.</p><div class="fullcomment"><div class="comment cmt"><p>This method removes an item from the list of items in a room.</p></div><dl class="paramcmts block"><dt class="param">item</dt><dd class="cmt"><p>The name of the item to be removed.
+      <p class="shortcomment cmt">This method removes an item from the list of items in a room.</p><div class="fullcomment"><div class="comment cmt"><p>This method removes an item from the list of items in a room.</p></div><dl class="paramcmts block"><dt class="param">item</dt><dd class="cmt"><p>The name of the Item to be removed.
 </p></dd></dl></div>
     </li><li name="lostvaults.server.Room#removeNPC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="removeNPC(npc:String):Unit"></a>
@@ -652,6 +676,19 @@ players, items and possible exits in this room.</p></div><dl class="paramcmts bl
       </h4>
       <p class="shortcomment cmt">This method removes a player from the list players in the room.</p><div class="fullcomment"><div class="comment cmt"><p>This method removes a player from the list players in the room.</p></div><dl class="paramcmts block"><dt class="param">player</dt><dd class="cmt"><p>The name of the player to be removed from the room.
 </p></dd></dl></div>
+    </li><li name="lostvaults.server.Room#roomDesc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="roomDesc:String"></a>
+      <a id="roomDesc:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">roomDesc</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      
     </li><li name="lostvaults.server.Room#startRoom" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="startRoom:Boolean"></a>
       <a id="startRoom:Boolean"></a>
@@ -690,7 +727,7 @@ players, items and possible exits in this room.</p></div><dl class="paramcmts bl
         <span class="name">takeItem</span><span class="params">(<span name="_name">_name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Item.html" class="extype" name="lostvaults.server.Item">Item</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p>
+      <p class="shortcomment cmt">Removes an Item from this Room and returns it.</p>
     </li><li name="lostvaults.server.Room#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

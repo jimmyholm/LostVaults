@@ -24,7 +24,7 @@ class RoomTest extends FunSuite {
 
   test("This test checks if removed player in playerlist is removed!") {
     room.removePlayer(TestMan)
-    assert(room.hasPlayer(TestMan))
+    assert(!room.hasPlayer(TestMan))
   }
 
 

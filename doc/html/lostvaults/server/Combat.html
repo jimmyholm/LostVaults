@@ -80,7 +80,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="lostvaults.server.Combat#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(_dungeon:akka.actor.ActorRef,_roomIndex:Int):lostvaults.server.Combat"></a>
+      <a id="&lt;init&gt;(_dungeon:akka.actor.ActorRef,_roomIndex:Int,dungeonId:Int,id:Int):lostvaults.server.Combat"></a>
       <a id="&lt;init&gt;:Combat"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -88,7 +88,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Combat</span><span class="params">(<span name="_dungeon">_dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="_roomIndex">_roomIndex: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">Combat</span><span class="params">(<span name="_dungeon">_dungeon: <span class="extype" name="akka.actor.ActorRef">ActorRef</span></span>, <span name="_roomIndex">_roomIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="dungeonId">dungeonId: <span class="extype" name="scala.Int">Int</span></span>, <span name="id">id: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       </h4>
       
@@ -487,6 +487,19 @@
       </span>
       </h4>
       
+    </li><li name="lostvaults.server.Combat#dungeonID" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dungeonID:Int"></a>
+      <a id="dungeonID:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dungeonID</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -675,6 +688,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>FSM</dd></dl></div>
+    </li><li name="lostvaults.server.Combat#myID" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="myID:Int"></a>
+      <a id="myID:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">myID</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
