@@ -1,9 +1,9 @@
+package lostvaults.server
 /**
  * PlayerGroup.scala
  * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
  * @Version 1.0
  */
-package lostvaults.server
 import scala.collection.mutable.Set
 /**
  * PlayerGroup signifies a party of player characters. It's through PlayerGroup entities that players may enter dungeons. Any information to be
