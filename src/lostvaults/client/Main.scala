@@ -1,4 +1,9 @@
 package lostvaults.client
+/**
+ * Main.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import akka.actor.{ Actor, ActorRef, ActorSystem, Props, Terminated }
 
 object Main {
