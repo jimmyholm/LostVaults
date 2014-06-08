@@ -1,5 +1,9 @@
 package lostvaults.client
-
+/**
+ * PlayGame.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import akka.actor.{ Actor, ActorRef, Props }
 import lostvaults.Parser
 import java.net.InetSocketAddress
