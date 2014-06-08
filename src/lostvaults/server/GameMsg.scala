@@ -188,10 +188,25 @@ case class GameDropItem(item: Item, room: Int) extends GameMsg
  */
 case class GameUpdateItem(item: Item) extends GameMsg
 
+/**
+ * Passed along to a dungeon, it relays a network message to all players 
+ * in a given room.
+ * @param room The index of the relevant room
+ * @param msg The network message to be relayed.
+ */
 case class GameNotifyGUI(room: Int, msg: String) extends GameMsg
 
+/**
+ * Message sent to a player to restore the player's health.
+ * Sent by the admin tool CheatActor.
+ */
 case object GameHeal extends GameMsg
 
+/**
+ * Message sent to a player to reduce the player's health to a minimum of 1.
+ * Sent by the admin tool CheatActor
+ * @param amnt The amount to reduce health by.
+ */
 case class GameHarm(amnt: Int) extends GameMsg
 /**
  * Passed along to a Dungeon, when the NPC has died
@@ -200,6 +215,14 @@ case class GameHarm(amnt: Int) extends GameMsg
  */
 case class GameRemoveNPCFromRoom(name: String, room: Int) extends GameMsg
 
+/**
+ * Passed along to a player, it changes the player's internal combat target.
+ * @param newTarget The name of the new target.
+ */
 case class GamePlayerSetTarget(newTarget: String) extends GameMsg
 
+/** Passed to a dungeon, it removes a player from a room's player set.
+ *  @param name The name of the player to be removed
+ *  @roomIndex The index of the room to remove the player from.
+ */
 case class GameRemoveFromRoom(name:String, roomIndex: Int) extends GameMsg
