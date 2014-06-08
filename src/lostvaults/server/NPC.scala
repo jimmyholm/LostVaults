@@ -1,3 +1,9 @@
+/**
+ * NPC.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
+
 package lostvaults.server
 import akka.actor.{ Actor, ActorRef, Props }
 import akka.util.ByteString
@@ -6,7 +12,10 @@ import scala.util.Random
 object NPC {
   def props(name: String, hp: Int, rating: Int, dungeon: ActorRef, room: Int): Props = Props(new NPC(name, hp, rating, dungeon, room: Int))
 }
-
+/**
+ * NPC represents monsters in dungeons. Implemented as an actor, it allows the combat system tp be ignorant of the 
+ * difference between player and NPC.
+ */
 class NPC(_name: String, _hp: Int, _rating: Int, _dungeon: ActorRef, _room: Int) extends Actor {
   var rand = new Random(System.currentTimeMillis())
   var name = _name
