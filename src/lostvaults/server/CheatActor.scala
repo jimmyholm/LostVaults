@@ -1,3 +1,10 @@
+/**
+ * CheatActor.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
+
+
 package lostvaults.server
 
 import lostvaults.Parser
@@ -17,7 +24,11 @@ import scala.concurrent.Await
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
-
+/**
+ * CheatActor provides a way to perform admin-related tasks on the server, including testing functionality
+ * such as giving items to player, healing players, hurting players and listing NPCs and Items from the
+ * database.
+ */
 class CheatActor extends Actor {
   val PMap = Main.PMap.get
   val log = Logging(context.system, this)
