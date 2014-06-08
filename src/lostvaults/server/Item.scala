@@ -1,9 +1,9 @@
+package lostvaults.server
 /**
  * Item.scala
  * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
  * @Version 1.0
  */
-package lostvaults.server
 
 import scala.io.Source
 
