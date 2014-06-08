@@ -1,3 +1,8 @@
+/**
+ * CheatActor.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 package lostvaults.server
 
 import akka.actor.{ Actor, Props, ActorRef }
@@ -9,6 +14,9 @@ import lostvaults.Parser
  */
 case object DungeonMakeCity
 
+/**
+ * Message sent to tell a dungeon to initialize.
+ */
 case object NewDungeon
 
 object Dungeon {
