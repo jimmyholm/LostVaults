@@ -1,3 +1,8 @@
+/**
+ * ItemRepo.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 package lostvaults.server
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
@@ -6,6 +11,10 @@ import scala.slick.driver.SQLiteDriver.simple._
 import Q.interpolation
 import scala.util.Random
 
+/**
+ * ItemRepo provides a repository of item templates, loaded from the database. Item instances are then created
+ * through this repository, either specifically or at random.
+ */
 object ItemRepo {
   import JdbcBackend.Database
   case class ItemData(id: Int, name: String, attack: Int, defense: Int, speed: Int, rating: Int, itemType: String)
