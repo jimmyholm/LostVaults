@@ -1,5 +1,5 @@
 /**
- * CheatActor.scala
+ * ConMan.scala
  * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
  * @Version 1.0
  */
