@@ -1,3 +1,8 @@
+/**
+ * CheatActor.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 package lostvaults.server
 import akka.actor.{Actor, Props}
 import akka.io.{ IO, Tcp }
