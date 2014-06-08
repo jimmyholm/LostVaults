@@ -1,3 +1,8 @@
+/**
+ * Logger.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 package lostvaults.server
 import akka.event.Logging.InitializeLogger
 import akka.event.Logging.Error
