@@ -1,3 +1,9 @@
+/**
+ * Player.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
+
 package lostvaults.server
 import lostvaults.Parser
 import akka.actor.{ Actor, ActorRef }
@@ -11,11 +17,27 @@ import scala.slick.jdbc.JdbcBackend
 import scala.slick.driver.SQLiteDriver.simple._
 import Q.interpolation
 
+/**
+ * PlayerAction is the base trait for the possible internal combat states a player can be in.
+ */
 sealed trait PlayerAction
+/**
+ * PAttack represents a player's wish to continue attacking their set target.
+ */
 case object PAttack extends PlayerAction
+/**
+ * PDrinkPotion represents a player's wish to consume a potion to restore health.
+ */
 case object PDrinkPotion extends PlayerAction
+/**
+ * PDecide represents a player's wish to pause the combat situation and make a new decision.
+ */
 case object PDecide extends PlayerAction
 
+/**
+ * Player is the connection point between the server and the remote client connection. It is through player
+ * all other systems communicate with clients. Player also keeps track of the various character attributes of players.
+ */
 class Player extends Actor {
   import JdbcBackend.Database
   import Tcp._
