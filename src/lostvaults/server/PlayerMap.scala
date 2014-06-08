@@ -63,14 +63,11 @@ case object PMapFailure extends PMapMsg
 
 
 /**
- *
- *
+ * PlayerMap acts as a lookup table for players, mapping player names as strings to their internal actor reference.
+ * Using PlayerMap allows simple communication with any player based on their name.
  */
 class PlayerMap extends Actor {
   var PMap: HashMap[String, ActorRef] = HashMap()
-  /**
-   *
-   */
   def receive = {
     case PMapSendGameMessage(name: String, msg: GameMsg) => {
       val sendTo = PMap.find((A: Tuple2[String, ActorRef]) => A._1.compareToIgnoreCase(name) == 0)
