@@ -1,9 +1,9 @@
+package lostvaults.server
 /**
  * NPCRepo.scala
  * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
  * @Version 1.0
  */
-package lostvaults.server
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import scala.slick.jdbc.meta.MTable
 import scala.slick.jdbc.JdbcBackend
