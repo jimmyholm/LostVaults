@@ -1,8 +1,16 @@
 package lostvaults.server
+/**
+ * RoomGenerator.scala
+ * @Author Felix Färsjö, Jimmy Holm, Fredrik Larsson, Anna Nilsson, Philip Åkerfeldt
+ * @Version 1.0
+ */
 import scala.util.Random
 import java.util.Calendar
 import akka.actor.{ ActorSystem, ActorRef }
 
+/**
+ * RoomGenerator provides functionality to procedurally generate dungeon rooms.
+ */
 class RoomGenerator {
   var itemcnt = 0
   var itemrooms = 0
